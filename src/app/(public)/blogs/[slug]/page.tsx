@@ -281,8 +281,10 @@ export default async function BlogDetailsPage({ params }: PageProps) {
           <article className="lg:col-span-8 space-y-8 relative">
 
             {/* Sticky vertical share bar on desktop (xl and up) */}
-            <div className="hidden xl:block absolute -left-16 top-12 z-30 h-fit sticky top-36">
-              <ShareBar url={currentUrl} title={post.title} />
+            <div className="hidden xl:block absolute -left-16 top-0 bottom-0 w-10 z-30 pointer-events-none">
+              <div className="sticky top-36 pointer-events-auto">
+                <ShareBar url={currentUrl} title={post.title} />
+              </div>
             </div>
 
             {resolvedCoverImageUrl && (
