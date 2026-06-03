@@ -101,6 +101,45 @@ function renderContent(content: any) {
         )
       }
 
+      if (node.type === 'table') {
+        return (
+          <div key={index} className="overflow-x-auto my-6 border border-slate-200/80 rounded-xl shadow-sm">
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <tbody className="divide-y divide-slate-100">
+                {node.children?.map((row: any, rIdx: number) => {
+                  if (row.type === 'tablerow') {
+                    const isHeader = rIdx === 0
+                    return (
+                      <tr key={rIdx} className={isHeader ? 'bg-slate-50/75' : 'hover:bg-slate-50/20'}>
+                        {row.children?.map((cell: any, cIdx: number) => {
+                          if (cell.type === 'tablecell') {
+                            const CellTag = isHeader ? 'th' : 'td'
+                            return (
+                              <CellTag
+                                key={cIdx}
+                                className={`px-4 py-3 text-left font-body ${
+                                  isHeader
+                                    ? 'text-[#0D1B2A] font-bold text-xs uppercase tracking-wider bg-slate-50/60'
+                                    : 'text-[#0D1B2A]/70 font-normal'
+                                }`}
+                              >
+                                {cell.children?.map((c: any, i: number) => renderTextNode(c, i))}
+                              </CellTag>
+                            )
+                          }
+                          return null
+                        })}
+                      </tr>
+                    )
+                  }
+                  return null
+                })}
+              </tbody>
+            </table>
+          </div>
+        )
+      }
+
       return null
     })
   } catch (err) {

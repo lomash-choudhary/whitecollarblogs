@@ -19,7 +19,8 @@ import {
   Code,
   Quote,
   List,
-  ListOrdered
+  ListOrdered,
+  Table
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
@@ -125,6 +126,29 @@ function lexicalToMarkdown(lexical: any): string {
             }
           })
         }
+        md += '\n'
+      } else if (node.type === 'table') {
+        const rows = node.children || []
+        rows.forEach((row: any, rowIndex: number) => {
+          if (row.type === 'tablerow') {
+            const cells = row.children || []
+            let rowText = '|'
+            cells.forEach((cell: any) => {
+              if (cell.type === 'tablecell') {
+                const cellText = cell.children?.map((leaf: any) => renderLeafToMarkdown(leaf)).join('') || ''
+                rowText += ` ${cellText} |`
+              }
+            })
+            md += rowText + '\n'
+            if (rowIndex === 0) {
+              let sepText = '|'
+              cells.forEach(() => {
+                sepText += '---|'
+              })
+              md += sepText + '\n'
+            }
+          }
+        })
         md += '\n'
       }
     }
@@ -281,6 +305,48 @@ function markdownToLexical(markdown: string): any {
     if (trimmed === '') {
       commitList()
       i++
+      continue
+    }
+
+    // Table (starts with | and has columns separated by |)
+    if (trimmed.startsWith('|')) {
+      commitList()
+      const tableRows: any[] = []
+      
+      while (i < lines.length) {
+        const nextLine = lines[i].trim()
+        if (!nextLine.startsWith('|')) {
+          break
+        }
+        
+        // Skip separator line (like |---|---|)
+        if (nextLine.match(/^\|(?:\s*:?-+:?\s*\|)+$/)) {
+          i++
+          continue
+        }
+        
+        const cells = nextLine.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1)
+        
+        tableRows.push({
+          type: 'tablerow',
+          version: 1,
+          children: cells.map(cellText => ({
+            type: 'tablecell',
+            version: 1,
+            children: parseInlineMarkdown(cellText)
+          }))
+        })
+        
+        i++
+      }
+      
+      if (tableRows.length > 0) {
+        children.push({
+          type: 'table',
+          version: 1,
+          children: tableRows
+        })
+      }
       continue
     }
 
@@ -464,6 +530,11 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         break
       case 'ol':
         replacement = `\n1. ${selectedText || 'List item'}\n`
+        break
+      case 'table':
+        replacement = selectedText 
+          ? `\n| ${selectedText} | Column 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n`
+          : `\n| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n| Cell 3 | Cell 4 |\n`
         break
       default:
         return
@@ -957,6 +1028,14 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     title="Numbered List (1. Item)"
                   >
                     <ListOrdered className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormatting('table')}
+                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
+                    title="Insert Table"
+                  >
+                    <Table className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
