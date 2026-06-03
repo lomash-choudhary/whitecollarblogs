@@ -15,6 +15,37 @@ interface PageProps {
 // Rich helper to render Lexical rich text with WCA typography
 function renderTextNode(node: any, index: number) {
   if (!node) return null
+
+  if (node.type === 'link') {
+    const url = node.fields?.url || ''
+    const rel = node.fields?.rel || []
+    const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
+    const newTab = node.fields?.newTab || url.startsWith('http')
+    
+    const linkProps = {
+      href: url,
+      target: newTab ? '_blank' : undefined,
+      rel: `${newTab ? 'noopener noreferrer ' : ''}${isNofollow ? 'nofollow' : ''}`.trim() || undefined,
+      className: 'text-[#C9A84C] hover:underline font-semibold'
+    }
+    
+    const children = node.children?.map((c: any, i: number) => renderTextNode(c, i))
+    
+    if (url.startsWith('/') || url.startsWith('#')) {
+      return (
+        <Link key={index} {...linkProps}>
+          {children}
+        </Link>
+      )
+    }
+    
+    return (
+      <a key={index} {...linkProps}>
+        {children}
+      </a>
+    )
+  }
+
   const text = node.text || ''
   const format = node.format || 0
 

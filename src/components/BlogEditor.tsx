@@ -77,6 +77,23 @@ function renderLeafToMarkdown(leaf: any): string {
   return text
 }
 
+function serializeInlineNodes(nodes: any[]): string {
+  if (!nodes) return ''
+  let text = ''
+  for (const node of nodes) {
+    if (node.type === 'link') {
+      const linkText = node.children?.map((leaf: any) => renderLeafToMarkdown(leaf)).join('') || ''
+      const url = node.fields?.url || ''
+      const rel = node.fields?.rel || []
+      const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
+      text += `[${linkText}](${url}${isNofollow ? ' "nofollow"' : ''})`
+    } else {
+      text += renderLeafToMarkdown(node)
+    }
+  }
+  return text
+}
+
 function lexicalToMarkdown(lexical: any): string {
   if (!lexical) return ''
   if (typeof lexical === 'string') return lexical
@@ -87,31 +104,16 @@ function lexicalToMarkdown(lexical: any): string {
       if (!node) continue
       
       if (node.type === 'paragraph') {
-        let pText = ''
-        if (node.children) {
-          for (const leaf of node.children) {
-            pText += renderLeafToMarkdown(leaf)
-          }
-        }
+        let pText = serializeInlineNodes(node.children)
         md += pText + '\n\n'
       } else if (node.type === 'heading') {
         let level = 3
         if (node.tag === 'h1') level = 1
         if (node.tag === 'h2') level = 2
-        let hText = '#'.repeat(level) + ' '
-        if (node.children) {
-          for (const leaf of node.children) {
-            hText += renderLeafToMarkdown(leaf)
-          }
-        }
+        let hText = '#'.repeat(level) + ' ' + serializeInlineNodes(node.children)
         md += hText + '\n\n'
       } else if (node.type === 'quote') {
-        let qText = '> '
-        if (node.children) {
-          for (const leaf of node.children) {
-            qText += renderLeafToMarkdown(leaf)
-          }
-        }
+        let qText = '> ' + serializeInlineNodes(node.children)
         md += qText + '\n\n'
       } else if (node.type === 'list') {
         const isNumbered = node.listType === 'number'
@@ -119,9 +121,7 @@ function lexicalToMarkdown(lexical: any): string {
           node.children.forEach((item: any, i: number) => {
             if (item.type === 'listitem' && item.children) {
               let itemText = isNumbered ? `${i + 1}. ` : '- '
-              for (const leaf of item.children) {
-                itemText += renderLeafToMarkdown(leaf)
-              }
+              itemText += serializeInlineNodes(item.children)
               md += itemText + '\n'
             }
           })
@@ -158,8 +158,8 @@ function lexicalToMarkdown(lexical: any): string {
   }
 }
 
-function parseInlineMarkdown(text: string): LexicalTextNode[] {
-  const nodes: LexicalTextNode[] = []
+function parseInlineMarkdown(text: string): any[] {
+  const nodes: any[] = []
   let i = 0
   const len = text.length
   
@@ -177,6 +177,49 @@ function parseInlineMarkdown(text: string): LexicalTextNode[] {
         })
         i = closingIdx + 1
         continue
+      }
+    }
+
+    // Check for Markdown Link: [text](url) or [text](url "title")
+    if (text[i] === '[') {
+      const closeBracketIdx = text.indexOf(']', i + 1)
+      if (closeBracketIdx !== -1 && text[closeBracketIdx + 1] === '(') {
+        const closeParenIdx = text.indexOf(')', closeBracketIdx + 2)
+        if (closeParenIdx !== -1) {
+          const linkText = text.substring(i + 1, closeBracketIdx)
+          const linkContent = text.substring(closeBracketIdx + 2, closeParenIdx).trim()
+          
+          let url = linkContent
+          let title = ''
+          
+          const titleMatch = linkContent.match(/^([^\s]+)\s+["'](.*?)["']$/)
+          if (titleMatch) {
+            url = titleMatch[1]
+            title = titleMatch[2].trim()
+          }
+          
+          const isNofollow = title.toLowerCase() === 'nofollow'
+          
+          nodes.push({
+            type: 'link',
+            version: 1,
+            fields: {
+              url,
+              newTab: url.startsWith('http'),
+              rel: isNofollow ? ['nofollow'] : []
+            },
+            children: [
+              {
+                type: 'text',
+                text: linkText,
+                version: 1
+              }
+            ]
+          })
+          
+          i = closeParenIdx + 1
+          continue
+        }
       }
     }
     
@@ -248,7 +291,7 @@ function parseInlineMarkdown(text: string): LexicalTextNode[] {
     let plainText = ''
     while (i < len) {
       const char = text[i]
-      if (char === '`' || text.startsWith('***', i) || text.startsWith('**', i) || text.startsWith('__', i) || char === '*') {
+      if (char === '`' || char === '[' || text.startsWith('***', i) || text.startsWith('**', i) || text.startsWith('__', i) || char === '*') {
         break
       }
       plainText += char
@@ -535,6 +578,14 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         replacement = selectedText 
           ? `\n| ${selectedText} | Column 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n`
           : `\n| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n| Cell 3 | Cell 4 |\n`
+        break
+      case 'link':
+        replacement = `[${selectedText || 'link text'}](https://example.com)`
+        cursorOffset = selectedText ? 0 : 21
+        break
+      case 'link-nofollow':
+        replacement = `[${selectedText || 'link text'}](https://example.com "nofollow")`
+        cursorOffset = selectedText ? 0 : 32
         break
       default:
         return
@@ -1009,6 +1060,22 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     title="Blockquote (> Quote)"
                   >
                     <Quote className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormatting('link')}
+                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
+                    title="Insert Follow Link"
+                  >
+                    <Link2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormatting('link-nofollow')}
+                    className="p-1.5 hover:bg-slate-200/70 text-slate-500 rounded-lg transition-colors cursor-pointer"
+                    title="Insert Nofollow Link (Crawler Ignore)"
+                  >
+                    <Link2 className="w-3.5 h-3.5 text-rose-500/80" />
                   </button>
                 </div>
 
