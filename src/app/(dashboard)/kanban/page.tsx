@@ -25,7 +25,7 @@ export default async function KanbanPage() {
     const postsResult = await payload.find({
       collection: 'posts',
       limit: 100,
-      depth: 2,
+      depth: 1,
     })
     posts = postsResult.docs
       .filter((post: any) => post.stage && typeof post.stage === 'object')

@@ -26,7 +26,7 @@ export default async function DashboardPage() {
     const postsResult = await payload.find({
       collection: 'posts',
       limit: 10,
-      depth: 2,
+      depth: 1,
     })
 
     posts = postsResult.docs

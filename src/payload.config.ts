@@ -36,8 +36,8 @@ export default buildConfig({
           'postgresql://postgres:postgres@127.0.0.1:5432/payload'
         return raw
       })(),
-      max: 10,
-      idleTimeoutMillis: 5000,
+      max: 3,
+      idleTimeoutMillis: 30000,
     },
   }),
   plugins: [

@@ -144,7 +144,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     const postsResult = await payload.find({
       collection: 'posts',
       where: { slug: { equals: slug } },
-      depth: 2,
+      depth: 1,
       overrideAccess: true,
     })
 
@@ -163,7 +163,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     const moreReadsResult = await payload.find({
       collection: 'posts',
       limit: 10,
-      depth: 2,
+      depth: 1,
       overrideAccess: true,
     })
 

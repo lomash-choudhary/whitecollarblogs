@@ -28,7 +28,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
     const postsResult = await payload.find({
       collection: 'posts',
       limit: 100,
-      depth: 2,
+      depth: 1,
     })
 
     const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || ''
