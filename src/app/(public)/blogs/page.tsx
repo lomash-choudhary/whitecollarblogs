@@ -105,9 +105,6 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
             </p>
           </div>
         </div>
-
-        {/* Bottom fade into content */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F5F0E8] to-transparent" />
       </section>
 
       {/* ── Filters + Search ── */}
