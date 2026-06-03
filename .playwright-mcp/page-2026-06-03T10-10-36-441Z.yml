@@ -1,0 +1,116 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e4]:
+      - link "White Collar Advice — home" [ref=e5] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e6]: White Collar Advice
+        - generic [ref=e7]: Est. 2008
+      - generic [ref=e8]:
+        - link "The Work" [ref=e9] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-work
+        - link "The Record" [ref=e10] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-record
+        - link "Tools" [ref=e11] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#tools
+        - link "The Archive" [ref=e12] [cursor=pointer]:
+          - /url: /blogs
+        - link "Prison Professors" [ref=e13] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#prison-professors
+      - link "Book Strategy Session" [ref=e14] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+  - main [ref=e15]:
+    - generic [ref=e18]:
+      - generic [ref=e20]:
+        - img [ref=e22]
+        - generic [ref=e25]:
+          - generic [ref=e26]: White Collar
+          - generic [ref=e27]: Advice
+        - heading "CMS Portal" [level=1] [ref=e28]
+        - paragraph [ref=e29]: Password protected administrative archive portal.
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - text: Email Address
+          - generic [ref=e32]:
+            - textbox "admin@whitecollar.com" [ref=e33]
+            - img [ref=e34]
+        - generic [ref=e37]:
+          - text: Password
+          - generic [ref=e38]:
+            - textbox "••••••••" [ref=e39]
+            - img [ref=e40]
+        - button "Secure Login" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: Secure Login
+          - img [ref=e45]
+  - contentinfo [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - paragraph [ref=e52]: White Collar Advice
+            - paragraph [ref=e53]: Est. 2008
+          - paragraph [ref=e54]: Building records that change outcomes. Est. 2008.
+          - generic [ref=e55]:
+            - link [ref=e56] [cursor=pointer]:
+              - /url: https://youtube.com
+              - img [ref=e57]
+            - link [ref=e59] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e60]
+            - link [ref=e62] [cursor=pointer]:
+              - /url: https://instagram.com
+              - img [ref=e63]
+            - link [ref=e65] [cursor=pointer]:
+              - /url: https://tiktok.com
+              - img [ref=e66]
+            - link [ref=e68] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e69]
+        - generic [ref=e71]:
+          - heading "Resources" [level=4] [ref=e72]
+          - list [ref=e73]:
+            - listitem [ref=e74]:
+              - link "The Playbook" [ref=e75] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e76]:
+              - link "Video Library" [ref=e77] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e78]:
+              - link "BOP Directory" [ref=e79] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e80]:
+              - link "Blog" [ref=e81] [cursor=pointer]:
+                - /url: /blogs
+        - generic [ref=e82]:
+          - heading "Company" [level=4] [ref=e83]
+          - list [ref=e84]:
+            - listitem [ref=e85]:
+              - link "About Justin" [ref=e86] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e87]:
+              - link "Prison Professors" [ref=e88] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e89]:
+              - link "Media Kit" [ref=e90] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e91]:
+              - link "Contact" [ref=e92] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e93]:
+          - heading "Legal" [level=4] [ref=e94]
+          - list [ref=e95]:
+            - listitem [ref=e96]:
+              - link "Privacy Policy" [ref=e97] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e98]:
+              - link "Terms of Service" [ref=e99] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e100]:
+              - link "Disclaimer" [ref=e101] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+      - generic [ref=e102]:
+        - paragraph [ref=e103]: © 2026 White Collar Advice. All rights reserved.
+        - paragraph [ref=e104]:
+          - text: "Call or text:"
+          - link "949-799-3277" [ref=e105] [cursor=pointer]:
+            - /url: tel:9497993277
+  - alert [ref=e106]

@@ -1,0 +1,184 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e4]:
+      - link "White Collar Advice — home" [ref=e5] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e6]: White Collar Advice
+        - generic [ref=e7]: Est. 2008
+      - generic [ref=e8]:
+        - link "The Work" [ref=e9] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-work
+        - link "The Record" [ref=e10] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-record
+        - link "Tools" [ref=e11] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#tools
+        - link "The Archive" [ref=e12] [cursor=pointer]:
+          - /url: /blogs
+        - link "Prison Professors" [ref=e13] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#prison-professors
+      - link "Book Strategy Session" [ref=e14] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: White Collar Advice · The Archive
+        - heading "Insights That Change Outcomes" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Federal sentencing strategies, prison preparation guides, and re-entry frameworks documented by Justin Paperny and the White Collar Advice team.
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - heading "All Articles" [level=2] [ref=e28]
+            - paragraph [ref=e29]: 3 articles found
+          - generic [ref=e30]:
+            - textbox "Search the archive..." [ref=e31]
+            - img [ref=e32]
+        - generic [ref=e35]:
+          - link "All" [ref=e36] [cursor=pointer]:
+            - /url: /blogs#articles
+          - link "Post-Sentence" [ref=e37] [cursor=pointer]:
+            - /url: /blogs?role=Post-Sentence#articles
+          - link "Pre-Sentence" [ref=e38] [cursor=pointer]:
+            - /url: /blogs?role=Pre-Sentence#articles
+      - generic [ref=e40]:
+        - 'link "How to Choose the Right Federal Prison Camp: A Practical Guide Featured Post-Sentence 10 min read How to Choose the Right Federal Prison Camp: A Practical Guide The Bureau of Prisons will designate you to a facility — but that doesn''t mean you have no input. Here''s how to advocate for a designation that serves your re-entry goals. Justin Paperny Jun 3, 2026 Read More" [ref=e41] [cursor=pointer]':
+          - /url: /blogs/choosing-right-federal-prison-camp-guide
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - 'img "How to Choose the Right Federal Prison Camp: A Practical Guide" [ref=e44]'
+              - generic [ref=e46]: Featured
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - generic [ref=e49]:
+                  - generic [ref=e50]: Post-Sentence
+                  - generic [ref=e51]: 10 min read
+                - 'heading "How to Choose the Right Federal Prison Camp: A Practical Guide" [level=3] [ref=e52]'
+                - paragraph [ref=e53]: The Bureau of Prisons will designate you to a facility — but that doesn't mean you have no input. Here's how to advocate for a designation that serves your re-entry goals.
+              - generic [ref=e54]:
+                - generic [ref=e55]:
+                  - img [ref=e57]
+                  - generic [ref=e59]:
+                    - paragraph [ref=e60]: Justin Paperny
+                    - paragraph [ref=e61]: Jun 3, 2026
+                - generic [ref=e62]:
+                  - text: Read More
+                  - img [ref=e63]
+        - generic [ref=e65]:
+          - link "Understanding the Difference Between Cooperation and Mitigation Pre-Sentence 8 min read Understanding the Difference Between Cooperation and Mitigation Many defendants confuse cooperating with the government and building a mitigation strategy. They are not the same thing — and conflating them can cost you years. Justin Paperny Jun 3, 2026 Read" [ref=e66] [cursor=pointer]:
+            - /url: /blogs/cooperation-vs-mitigation-federal-sentencing
+            - img "Understanding the Difference Between Cooperation and Mitigation" [ref=e68]
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]: Pre-Sentence
+                - generic [ref=e73]: 8 min read
+              - heading "Understanding the Difference Between Cooperation and Mitigation" [level=3] [ref=e74]
+              - paragraph [ref=e75]: Many defendants confuse cooperating with the government and building a mitigation strategy. They are not the same thing — and conflating them can cost you years.
+              - generic [ref=e76]:
+                - generic [ref=e77]:
+                  - img [ref=e79]
+                  - generic [ref=e81]:
+                    - paragraph [ref=e82]: Justin Paperny
+                    - paragraph [ref=e83]: Jun 3, 2026
+                - generic [ref=e84]:
+                  - text: Read
+                  - img [ref=e85]
+          - link "Why Most Defendants Wait Too Long to Begin Mitigation Pre-Sentence 6 min read Why Most Defendants Wait Too Long to Begin Mitigation The biggest mistake federal defendants make is not hiring the wrong consultant — it's waiting until it's too late to act. Here's what the timeline actually looks like. Justin Paperny Jun 3, 2026 Read" [ref=e87] [cursor=pointer]:
+            - /url: /blogs/why-defendants-wait-too-long-mitigation
+            - img "Why Most Defendants Wait Too Long to Begin Mitigation" [ref=e89]
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - generic [ref=e93]: Pre-Sentence
+                - generic [ref=e94]: 6 min read
+              - heading "Why Most Defendants Wait Too Long to Begin Mitigation" [level=3] [ref=e95]
+              - paragraph [ref=e96]: The biggest mistake federal defendants make is not hiring the wrong consultant — it's waiting until it's too late to act. Here's what the timeline actually looks like.
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - img [ref=e100]
+                  - generic [ref=e102]:
+                    - paragraph [ref=e103]: Justin Paperny
+                    - paragraph [ref=e104]: Jun 3, 2026
+                - generic [ref=e105]:
+                  - text: Read
+                  - img [ref=e106]
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - paragraph [ref=e111]: Ready to Begin?
+          - heading "$500 for one hour. I will tell you exactly where you stand and what to do next." [level=3] [ref=e112]:
+            - text: $500 for one hour.
+            - text: I will tell you exactly where you stand and what to do next.
+        - link "Book Strategy Session" [ref=e113] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/
+          - text: Book Strategy Session
+          - img [ref=e114]
+  - contentinfo [ref=e116]:
+    - generic [ref=e117]:
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - paragraph [ref=e121]: White Collar Advice
+            - paragraph [ref=e122]: Est. 2008
+          - paragraph [ref=e123]: Building records that change outcomes. Est. 2008.
+          - generic [ref=e124]:
+            - link [ref=e125] [cursor=pointer]:
+              - /url: https://youtube.com
+              - img [ref=e126]
+            - link [ref=e128] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e129]
+            - link [ref=e131] [cursor=pointer]:
+              - /url: https://instagram.com
+              - img [ref=e132]
+            - link [ref=e134] [cursor=pointer]:
+              - /url: https://tiktok.com
+              - img [ref=e135]
+            - link [ref=e137] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e138]
+        - generic [ref=e140]:
+          - heading "Resources" [level=4] [ref=e141]
+          - list [ref=e142]:
+            - listitem [ref=e143]:
+              - link "The Playbook" [ref=e144] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e145]:
+              - link "Video Library" [ref=e146] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e147]:
+              - link "BOP Directory" [ref=e148] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e149]:
+              - link "Blog" [ref=e150] [cursor=pointer]:
+                - /url: /blogs
+        - generic [ref=e151]:
+          - heading "Company" [level=4] [ref=e152]
+          - list [ref=e153]:
+            - listitem [ref=e154]:
+              - link "About Justin" [ref=e155] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e156]:
+              - link "Prison Professors" [ref=e157] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e158]:
+              - link "Media Kit" [ref=e159] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e160]:
+              - link "Contact" [ref=e161] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e162]:
+          - heading "Legal" [level=4] [ref=e163]
+          - list [ref=e164]:
+            - listitem [ref=e165]:
+              - link "Privacy Policy" [ref=e166] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e167]:
+              - link "Terms of Service" [ref=e168] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e169]:
+              - link "Disclaimer" [ref=e170] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+      - generic [ref=e171]:
+        - paragraph [ref=e172]: © 2026 White Collar Advice. All rights reserved.
+        - paragraph [ref=e173]:
+          - text: "Call or text:"
+          - link "949-799-3277" [ref=e174] [cursor=pointer]:
+            - /url: tel:9497993277
+  - alert [ref=e175]

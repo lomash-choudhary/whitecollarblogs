@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+
+
+:root {
+  /* ── White Collar Advice Design Tokens ── */
+
+  /* Backgrounds */
+  --background: #F5F0E8;           /* Warm cream / parchment */
+  --background-dark: #0D1B2A;     /* Deep navy */
+  --background-pure-white: #FFFFFF;
+
+  /* Typography */
+  --foreground: #0D1B2A;           /* Dark navy text on light bg */
+  --foreground-muted: rgba(13, 27, 42, 0.6);
+  --pure-white: #FFFFFF;
+  --pure-white-muted: rgba(255, 255, 255, 0.7);
+
+  /* Gold Accent */
+  --gold: #C9A84C;
+  --gold-light: #E5C567;
+  --gold-dark: #B29135;
+  --gold-muted: rgba(201, 168, 76, 0.2);
+
+  /* Warm rule / divider */
+  --warm-rule: rgba(13, 27, 42, 0.1);
+  --dark-rule: rgba(255, 255, 255, 0.08);
+
+  /* Fonts */
+  --font-headline: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* Spacing */
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --section-gap: clamp(4rem, 8vw, 7rem);
+  --max-width: 1280px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(13, 27, 42, 0.06), 0 1px 2px -1px rgba(13, 27, 42, 0.04);
+  --shadow-md: 0 4px 20px -4px rgba(13, 27, 42, 0.12);
+  --shadow-lg: 0 20px 40px -8px rgba(13, 27, 42, 0.15);
+  --shadow-gold: 0 4px 25px rgba(201, 168, 76, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-dark: var(--background-dark);
+  --color-foreground: var(--foreground);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-pure-white: var(--pure-white);
+
+  --font-headline: var(--font-headline);
+  --font-body: var(--font-body);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-gold: var(--shadow-gold);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Typography ── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+}
+
+/* ── Scrollbars ── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-muted);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ── Utility Components ── */
+
+/* WCA Card — light surface */
+.wca-card {
+  background: var(--background-pure-white);
+  border: 1px solid var(--warm-rule);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wca-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+/* WCA Card — dark surface */
+.wca-card-dark {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wca-card-dark:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(201, 168, 76, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Gold pill badge */
+.wca-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+/* Gold CTA button */
+.wca-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--gold);
+  color: var(--background-dark);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: 1px solid var(--gold);
+  box-shadow: var(--shadow-gold);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.wca-btn-gold:hover {
+  filter: brightness(1.08);
+  transform: scale(1.02);
+}
+
+/* Outline gold button */
+.wca-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.wca-btn-outline:hover {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.06);
+}
+
+/* Nav link animation */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.25s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Hide scrollbar but keep scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Marquee animation */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-scroll {
+  animation: marquee-scroll 30s linear infinite;
+}
+
+/* Article prose overrides */
+.prose-wca p {
+  font-family: var(--font-body);
+  color: rgba(13, 27, 42, 0.75);
+  line-height: 1.85;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose-wca h2 {
+  font-family: var(--font-headline);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--background-dark);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.prose-wca h3 {
+  font-family: var(--font-headline);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--background-dark);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-wca blockquote {
+  border-left: 3px solid var(--gold);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(201, 168, 76, 0.06);
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: var(--background-dark);
+}
+
+.prose-wca ul,
+.prose-wca ol {
+  padding-left: 1.5rem;
+  margin: 1.25rem 0;
+  color: rgba(13, 27, 42, 0.75);
+}
+
+.prose-wca li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}
+
+.prose-wca strong {
+  color: var(--background-dark);
+  font-weight: 700;
+}
+
+.prose-wca code {
+  font-family: 'Courier New', monospace;
+  background: rgba(13, 27, 42, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--background-dark);
+}

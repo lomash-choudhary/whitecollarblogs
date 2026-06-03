@@ -1,0 +1,161 @@
+/* 
+  Small Group Custom Admin CSS Override
+  Provides beautiful Electric Blue theme elements, elegant cards, and modern rounded buttons/inputs to match the team's visual identity.
+*/
+
+:root, [data-theme="light"] {
+  --theme-bg: #f8fafc !important;
+  --theme-elevation-0: #f8fafc !important;
+  --theme-elevation-50: #f8fafc !important;
+  --theme-elevation-100: #ffffff !important;
+  --theme-elevation-150: #ffffff !important;
+  --theme-elevation-200: #ffffff !important;
+  
+  --theme-text: #090d16 !important;
+  --theme-primary: #2563eb !important;
+  --theme-primary-hover: #1d4ed8 !important;
+  --theme-success: #10b981 !important;
+  --theme-warning: #f59e0b !important;
+  --theme-error: #f43f5e !important;
+  
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif !important;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+[data-theme="dark"] {
+  --theme-bg: #090d16 !important;
+  --theme-elevation-0: #090d16 !important;
+  --theme-elevation-50: #0d1321 !important;
+  --theme-elevation-100: #121a2e !important;
+  --theme-elevation-150: #16223b !important;
+  --theme-elevation-200: #1a2a47 !important;
+  
+  --theme-text: #f8fafc !important;
+  --theme-primary: #3b82f6 !important;
+  --theme-primary-hover: #2563eb !important;
+}
+
+/* Beautiful custom login and registration screens */
+html:has(.template-minimal), 
+body:has(.template-minimal) {
+  min-height: 100vh !important;
+  background-color: #090d16 !important;
+  background-image: 
+    radial-gradient(at 50% 0%, rgba(37, 99, 235, 0.25) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(249, 115, 22, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.1) 0px, transparent 50%) !important;
+  background-size: cover !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.template-minimal, .template-create-first-user {
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.template-minimal__wrap, .template-create-first-user__wrap {
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4) !important;
+  padding: 40px !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  box-sizing: border-box !important;
+}
+
+.template-minimal h1, .template-create-first-user h1 {
+  font-weight: 900 !important;
+  letter-spacing: -0.025em !important;
+  color: #ffffff !important;
+}
+
+/* Premium Form Elements & Buttons */
+.btn {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 10px 24px !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn--style-primary {
+  background-color: #2563eb !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
+}
+
+.btn--style-primary:hover {
+  background-color: #1d4ed8 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Base Form Input Styling */
+.field-type input, .field-type textarea, .field-type select {
+  border-radius: 12px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 14px !important;
+}
+
+.field-type input:focus, .field-type textarea:focus, .field-type select:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* Login/Registration Specific Dark Theme Form Styling */
+.template-minimal__wrap label.field-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  padding-bottom: 6px !important;
+}
+
+.template-minimal__wrap .field-type input {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}
+
+.template-minimal__wrap .field-type input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3) !important;
+  outline: none !important;
+}
+
+.template-minimal__wrap a {
+  color: #3b82f6 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  display: inline-block !important;
+  margin-top: 10px !important;
+}
+
+.template-minimal__wrap a:hover {
+  color: #60a5fa !important;
+  text-decoration: underline !important;
+}
+
+.login__brand {
+  margin-bottom: 35px !important;
+  display: flex !important;
+  justify-content: center !important;
+}

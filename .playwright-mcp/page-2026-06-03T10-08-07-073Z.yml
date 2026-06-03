@@ -1,0 +1,162 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e4]:
+      - link "White Collar Advice — home" [ref=e5] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e6]: White Collar Advice
+        - generic [ref=e7]: Est. 2008
+      - generic [ref=e8]:
+        - link "The Work" [ref=e9] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-work
+        - link "The Record" [ref=e10] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#the-record
+        - link "Tools" [ref=e11] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#tools
+        - link "The Archive" [ref=e12] [cursor=pointer]:
+          - /url: /blogs
+        - link "Prison Professors" [ref=e13] [cursor=pointer]:
+          - /url: https://website-ten-sigma-61.vercel.app/#prison-professors
+      - link "Book Strategy Session" [ref=e14] [cursor=pointer]:
+        - /url: https://website-ten-sigma-61.vercel.app/
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e19]:
+        - link "Back to The Archive" [ref=e20] [cursor=pointer]:
+          - /url: /blogs
+          - img [ref=e21]
+          - text: Back to The Archive
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: Pre-Sentence
+            - generic [ref=e26]: 8 min read
+          - heading "Understanding the Difference Between Cooperation and Mitigation" [level=1] [ref=e27]
+          - paragraph [ref=e28]: Many defendants confuse cooperating with the government and building a mitigation strategy. They are not the same thing — and conflating them can cost you years.
+          - generic [ref=e29]:
+            - img [ref=e31]
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: Justin Paperny
+              - paragraph [ref=e35]: Founder & Lead Consultant · June 3, 2026
+      - generic [ref=e37]:
+        - article [ref=e38]:
+          - img "Understanding the Difference Between Cooperation and Mitigation" [ref=e40]
+          - generic [ref=e42]:
+            - paragraph [ref=e43]: Cooperation agreements are negotiated between your attorney and the prosecution. Mitigation is everything you build independent of the government's process. Both matter. But only one is entirely within your control.
+            - 'heading "Cooperation: What It Is and What It Is Not" [level=2] [ref=e44]'
+            - paragraph [ref=e45]: Cooperation means providing substantial assistance to the government — information about other criminal activity, testimony against co-conspirators, intelligence that leads to new charges or convictions. When effective, prosecutors file a 5K1.1 motion that allows the judge to sentence below the guideline range.
+            - paragraph [ref=e46]: But cooperation is controlled by the prosecution. They decide what qualifies. They decide when to file the motion. You have no guarantee it will happen, even if you provide substantial assistance.
+            - 'heading "Mitigation: The Work Only You Can Do" [level=2] [ref=e47]'
+            - paragraph [ref=e48]: Mitigation is the record you build to show the judge who you are beyond your worst moment. It includes your character letters, your community service, your therapy, your family circumstances, your professional history, and your documented plan for making amends.
+            - blockquote [ref=e49]: "\"The order of mitigation follows: defendant, friends and family, lawyer. Most defendants get the order wrong.\" — Judge Boulware, Federal District Court"
+          - generic [ref=e50]:
+            - img [ref=e52]
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: Written by
+              - paragraph [ref=e56]: Justin Paperny
+              - paragraph [ref=e57]: Founder & Lead Consultant · executive
+          - link "Back to The Archive" [ref=e59] [cursor=pointer]:
+            - /url: /blogs
+            - img [ref=e60]
+            - text: Back to The Archive
+        - complementary [ref=e62]:
+          - generic [ref=e63]:
+            - heading "Article Details" [level=4] [ref=e64]
+            - generic [ref=e65]:
+              - generic [ref=e66]:
+                - generic [ref=e67]: Published
+                - generic [ref=e68]: June 3, 2026
+              - generic [ref=e69]:
+                - generic [ref=e70]: Read time
+                - generic [ref=e71]: 8 min read
+              - generic [ref=e72]:
+                - generic [ref=e73]: Category
+                - generic [ref=e74]: Pre-Sentence
+          - generic [ref=e75]:
+            - paragraph [ref=e77]: Ready to Begin?
+            - heading "One hour. $500. I will tell you what to do next." [level=4] [ref=e78]:
+              - text: One hour. $500.
+              - text: I will tell you what to do next.
+            - paragraph [ref=e79]: If the call gives you nothing useful, I refund it.
+            - link "Book Strategy Session" [ref=e80] [cursor=pointer]:
+              - /url: https://website-ten-sigma-61.vercel.app/
+            - paragraph [ref=e81]:
+              - text: "Call or text:"
+              - link "949-799-3277" [ref=e82] [cursor=pointer]:
+                - /url: tel:9497993277
+          - generic [ref=e83]:
+            - heading "Browse The Archive" [level=4] [ref=e84]
+            - link "View all articles" [ref=e85] [cursor=pointer]:
+              - /url: /blogs
+              - generic [ref=e86]: View all articles
+              - img [ref=e87]
+  - contentinfo [ref=e89]:
+    - generic [ref=e90]:
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - paragraph [ref=e94]: White Collar Advice
+            - paragraph [ref=e95]: Est. 2008
+          - paragraph [ref=e96]: Building records that change outcomes. Est. 2008.
+          - generic [ref=e97]:
+            - link [ref=e98] [cursor=pointer]:
+              - /url: https://youtube.com
+              - img [ref=e99]
+            - link [ref=e101] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e102]
+            - link [ref=e104] [cursor=pointer]:
+              - /url: https://instagram.com
+              - img [ref=e105]
+            - link [ref=e107] [cursor=pointer]:
+              - /url: https://tiktok.com
+              - img [ref=e108]
+            - link [ref=e110] [cursor=pointer]:
+              - /url: https://x.com
+              - img [ref=e111]
+        - generic [ref=e113]:
+          - heading "Resources" [level=4] [ref=e114]
+          - list [ref=e115]:
+            - listitem [ref=e116]:
+              - link "The Playbook" [ref=e117] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e118]:
+              - link "Video Library" [ref=e119] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e120]:
+              - link "BOP Directory" [ref=e121] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e122]:
+              - link "Blog" [ref=e123] [cursor=pointer]:
+                - /url: /blogs
+        - generic [ref=e124]:
+          - heading "Company" [level=4] [ref=e125]
+          - list [ref=e126]:
+            - listitem [ref=e127]:
+              - link "About Justin" [ref=e128] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e129]:
+              - link "Prison Professors" [ref=e130] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e131]:
+              - link "Media Kit" [ref=e132] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e133]:
+              - link "Contact" [ref=e134] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+        - generic [ref=e135]:
+          - heading "Legal" [level=4] [ref=e136]
+          - list [ref=e137]:
+            - listitem [ref=e138]:
+              - link "Privacy Policy" [ref=e139] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e140]:
+              - link "Terms of Service" [ref=e141] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+            - listitem [ref=e142]:
+              - link "Disclaimer" [ref=e143] [cursor=pointer]:
+                - /url: https://website-ten-sigma-61.vercel.app/
+      - generic [ref=e144]:
+        - paragraph [ref=e145]: © 2026 White Collar Advice. All rights reserved.
+        - paragraph [ref=e146]:
+          - text: "Call or text:"
+          - link "949-799-3277" [ref=e147] [cursor=pointer]:
+            - /url: tel:9497993277
