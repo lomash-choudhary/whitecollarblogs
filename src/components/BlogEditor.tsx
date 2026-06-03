@@ -831,12 +831,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               )}
 
               {coverImageUrl && (
-                <div className="relative group w-full h-40 rounded-2xl overflow-hidden border border-slate-200/60 shadow-inner mt-2">
+                <div className="relative group w-full max-h-80 rounded-2xl overflow-hidden border border-slate-200/60 shadow-inner mt-2 bg-slate-50/50 flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={cleanImageUrl(coverImageUrl).startsWith('/') ? `${process.env.NEXT_PUBLIC_SERVER_URL || ''}${cleanImageUrl(coverImageUrl)}` : cleanImageUrl(coverImageUrl)}
                     alt="Cover preview"
-                    className="w-full h-full object-cover"
+                    className="max-h-80 w-auto object-contain"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                   />
                   {uploadedMediaId && (
