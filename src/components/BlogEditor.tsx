@@ -20,7 +20,8 @@ import {
   Quote,
   List,
   ListOrdered,
-  Table
+  Table,
+  Paperclip
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
@@ -87,6 +88,10 @@ function serializeInlineNodes(nodes: any[]): string {
       const rel = node.fields?.rel || []
       const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
       text += `[${linkText}](${url}${isNofollow ? ' "nofollow"' : ''})`
+    } else if (node.type === 'image') {
+      text += `![${node.alt || 'image'}](${node.url})`
+    } else if (node.type === 'video') {
+      text += `![video](${node.url})`
     } else {
       text += renderLeafToMarkdown(node)
     }
@@ -192,6 +197,31 @@ function parseInlineMarkdown(text: string): any[] {
         })
         i = closingIdx + 1
         continue
+      }
+    }
+
+    // Check for Markdown Image: ![alt](url)
+    if (text.startsWith('![', i)) {
+      const closeBracketIdx = text.indexOf(']', i + 2)
+      if (closeBracketIdx !== -1 && text[closeBracketIdx + 1] === '(') {
+        const closeParenIdx = text.indexOf(')', closeBracketIdx + 2)
+        if (closeParenIdx !== -1) {
+          flushPlainText()
+          const altText = text.substring(i + 2, closeBracketIdx)
+          const url = text.substring(closeBracketIdx + 2, closeParenIdx).trim()
+          
+          const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg)$/) || altText.toLowerCase().startsWith('video')
+          
+          nodes.push({
+            type: isVideo ? 'video' : 'image',
+            version: 1,
+            url,
+            alt: altText
+          })
+          
+          i = closeParenIdx + 1
+          continue
+        }
       }
     }
 
@@ -535,6 +565,73 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [excerpt, setExcerpt] = useState(initialPost?.excerpt || '')
   const [content, setContent] = useState(initialPost ? lexicalToMarkdown(initialPost.content) : '')
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
+  const mediaInputRef = React.useRef<HTMLInputElement>(null)
+  const [isMediaUploading, setIsMediaUploading] = useState(false)
+
+  const triggerFileUpload = () => {
+    mediaInputRef.current?.click()
+  }
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setIsMediaUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('alt', file.name)
+      
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      })
+      
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+      
+      const data = await res.json()
+      if (data.doc?.url) {
+        const fileUrl = data.doc.url
+        const fileName = data.doc.filename || file.name
+        const mimeType = file.type || ''
+        
+        let markdownInsert = ''
+        if (mimeType.startsWith('image/')) {
+          markdownInsert = `\n![${fileName}](${fileUrl})\n`
+        } else if (mimeType.startsWith('video/')) {
+          markdownInsert = `\n![video](${fileUrl})\n`
+        } else {
+          markdownInsert = `\n[📄 Download ${fileName}](${fileUrl})\n`
+        }
+        
+        const textarea = contentRef.current
+        if (textarea) {
+          const start = textarea.selectionStart
+          const end = textarea.selectionEnd
+          const text = textarea.value
+          const newValue = text.substring(0, start) + markdownInsert + text.substring(end)
+          setContent(newValue)
+          
+          setTimeout(() => {
+             textarea.focus()
+             const newCursorPos = start + markdownInsert.length
+             textarea.setSelectionRange(newCursorPos, newCursorPos)
+          }, 0)
+        }
+      }
+    } catch (err) {
+      alert('Failed to upload file. Please verify it is a valid format.')
+    } finally {
+      setIsMediaUploading(false)
+      // reset file input
+      if (mediaInputRef.current) {
+        mediaInputRef.current.value = ''
+      }
+    }
+  }
 
   const applyFormatting = (formatType: string) => {
     const textarea = contentRef.current
@@ -1110,8 +1207,29 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                   >
                     <Table className="w-3.5 h-3.5" />
                   </button>
+                  <button
+                    type="button"
+                    onClick={triggerFileUpload}
+                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
+                    title="Upload & Insert File"
+                  >
+                    <Paperclip className="w-3.5 h-3.5" />
+                  </button>
+                  {isMediaUploading && (
+                    <span className="text-[10px] text-amber-600 font-bold flex items-center gap-1 ml-2 animate-pulse">
+                      <Loader2 className="w-3 h-3 animate-spin" /> Uploading file...
+                    </span>
+                  )}
                 </div>
               </div>
+
+              <input
+                type="file"
+                ref={mediaInputRef}
+                onChange={handleMediaUpload}
+                className="hidden"
+                accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              />
 
               <textarea 
                 ref={contentRef}

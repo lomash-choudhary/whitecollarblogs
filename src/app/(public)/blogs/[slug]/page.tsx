@@ -46,6 +46,31 @@ function renderTextNode(node: any, index: number) {
     )
   }
 
+  if (node.type === 'image') {
+    return (
+      <span key={index} className="block my-8">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img 
+          src={node.url} 
+          alt={node.alt || 'Blog inline image'} 
+          className="w-full rounded-2xl shadow-md border border-slate-200/50 object-cover max-h-[500px]" 
+        />
+      </span>
+    )
+  }
+
+  if (node.type === 'video') {
+    return (
+      <span key={index} className="block my-8">
+        <video 
+          src={node.url} 
+          controls 
+          className="w-full rounded-2xl shadow-md border border-slate-200/50 max-h-[500px]" 
+        />
+      </span>
+    )
+  }
+
   const text = node.text || ''
   const format = node.format || 0
 
