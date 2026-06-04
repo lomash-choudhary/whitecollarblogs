@@ -163,11 +163,26 @@ function parseInlineMarkdown(text: string): any[] {
   let i = 0
   const len = text.length
   
+  let currentPlainText = ''
+  
+  const flushPlainText = () => {
+    if (currentPlainText) {
+      nodes.push({
+        type: 'text',
+        text: currentPlainText,
+        version: 1,
+        format: 0
+      })
+      currentPlainText = ''
+    }
+  }
+  
   while (i < len) {
     // Check for inline code
     if (text[i] === '`') {
       const closingIdx = text.indexOf('`', i + 1)
       if (closingIdx !== -1) {
+        flushPlainText()
         const codeText = text.substring(i + 1, closingIdx)
         nodes.push({
           type: 'text',
@@ -186,6 +201,7 @@ function parseInlineMarkdown(text: string): any[] {
       if (closeBracketIdx !== -1 && text[closeBracketIdx + 1] === '(') {
         const closeParenIdx = text.indexOf(')', closeBracketIdx + 2)
         if (closeParenIdx !== -1) {
+          flushPlainText()
           const linkText = text.substring(i + 1, closeBracketIdx)
           const linkContent = text.substring(closeBracketIdx + 2, closeParenIdx).trim()
           
@@ -227,6 +243,7 @@ function parseInlineMarkdown(text: string): any[] {
     if (text.startsWith('***', i)) {
       const closingIdx = text.indexOf('***', i + 3)
       if (closingIdx !== -1) {
+        flushPlainText()
         const innerText = text.substring(i + 3, closingIdx)
         nodes.push({
           type: 'text',
@@ -243,6 +260,7 @@ function parseInlineMarkdown(text: string): any[] {
     if (text.startsWith('**', i)) {
       const closingIdx = text.indexOf('**', i + 2)
       if (closingIdx !== -1) {
+        flushPlainText()
         const innerText = text.substring(i + 2, closingIdx)
         nodes.push({
           type: 'text',
@@ -259,6 +277,7 @@ function parseInlineMarkdown(text: string): any[] {
     if (text.startsWith('__', i)) {
       const closingIdx = text.indexOf('__', i + 2)
       if (closingIdx !== -1) {
+        flushPlainText()
         const innerText = text.substring(i + 2, closingIdx)
         nodes.push({
           type: 'text',
@@ -275,6 +294,7 @@ function parseInlineMarkdown(text: string): any[] {
     if (text[i] === '*') {
       const closingIdx = text.indexOf('*', i + 1)
       if (closingIdx !== -1) {
+        flushPlainText()
         const innerText = text.substring(i + 1, closingIdx)
         nodes.push({
           type: 'text',
@@ -287,26 +307,12 @@ function parseInlineMarkdown(text: string): any[] {
       }
     }
     
-    // Read plain text until next token
-    let plainText = ''
-    while (i < len) {
-      const char = text[i]
-      if (char === '`' || char === '[' || text.startsWith('***', i) || text.startsWith('**', i) || text.startsWith('__', i) || char === '*') {
-        break
-      }
-      plainText += char
-      i++
-    }
-    
-    if (plainText) {
-      nodes.push({
-        type: 'text',
-        text: plainText,
-        version: 1,
-        format: 0
-      })
-    }
+    // Just treat the current character as plain text if no formatting token matched
+    currentPlainText += text[i]
+    i++
   }
+  
+  flushPlainText()
   
   if (nodes.length === 0) {
     nodes.push({ type: 'text', text: '', version: 1, format: 0 })
