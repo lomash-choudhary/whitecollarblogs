@@ -1,0 +1,4759 @@
+{
+  "migrated": [
+    {
+      "slug": "rdap-federal-prison",
+      "wpId": 70405,
+      "payloadId": 16,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "plea-agreement-and-sentencing",
+      "wpId": 70398,
+      "payloadId": 17,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-happens-after-an-indictment",
+      "wpId": 70392,
+      "payloadId": 18,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "i-got-a-target-letter-from-the-fbi",
+      "wpId": 70379,
+      "payloadId": 19,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-checklist-you-have-never-seen",
+      "wpId": 70454,
+      "payloadId": 24,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "psr-interview-next-week-what-not-to-say",
+      "wpId": 70423,
+      "payloadId": 25,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "rule-35-motion",
+      "wpId": 70371,
+      "payloadId": 26,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-do-federal-judges-look-for-at-sentencing",
+      "wpId": 70354,
+      "payloadId": 27,
+      "images": 0,
+      "youtube": 2
+    },
+    {
+      "slug": "first-week-federal-prison-camp-lompoc",
+      "wpId": 70306,
+      "payloadId": 28,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-halfway-house-rules",
+      "wpId": 70291,
+      "payloadId": 29,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-grand-jury-subpoena",
+      "wpId": 70271,
+      "payloadId": 30,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "preparing-for-prison",
+      "wpId": 70152,
+      "payloadId": 31,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-mitigation-letter",
+      "wpId": 70111,
+      "payloadId": 32,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-indictment-process",
+      "wpId": 70054,
+      "payloadId": 33,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-is-minimum-security-prison",
+      "wpId": 69825,
+      "payloadId": 34,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-happens-at-a-federal-sentencing-hearing",
+      "wpId": 69792,
+      "payloadId": 35,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-i-went-to-federal-prison-18-years-later",
+      "wpId": 69804,
+      "payloadId": 36,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-do-prison-consultants-do",
+      "wpId": 69749,
+      "payloadId": 37,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-mindset",
+      "wpId": 69752,
+      "payloadId": 38,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-release-plan-build-a-record",
+      "wpId": 69744,
+      "payloadId": 39,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "ppp-loan-fraud-sentencing",
+      "wpId": 69731,
+      "payloadId": 40,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-memorandum-what-only-you-can-do",
+      "wpId": 69721,
+      "payloadId": 41,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "slugfreedom-of-money-review-cz-michael-santos",
+      "wpId": 69708,
+      "payloadId": 42,
+      "images": 3,
+      "youtube": 0
+    },
+    {
+      "slug": "what-not-to-say-first-day-federal-prison",
+      "wpId": 69705,
+      "payloadId": 43,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-plea-vs-trial-defense-lawyer-stephen-lee",
+      "wpId": 69672,
+      "payloadId": 44,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-sentencing-guidelines-psr-reduce-sentence",
+      "wpId": 69579,
+      "payloadId": 45,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "rdap-program-federal-sentence-reduction",
+      "wpId": 68309,
+      "payloadId": 46,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-judges-want-to-hear-at-sentencing",
+      "wpId": 69587,
+      "payloadId": 47,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-show-remorse-at-sentencing",
+      "wpId": 69550,
+      "payloadId": 48,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "proffers-reverse-proffers-and-cooperation",
+      "wpId": 60800,
+      "payloadId": 49,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-security-levels-explained",
+      "wpId": 64094,
+      "payloadId": 50,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "2026-federal-sentencing-guidelines-amendments",
+      "wpId": 69423,
+      "payloadId": 51,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lompoc-federal-prison-camp",
+      "wpId": 69420,
+      "payloadId": 52,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "home-confinement",
+      "wpId": 62382,
+      "payloadId": 53,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-mitigation-plan",
+      "wpId": 64673,
+      "payloadId": 54,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-preparation-guide",
+      "wpId": 64153,
+      "payloadId": 55,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-self-surrender-guide",
+      "wpId": 64188,
+      "payloadId": 56,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-matt-bowyer-did-after-the-raid",
+      "wpId": 69092,
+      "payloadId": 57,
+      "images": 3,
+      "youtube": 0
+    },
+    {
+      "slug": "good-conduct-time-credit-federal-sentence",
+      "wpId": 68282,
+      "payloadId": 58,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-earned-time-credits-federal-sentence",
+      "wpId": 68303,
+      "payloadId": 59,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentence-reduction-credits-good-time-fsa-rdap",
+      "wpId": 68245,
+      "payloadId": 60,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "second-chances-after-federal-prison",
+      "wpId": 69179,
+      "payloadId": 61,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-conspiracy-sentencing",
+      "wpId": 69070,
+      "payloadId": 62,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "rdap-program-eligibility-requirements",
+      "wpId": 64090,
+      "payloadId": 63,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-target-letter",
+      "wpId": 69067,
+      "payloadId": 64,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-visitation-mistakes",
+      "wpId": 69102,
+      "payloadId": 65,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "contraband-in-federal-prison-camp",
+      "wpId": 69096,
+      "payloadId": 66,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "wire-fraud-sentencing",
+      "wpId": 69064,
+      "payloadId": 67,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-mitigation-errors",
+      "wpId": 68919,
+      "payloadId": 68,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "small-federal-prison-camp-can-help-you",
+      "wpId": 68914,
+      "payloadId": 69,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "going-to-trial-case-example",
+      "wpId": 68523,
+      "payloadId": 70,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-wire-fraud-indictment",
+      "wpId": 68612,
+      "payloadId": 71,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-mandatory-minimum-vs-guideline-range",
+      "wpId": 68159,
+      "payloadId": 72,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "minimum-security-camps",
+      "wpId": 66949,
+      "payloadId": 73,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-criminal-history-category-sentencing",
+      "wpId": 68135,
+      "payloadId": 74,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "should-i-hire-a-lawyer-right-away",
+      "wpId": 67758,
+      "payloadId": 75,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-guidelines-explained",
+      "wpId": 64111,
+      "payloadId": 76,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-offense-level-calculation-steps-examples",
+      "wpId": 68120,
+      "payloadId": 77,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "questions-to-ask-a-lawyer",
+      "wpId": 68184,
+      "payloadId": 78,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "hire-a-lawyer",
+      "wpId": 68072,
+      "payloadId": 79,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-sentencing-table-estimate-sentence",
+      "wpId": 67798,
+      "payloadId": 80,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-guidelines-how-they-work",
+      "wpId": 67795,
+      "payloadId": 81,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "probation-interview-what-defendants-miss",
+      "wpId": 67801,
+      "payloadId": 82,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-prepare-for-federal-prison-wrong-question",
+      "wpId": 67767,
+      "payloadId": 83,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-sentencing-guidelines-101-prison-range",
+      "wpId": 67761,
+      "payloadId": 84,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "wire-fraud-plea-restitution",
+      "wpId": 66827,
+      "payloadId": 85,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-prepare-for-federal-prison",
+      "wpId": 67682,
+      "payloadId": 86,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-sentencing-calculator-guide",
+      "wpId": 67658,
+      "payloadId": 87,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-kingpin-prison-routines-conduct",
+      "wpId": 66958,
+      "payloadId": 88,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "pre-suasion-sentencing-preparation",
+      "wpId": 67616,
+      "payloadId": 89,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-defense-attorney-vetting-script-red-flags",
+      "wpId": 67444,
+      "payloadId": 90,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "criminal-defense-lawyer-consultation-questions-script",
+      "wpId": 67452,
+      "payloadId": 91,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "coming-home-from-federal-prison",
+      "wpId": 67276,
+      "payloadId": 92,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "monas-eyes-4-lessons-for-a-government-investigation",
+      "wpId": 67249,
+      "payloadId": 93,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-sentence-calculator",
+      "wpId": 67208,
+      "payloadId": 94,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-early-release-rdap-probation-interview",
+      "wpId": 67191,
+      "payloadId": 95,
+      "images": 0,
+      "youtube": 2
+    },
+    {
+      "slug": "supreme-court-transforms-restitution-in-white-collar-cases",
+      "wpId": 67161,
+      "payloadId": 96,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "lewisburg-federal-prison-camp-rdap-daily-life-what-to-expect",
+      "wpId": 67066,
+      "payloadId": 97,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "bop-visiting-rules",
+      "wpId": 67042,
+      "payloadId": 98,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "find-the-right-criminal-defense-lawyer",
+      "wpId": 67082,
+      "payloadId": 99,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "self-surrender-checklist-top-10-steps",
+      "wpId": 67036,
+      "payloadId": 100,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-time-credits-update",
+      "wpId": 67021,
+      "payloadId": 101,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "learning-the-ropes-federal-prison",
+      "wpId": 66553,
+      "payloadId": 102,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "asset-engineering-the-brutal-doj-narrative-chapter-1",
+      "wpId": 66917,
+      "payloadId": 103,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "blueprint-for-reform",
+      "wpId": 62751,
+      "payloadId": 104,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "underground-economy-prison",
+      "wpId": 66818,
+      "payloadId": 105,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-food-and-commissary",
+      "wpId": 66354,
+      "payloadId": 106,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "what-to-do-after-a-federal-indictment",
+      "wpId": 66608,
+      "payloadId": 107,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-federal-probation-interview",
+      "wpId": 66487,
+      "payloadId": 108,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-inside-a-federal-prison-camp-first-day",
+      "wpId": 66350,
+      "payloadId": 109,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-processing-self-surrender",
+      "wpId": 66253,
+      "payloadId": 110,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "ssi-and-medicare-federal-prison-rules-explained",
+      "wpId": 66274,
+      "payloadId": 111,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "preparing-for-sentencing-and-prison",
+      "wpId": 66249,
+      "payloadId": 112,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "medical-treatment",
+      "wpId": 66198,
+      "payloadId": 113,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "the-maze-chapter-8",
+      "wpId": 66189,
+      "payloadId": 114,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prison-coach-before-self-surrender",
+      "wpId": 66140,
+      "payloadId": 115,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "religious-services",
+      "wpId": 66046,
+      "payloadId": 116,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-and-life-after",
+      "wpId": 66123,
+      "payloadId": 117,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "digital-marketing-after-federal-prison",
+      "wpId": 66051,
+      "payloadId": 118,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-cooperation",
+      "wpId": 66031,
+      "payloadId": 119,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "rdap-psychology-programs",
+      "wpId": 65996,
+      "payloadId": 120,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "education-recreation-prison",
+      "wpId": 65911,
+      "payloadId": 121,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "the-barbarian-chapter-7",
+      "wpId": 65968,
+      "payloadId": 122,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lying-to-federal-investigators",
+      "wpId": 65908,
+      "payloadId": 123,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "job-details-in-federal-prison",
+      "wpId": 65659,
+      "payloadId": 124,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "security-levels",
+      "wpId": 65454,
+      "payloadId": 125,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "ponzi-scheme",
+      "wpId": 65578,
+      "payloadId": 126,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "fraud-triangle",
+      "wpId": 65318,
+      "payloadId": 127,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-get-shorter-prison-sentence",
+      "wpId": 64185,
+      "payloadId": 128,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prison-disciplinary-infractions",
+      "wpId": 65203,
+      "payloadId": 129,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "administrative-remedy-process",
+      "wpId": 65143,
+      "payloadId": 130,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "first-days-in-federal-prison",
+      "wpId": 65218,
+      "payloadId": 131,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-mitigation-guide",
+      "wpId": 64087,
+      "payloadId": 132,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prison-staff-hierarchy",
+      "wpId": 65076,
+      "payloadId": 133,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "keonne-rodriguez",
+      "wpId": 65026,
+      "payloadId": 134,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "prison-transfers",
+      "wpId": 65047,
+      "payloadId": 135,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-time-credits-guide",
+      "wpId": 64097,
+      "payloadId": 136,
+      "images": 0,
+      "youtube": 2
+    },
+    {
+      "slug": "sentencing-hearing",
+      "wpId": 65019,
+      "payloadId": 137,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "14-sentencing-mistakes-that-add-years-to-your-sentence",
+      "wpId": 65036,
+      "payloadId": 138,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "problems-in-the-psr",
+      "wpId": 64786,
+      "payloadId": 139,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "presentence-investigation-report",
+      "wpId": 64736,
+      "payloadId": 140,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-preparation-12-2-25",
+      "wpId": 64949,
+      "payloadId": 141,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "nonresidential-drug-abuse-program-nrdap-in-federal-prison",
+      "wpId": 64958,
+      "payloadId": 142,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "securities-fraud-federal-prison-my-story",
+      "wpId": 64923,
+      "payloadId": 143,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "dirty-prison-consultants-excuse",
+      "wpId": 64812,
+      "payloadId": 144,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "post-conviction-proceedings",
+      "wpId": 64668,
+      "payloadId": 145,
+      "images": 1,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-criminal-case-process",
+      "wpId": 64473,
+      "payloadId": 146,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-hire-a-criminal-defense-lawyer",
+      "wpId": 64384,
+      "payloadId": 147,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-defense-lawyer",
+      "wpId": 64249,
+      "payloadId": 148,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-crime-investigation",
+      "wpId": 64201,
+      "payloadId": 149,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "33-strategies-of-war-federal-sentencing-lessons",
+      "wpId": 64213,
+      "payloadId": 150,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-defendant-lessons-part-i-summary-of-justin-papernys-after-the-fall",
+      "wpId": 64102,
+      "payloadId": 151,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "probation-requests-that-backfire-at-sentencing",
+      "wpId": 64084,
+      "payloadId": 152,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "when-bad-news-keeps-coming-before-sentencing",
+      "wpId": 64068,
+      "payloadId": 153,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "what-persuades-a-federal-judge-at-sentencing-white-collar-advice",
+      "wpId": 64053,
+      "payloadId": 154,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "delayed-sentencing-what-to-do-with-time",
+      "wpId": 64060,
+      "payloadId": 155,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "easier-to-say-than-live-the-real-cost-of-freedom-after-federal-prison",
+      "wpId": 64048,
+      "payloadId": 156,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-conditional-placement-date-update-2",
+      "wpId": 63992,
+      "payloadId": 157,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-conditional-placement-date-update",
+      "wpId": 63994,
+      "payloadId": 158,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-some-defense-lawyers-quietly-turn-against-their-clients",
+      "wpId": 64012,
+      "payloadId": 159,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dodgers-win",
+      "wpId": 64015,
+      "payloadId": 160,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "silence-isnt-a-strategy-longer-sentences",
+      "wpId": 64008,
+      "payloadId": 161,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "most-people-write-character-reference-letters-wrong",
+      "wpId": 64001,
+      "payloadId": 162,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "discipline-and-control-in-federal-prison",
+      "wpId": 64003,
+      "payloadId": 163,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "justice-unfairness",
+      "wpId": 63985,
+      "payloadId": 164,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "george-santos-vs-sean-combs-who-deserves-mercy",
+      "wpId": 63972,
+      "payloadId": 165,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "after-the-fall-chapter-3-no-discounts-on-dignity-justin-paperny",
+      "wpId": 63933,
+      "payloadId": 166,
+      "images": 4,
+      "youtube": 0
+    },
+    {
+      "slug": "what-parents-could-learn-from-prison-camps",
+      "wpId": 63929,
+      "payloadId": 167,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "john-boltons-indictment-when-the-insider-becomes-the-federal-defendant",
+      "wpId": 63914,
+      "payloadId": 168,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "after-release-reflections",
+      "wpId": 63912,
+      "payloadId": 169,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "wasting-time-after-prison",
+      "wpId": 63910,
+      "payloadId": 170,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-fraud-triangle-and-letitia-james",
+      "wpId": 63905,
+      "payloadId": 171,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "reentry-goals-and-reentry-plans",
+      "wpId": 63900,
+      "payloadId": 172,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "letitia-james-and-the-myth-of-good-intentions-no-two-tiered-justice",
+      "wpId": 63891,
+      "payloadId": 173,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "presumption-of-innocence",
+      "wpId": 63895,
+      "payloadId": 174,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "chapter-2-walking-cliche",
+      "wpId": 63902,
+      "payloadId": 175,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "james-comey-and-michael-flynn",
+      "wpId": 63887,
+      "payloadId": 176,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "from-prosecutor-to-defendant-the-irony-of-letitia-james-indictment",
+      "wpId": 63878,
+      "payloadId": 177,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-parents-in-prison-can-rebuild-trust-after-damaging-family-visits",
+      "wpId": 63874,
+      "payloadId": 178,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fort-dix-federal-prison",
+      "wpId": 63866,
+      "payloadId": 179,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "hidden-cost-of-federal-prison-reform",
+      "wpId": 63864,
+      "payloadId": 180,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "three-mistakes-that-add-years-to-a-federal-prison-sentence-2",
+      "wpId": 63854,
+      "payloadId": 181,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "stand-out-in-federal-prison-and-after-release",
+      "wpId": 63842,
+      "payloadId": 182,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "chapter-1-silence-isnt-a-strategy-its-a-sentence",
+      "wpId": 63818,
+      "payloadId": 183,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "the-prison-double-standard",
+      "wpId": 63810,
+      "payloadId": 184,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-matthew-bowyer-used-the-next-right-thing-mindset-to-rebuild-after-federal-charges",
+      "wpId": 63804,
+      "payloadId": 185,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "charlie-javice-what-she-must-prove-in-federal-prison",
+      "wpId": 63776,
+      "payloadId": 186,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "tai-lopez-faces-112m-fraud-allegations",
+      "wpId": 63756,
+      "payloadId": 187,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "preface",
+      "wpId": 63745,
+      "payloadId": 188,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-the-u-shaped-curve-of-prison",
+      "wpId": 63793,
+      "payloadId": 189,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-biggest-mistake-people-make-before-surrendering",
+      "wpId": 63787,
+      "payloadId": 190,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-do-most-defendants-get-the-order-of-mitigation-completely-wrong",
+      "wpId": 63735,
+      "payloadId": 191,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "andrew-adler-and-the-choice-to-build",
+      "wpId": 63730,
+      "payloadId": 192,
+      "images": 2,
+      "youtube": 0
+    },
+    {
+      "slug": "why-do-so-many-defendants-treat-their-lawyer-like-a-nanny",
+      "wpId": 63722,
+      "payloadId": 193,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-does-the-prosecutors-playbook-actually-look-like",
+      "wpId": 63720,
+      "payloadId": 194,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-will-a-federal-judge-be-more-inclined-to-listen",
+      "wpId": 63700,
+      "payloadId": 195,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-creating-assets-before-sentencing-can-influence-judges-probation-officers-and-the-bop",
+      "wpId": 63691,
+      "payloadId": 196,
+      "images": 3,
+      "youtube": 0
+    },
+    {
+      "slug": "preparing-for-federal-prison-release-the-u-shaped-curve-and-the-1000-minute-rule",
+      "wpId": 63628,
+      "payloadId": 197,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lessons-from-matthew-bowyers-sentencing",
+      "wpId": 62793,
+      "payloadId": 198,
+      "images": 5,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-write-a-federal-sentencing-narrative-and-release-plan",
+      "wpId": 63697,
+      "payloadId": 199,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "dignity-in-prison-the-men-i-admired",
+      "wpId": 62746,
+      "payloadId": 200,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-reentry-is-harder",
+      "wpId": 62707,
+      "payloadId": 201,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "do-white-collar-defendants-go-to-dangerous-prisons",
+      "wpId": 62701,
+      "payloadId": 202,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "case-managers-rdap-release-plans-and-the-battle-for-early-prison-release",
+      "wpId": 62688,
+      "payloadId": 203,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-crediting-mentors-makes-you-stronger-in-a-federal-case",
+      "wpId": 62693,
+      "payloadId": 204,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "wrong-about-cooperation",
+      "wpId": 62704,
+      "payloadId": 205,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "letting-the-bop-choose-your-prison",
+      "wpId": 62666,
+      "payloadId": 206,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prepare-you-for-prison",
+      "wpId": 62622,
+      "payloadId": 207,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "mistake-that-costs-you-more-time",
+      "wpId": 62598,
+      "payloadId": 208,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-isnt-fair-but-this-is-how-you-influence-it-anyway",
+      "wpId": 62614,
+      "payloadId": 209,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-happens-if-you-deny-guilt",
+      "wpId": 62595,
+      "payloadId": 210,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sunny-boy-what-will-you-do-with-the-gift-someone-gives-you",
+      "wpId": 62591,
+      "payloadId": 211,
+      "images": 5,
+      "youtube": 0
+    },
+    {
+      "slug": "why-some-people-serve-less-prison-time-and-others-dont",
+      "wpId": 62588,
+      "payloadId": 212,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-do-you-do-when-youre-told-not-to-prepare-for-sentencing",
+      "wpId": 62581,
+      "payloadId": 213,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "watching-vision-quest-in-hawaii-brought-me-back-to-federal-prison",
+      "wpId": 62548,
+      "payloadId": 214,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "why-nietzsche-wrote-for-people-going-to-federal-prison",
+      "wpId": 62537,
+      "payloadId": 215,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-george-santos-got-wrong",
+      "wpId": 62533,
+      "payloadId": 216,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "waiting-for-trial",
+      "wpId": 62527,
+      "payloadId": 217,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "new-standards-for-home-confinement",
+      "wpId": 62524,
+      "payloadId": 218,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "george-santos-5-things-he-must-avoid-in-federal-prison",
+      "wpId": 62512,
+      "payloadId": 219,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "fix-home-confinement-delays",
+      "wpId": 62509,
+      "payloadId": 220,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "early-cooperation-and-documentation",
+      "wpId": 62495,
+      "payloadId": 221,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "documented-release-plan",
+      "wpId": 62483,
+      "payloadId": 222,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "using-prison-time",
+      "wpId": 62478,
+      "payloadId": 223,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "when-delay-becomes-the-defining-choice",
+      "wpId": 62467,
+      "payloadId": 224,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "rise-of-data-analytics",
+      "wpId": 62469,
+      "payloadId": 225,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "robert-greene-and-the-men-who-wait",
+      "wpId": 62462,
+      "payloadId": 226,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "genetic-testing-fraud",
+      "wpId": 62457,
+      "payloadId": 227,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "medical-professionals-under-investigation",
+      "wpId": 62454,
+      "payloadId": 228,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fraud-schemes",
+      "wpId": 62449,
+      "payloadId": 229,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "health-care-fraud",
+      "wpId": 62435,
+      "payloadId": 230,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-10-10-10-planning-strengthens-your-case-for-bop-home-confinement",
+      "wpId": 62401,
+      "payloadId": 231,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "second-chance-act",
+      "wpId": 62395,
+      "payloadId": 232,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "action-solves-everything-but-can-you-handle-the-reaction",
+      "wpId": 62386,
+      "payloadId": 233,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dignity-intact-what-michael-santos-taught-me-about-the-long-game",
+      "wpId": 62371,
+      "payloadId": 234,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "conditional-placement-date",
+      "wpId": 62367,
+      "payloadId": 235,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "new-home-confinement-directive",
+      "wpId": 62360,
+      "payloadId": 236,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "june-17-bop-memo-what-it-means-for-early-release-under-the-first-step-act",
+      "wpId": 62353,
+      "payloadId": 237,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "judges-ignore-apologies",
+      "wpId": 62350,
+      "payloadId": 238,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "truth-about-cooperation",
+      "wpId": 62348,
+      "payloadId": 239,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "shorter-sentence",
+      "wpId": 62340,
+      "payloadId": 240,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-i-learned-re-reading-the-stranger-16-years-after-federal-prison",
+      "wpId": 62331,
+      "payloadId": 241,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "what-you-need-to-know-about-federal-prison-designation-and-why-it-starts-before-sentencing",
+      "wpId": 62323,
+      "payloadId": 242,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "obstructed-a-federal-investigation",
+      "wpId": 62292,
+      "payloadId": 243,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-investigation",
+      "wpId": 62260,
+      "payloadId": 244,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "oakdale-federal-prison-camp-write-more-than-you-say",
+      "wpId": 62250,
+      "payloadId": 245,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-federal-prison-camp-record-that-helped-cut-a-30-month-sentence-down-to-6",
+      "wpId": 62242,
+      "payloadId": 246,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "craig-cartons-second-chance-after-lewisburg-federal-prison-camp",
+      "wpId": 62215,
+      "payloadId": 247,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "silence-becomes-a-crime",
+      "wpId": 62209,
+      "payloadId": 248,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "my-conviction-still-follows-me",
+      "wpId": 62008,
+      "payloadId": 249,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "encore-webinar-bop-to-expand-home-confinement",
+      "wpId": 62175,
+      "payloadId": 250,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "writing-from-prison-changed-my-life",
+      "wpId": 62006,
+      "payloadId": 251,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lying-to-my-lawyer",
+      "wpId": 61999,
+      "payloadId": 252,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-a-cynical-federal-judge-might-respond-to-the-new-bop-memo",
+      "wpId": 62121,
+      "payloadId": 253,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-day-the-fbi-showed-up",
+      "wpId": 61996,
+      "payloadId": 254,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "atlas-shrugged-the-prince-and-what-i-learned-from-michael-santos",
+      "wpId": 62114,
+      "payloadId": 255,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "status-in-prison",
+      "wpId": 62107,
+      "payloadId": 256,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-i-justified-fraud",
+      "wpId": 62104,
+      "payloadId": 257,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "7-components-of-a-credible-release-plan",
+      "wpId": 62079,
+      "payloadId": 258,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-bop-memo-on-home-confinement-why-the-file-not-the-policy-determines-who-goes-home",
+      "wpId": 62074,
+      "payloadId": 259,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-the-bop-should-close-camps-and-expand-home-confinement",
+      "wpId": 62066,
+      "payloadId": 260,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-the-bop-memo-reflects-a-shift-michael-santos-saw-coming-10-years-ago",
+      "wpId": 62062,
+      "payloadId": 261,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-you-might-still-be-in-federal-prison-even-after-the-bop-memo",
+      "wpId": 62058,
+      "payloadId": 262,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prison-was-not-temporary",
+      "wpId": 62051,
+      "payloadId": 263,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "youre-not-ready-for-sentencing-or-prison-if-you-havent-answered-these-7-questions",
+      "wpId": 62031,
+      "payloadId": 264,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "study-yourself-first-why-montaigne-belongs-in-federal-prison-camp",
+      "wpId": 62022,
+      "payloadId": 265,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-home-confinement-you-think-youre-earning-might-never-happen",
+      "wpId": 62016,
+      "payloadId": 266,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "early-release",
+      "wpId": 62010,
+      "payloadId": 267,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-bop-may-be-expanding-home-confinement-but-you-still-might-stay-in-prison-longer",
+      "wpId": 61976,
+      "payloadId": 268,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "insights-from-a-retired-bop-warden",
+      "wpId": 61955,
+      "payloadId": 269,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-the-chrisley-pardon-matters",
+      "wpId": 61963,
+      "payloadId": 270,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "you-dont-rebuild-a-reputation-by-hiding-heres-what-works-instead",
+      "wpId": 61938,
+      "payloadId": 271,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dojs-criminal-division-new-memo-prepare-now",
+      "wpId": 61930,
+      "payloadId": 272,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-i-would-tell-myself-before-prison",
+      "wpId": 61926,
+      "payloadId": 273,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "billionaire-before-he-went-to-prison",
+      "wpId": 61909,
+      "payloadId": 274,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "doj-memo-changes-the-game-for-white-collar-targets",
+      "wpId": 61904,
+      "payloadId": 275,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-day-i-left-federal-prison",
+      "wpId": 61901,
+      "payloadId": 276,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "he-said-hed-prepare-he-didnt-now-hes-facing-more-federal-prison-time",
+      "wpId": 61898,
+      "payloadId": 277,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "reputation-repair-after-federal-prison-why-hiding-never-works",
+      "wpId": 61839,
+      "payloadId": 278,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "refusing-a-job-before-sentencing",
+      "wpId": 61830,
+      "payloadId": 279,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-get-out-of-federal-prison-early",
+      "wpId": 61811,
+      "payloadId": 280,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "one-letter-triggered-government-collection",
+      "wpId": 61821,
+      "payloadId": 281,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "preparing-for-sentencing-too-late",
+      "wpId": 61814,
+      "payloadId": 282,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "one-honest-statement",
+      "wpId": 61806,
+      "payloadId": 283,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "gambling-in-prison-is-not-just-a-game",
+      "wpId": 61803,
+      "payloadId": 284,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "sentencing-mistake-2",
+      "wpId": 61679,
+      "payloadId": 285,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-kind-of-giver-are-you",
+      "wpId": 61668,
+      "payloadId": 286,
+      "images": 4,
+      "youtube": 0
+    },
+    {
+      "slug": "how-matthew-boyer-faced-federal-charges",
+      "wpId": 61662,
+      "payloadId": 287,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "this-is-how-you-talk-your-way-into-a-longer-federal-sentence",
+      "wpId": 61659,
+      "payloadId": 288,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "get-a-better-outcome-before-during-and-after-sentencing",
+      "wpId": 61655,
+      "payloadId": 289,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-state-walked-away-from-reentry",
+      "wpId": 61652,
+      "payloadId": 290,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "gossip-about-elizabeth-holmes-in-prison",
+      "wpId": 61650,
+      "payloadId": 291,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-denial-keeps-you-stuck",
+      "wpId": 61648,
+      "payloadId": 292,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-janitor-who-tried",
+      "wpId": 61590,
+      "payloadId": 293,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "kickback-schemes-charges",
+      "wpId": 61588,
+      "payloadId": 294,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "healthcare-fraud-charges",
+      "wpId": 61580,
+      "payloadId": 295,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "medicare-fraud-charges",
+      "wpId": 61568,
+      "payloadId": 296,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "employment-tax-crimes",
+      "wpId": 61559,
+      "payloadId": 297,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-judges-dont-trust-words",
+      "wpId": 61552,
+      "payloadId": 298,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "healthcare-fraud",
+      "wpId": 61548,
+      "payloadId": 299,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "tax-fraud-charges",
+      "wpId": 61531,
+      "payloadId": 300,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lessons-from-a-prison-quiet-room-at-5-a-m",
+      "wpId": 61532,
+      "payloadId": 301,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "your-attitude-is-wrong",
+      "wpId": 61534,
+      "payloadId": 302,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "wire-fraud-and-mail-fraud-charges",
+      "wpId": 61528,
+      "payloadId": 303,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "strong-sentencing-plan",
+      "wpId": 61525,
+      "payloadId": 304,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prepare-after-sentencing",
+      "wpId": 61506,
+      "payloadId": 305,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "building-a-strong-mitigation-strategy",
+      "wpId": 61500,
+      "payloadId": 306,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "preparing-before-sentencing",
+      "wpId": 61498,
+      "payloadId": 307,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "10-assets-that-can-influence-sentencing-prison-and-life-afterward",
+      "wpId": 61490,
+      "payloadId": 308,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "you-only-get-one-shot-with-the-judge",
+      "wpId": 61487,
+      "payloadId": 309,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "letting-your-lawyer-handle-sentencing-alone-could-cost-you-more-prison-time",
+      "wpId": 61481,
+      "payloadId": 310,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-federal-judges-actually-look-for",
+      "wpId": 61477,
+      "payloadId": 311,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-glenn-fought-for-his-freedom-one-round-at-a-time-in-federal-prison",
+      "wpId": 61472,
+      "payloadId": 312,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "denying-guilt-in-a-federal-case",
+      "wpId": 61467,
+      "payloadId": 313,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "you-might-still-be-in-the-cave",
+      "wpId": 61465,
+      "payloadId": 314,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "9-extra-months-of-freedom",
+      "wpId": 61458,
+      "payloadId": 315,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-your-halfway-house-time-is-at-risk-and-what-to-do-about-it",
+      "wpId": 61454,
+      "payloadId": 316,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "truthaboutthebop",
+      "wpId": 61436,
+      "payloadId": 317,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "facing-insurance-fraud-charges-heres-what-you-need-to-do-now",
+      "wpId": 61429,
+      "payloadId": 318,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-tracii-hutsona-got-a-9-month-sentence-reduction-and-a-year-in-the-halfway-house",
+      "wpId": 61370,
+      "payloadId": 319,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-happens-after-a-federal-indictment",
+      "wpId": 61368,
+      "payloadId": 320,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "influence-the-underdogs-edge-during-a-government-investigation",
+      "wpId": 60929,
+      "payloadId": 321,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "whitecollaradvicenewsletter",
+      "wpId": 60928,
+      "payloadId": 322,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-use-your-time-in-federal-prison-or-waste-it",
+      "wpId": 60868,
+      "payloadId": 323,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "pressure-rationalization-opportunity",
+      "wpId": 60890,
+      "payloadId": 324,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-judges-use-the-psr-to-decide-your-fate",
+      "wpId": 60728,
+      "payloadId": 325,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "if-youre-in-federal-prison-own-it",
+      "wpId": 60862,
+      "payloadId": 326,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "10-questions-to-ask-yourself-before-the-psi-interview",
+      "wpId": 60848,
+      "payloadId": 327,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-the-psr-affects-your-entire-sentence",
+      "wpId": 60726,
+      "payloadId": 328,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-psr-mistakes-that-can-cost-you-years",
+      "wpId": 60724,
+      "payloadId": 329,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-david-moulder-avoided-federal-prison-lessons-from-his-sentencing",
+      "wpId": 60837,
+      "payloadId": 330,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-pre-sentence-report-the-document-that-follows-you",
+      "wpId": 60722,
+      "payloadId": 331,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "5k1-1-and-rule-35b-what-cooperation-actually-buys-you-at-sentencing",
+      "wpId": 60833,
+      "payloadId": 332,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-boredom-in-federal-prison-can-turn-dangerous-fast",
+      "wpId": 60830,
+      "payloadId": 333,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "cooperation-and-co-defendants-when-one-choice-changes-everything",
+      "wpId": 60790,
+      "payloadId": 334,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-if-ive-already-had-my-proffer-and-didnt-prepare-how-to-recover-before-sentencing",
+      "wpId": 60738,
+      "payloadId": 335,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-prepare-for-a-proffer-or-reverse-proffer-session-without-hurting-your-case",
+      "wpId": 60736,
+      "payloadId": 336,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-i-turned-a-federal-prison-term-into-a-platform-one-page-at-a-time",
+      "wpId": 60886,
+      "payloadId": 337,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "should-you-cooperate-after-a-reverse-proffer",
+      "wpId": 60734,
+      "payloadId": 338,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "duringaproffer",
+      "wpId": 60766,
+      "payloadId": 339,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-a-reverse-proffer-understanding-this-strategic-tool-in-federal-cases",
+      "wpId": 60732,
+      "payloadId": 340,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "governmentinvestigations",
+      "wpId": 60710,
+      "payloadId": 341,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "proffer-vs-plea-agreement-understanding-the-difference",
+      "wpId": 60702,
+      "payloadId": 342,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "understanding-the-risks-of-a-federal-proffer-what-can-go-wrong",
+      "wpId": 60700,
+      "payloadId": 343,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "top-10-things-to-know-about-federal-proffer",
+      "wpId": 60696,
+      "payloadId": 344,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "bryan-federal-prison-camp-fpc",
+      "wpId": 60693,
+      "payloadId": 345,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "dr-nate-schotts-sentencing-playbook-from-51-months-to-33-in-10",
+      "wpId": 60687,
+      "payloadId": 346,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "most-defendants-wait-too-long-to-prepare-then-they-regret-it",
+      "wpId": 60683,
+      "payloadId": 347,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "will-luigi-mangione-be-different-or-will-we-just-move-on",
+      "wpId": 60658,
+      "payloadId": 348,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-a-24-month-federal-prison-sentence-became-3-years",
+      "wpId": 60648,
+      "payloadId": 349,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-white-collar-defendants-can-learn-from-czs-prison-preparation",
+      "wpId": 60646,
+      "payloadId": 350,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-a-retired-fbi-agent-wants-you-to-know-about-federal-investigations",
+      "wpId": 60483,
+      "payloadId": 351,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-an-fbi-agent-taught-me-about-white-collar-crime-investigations",
+      "wpId": 60294,
+      "payloadId": 352,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "former-fbi-agent-reveals-what-defendants",
+      "wpId": 60285,
+      "payloadId": 353,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-says-federal-prison-is-hell-and-torture",
+      "wpId": 60258,
+      "payloadId": 354,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-some-get-more-halfway-house-time-than-others",
+      "wpId": 60154,
+      "payloadId": 355,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-importance-of-a-reentry-plan-and-why-you-need-one-asap",
+      "wpId": 60149,
+      "payloadId": 356,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prison-life-at-mdc",
+      "wpId": 60092,
+      "payloadId": 357,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "creating-your-own-case-study-for-federal-sentencing",
+      "wpId": 60038,
+      "payloadId": 358,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-you-need-a-homecoming-strategy-before-you-surrender-to-prison-even-if-you-think-you-dont",
+      "wpId": 60020,
+      "payloadId": 359,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "characterreferenceletters",
+      "wpId": 60009,
+      "payloadId": 360,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "sentencing-guidelines",
+      "wpId": 59998,
+      "payloadId": 361,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "low-security-prison",
+      "wpId": 59894,
+      "payloadId": 362,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federalprison",
+      "wpId": 59818,
+      "payloadId": 363,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sam-bankman-fried",
+      "wpId": 59787,
+      "payloadId": 364,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "facinglifeforawhitecollarcrime",
+      "wpId": 59722,
+      "payloadId": 365,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "webinar-replay-the-strategic-plan",
+      "wpId": 59631,
+      "payloadId": 366,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "hiddensentence",
+      "wpId": 59608,
+      "payloadId": 367,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "get-out-of-prison-sooner",
+      "wpId": 59605,
+      "payloadId": 368,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fraudtriangle",
+      "wpId": 59598,
+      "payloadId": 369,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "webinar-replay-the-sentencing-narrative",
+      "wpId": 59583,
+      "payloadId": 370,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-judge-reveals-how-to-prepare-for-sentencing",
+      "wpId": 59574,
+      "payloadId": 371,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "pleadearly",
+      "wpId": 59560,
+      "payloadId": 372,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-violence",
+      "wpId": 59533,
+      "payloadId": 373,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "webinar-replay-highlights-of-2024-prison-professors-talent",
+      "wpId": 59511,
+      "payloadId": 374,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "5-steps-to-stay-on-track-in-prison",
+      "wpId": 59487,
+      "payloadId": 375,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "diddys-holidays",
+      "wpId": 59481,
+      "payloadId": 376,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-the-fortunate-few-often-make-federal-prison-harder",
+      "wpId": 59463,
+      "payloadId": 377,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "why-luigi-mangione-faces-solitary-confinement",
+      "wpId": 59433,
+      "payloadId": 378,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "considering-cooperation-when-youre-a-target-5k1-motion",
+      "wpId": 59429,
+      "payloadId": 379,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-judges-see-through-fake-apologies",
+      "wpId": 59421,
+      "payloadId": 380,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "navigating-a-government-investigation-a-practical-guide",
+      "wpId": 59402,
+      "payloadId": 381,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-signs-youre-under-federal-investigation-before-you-know-it",
+      "wpId": 59397,
+      "payloadId": 382,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-influence-a-probation-officer-with-chris-maloney",
+      "wpId": 58839,
+      "payloadId": 383,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "probation-interview-preparation-insights-from-4000-weeks",
+      "wpId": 58485,
+      "payloadId": 384,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "stop-paying-for-federal-prison-advice-the-real-way-to-prepare",
+      "wpId": 58437,
+      "payloadId": 385,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "advocacy-with-michael-santos",
+      "wpId": 58370,
+      "payloadId": 386,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-i-use-book-reports-to-help-white-collar-defendants-rebuild-after-conviction",
+      "wpId": 58350,
+      "payloadId": 387,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prepare-for-and-thrive-after-a-government-investigation",
+      "wpId": 58303,
+      "payloadId": 388,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-advice-helps-all-defendants",
+      "wpId": 58178,
+      "payloadId": 389,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "traciis-story-building-a-new-record-in-federal-prison",
+      "wpId": 58167,
+      "payloadId": 390,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "being-an-introvert-in-federal-prison-my-experience-and-advice",
+      "wpId": 58158,
+      "payloadId": 391,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-judge-if-its-not-documented-it-didnt-happen",
+      "wpId": 58111,
+      "payloadId": 392,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prep-for-prison-with-48-laws-of-power",
+      "wpId": 57824,
+      "payloadId": 393,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "using-pre-suasion-principles-to-influence-sentencing-outcomes",
+      "wpId": 57822,
+      "payloadId": 394,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "lessons-from-charlie-and-the-chocolate-factory",
+      "wpId": 57797,
+      "payloadId": 395,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lessons-on-preparing-for-early-release",
+      "wpId": 57794,
+      "payloadId": 396,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-influence-your-sentence-insights-from-judge-bennett-and-judge-bough",
+      "wpId": 57790,
+      "payloadId": 397,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "webinar-summary-transition-to-the-halfway-house",
+      "wpId": 57751,
+      "payloadId": 398,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "first-day-in-federal-prison-write-your-probation-officer",
+      "wpId": 57739,
+      "payloadId": 399,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-prison-release-15-years-later",
+      "wpId": 57735,
+      "payloadId": 400,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "key-steps-to-prepare-for-sentencing-and-federal-prison",
+      "wpId": 54813,
+      "payloadId": 401,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "common-mistakes-that-lead-to-longer-federal-prison-sentences",
+      "wpId": 54798,
+      "payloadId": 402,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "lessons-learned-in-federal-prison",
+      "wpId": 54724,
+      "payloadId": 403,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "facing-a-federal-investigation-insights-with-ron-chapman",
+      "wpId": 54601,
+      "payloadId": 404,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "unshackled-ambition-grit-in-federal-prison",
+      "wpId": 54583,
+      "payloadId": 405,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "taking-responsibility-7-questions-you-need-to-ask-yourself",
+      "wpId": 54555,
+      "payloadId": 406,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-a-release-plan-can-help-you-prepare-for-the-halfway-house-and-home-confinement",
+      "wpId": 54550,
+      "payloadId": 407,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "keys-to-successful-incarceration-with-pre-trial-services",
+      "wpId": 54549,
+      "payloadId": 408,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "meeting-michael-santos-in-a-minimum-security-camp",
+      "wpId": 54548,
+      "payloadId": 409,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fear-not-applying-50-cents-lessons-to-prepare-for-sentencing-and-federal-prison",
+      "wpId": 54547,
+      "payloadId": 410,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "16-years-ago-i-surrendered-to-federal-prison-camp",
+      "wpId": 54546,
+      "payloadId": 411,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "from-sunrise-to-lockdown-one-day-in-federal-prison-camp",
+      "wpId": 54545,
+      "payloadId": 412,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prison-wisdom-5-strategies-to-surviving-federal-prison",
+      "wpId": 54543,
+      "payloadId": 413,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "rdap-journey-how-rdap-saved-my-life",
+      "wpId": 54234,
+      "payloadId": 414,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "cnn-exclusive-justin-paperny-analyzes-sam-bankman-frieds-25-year-sentence",
+      "wpId": 54218,
+      "payloadId": 415,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "get-out-of-federal-prison-early",
+      "wpId": 54193,
+      "payloadId": 416,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "whats-next-for-peter-navarro-at-miami-federal-prison-camp",
+      "wpId": 54178,
+      "payloadId": 417,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "white-collar-advice-your-guide-through-the-sentencing-journey",
+      "wpId": 54175,
+      "payloadId": 418,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "does-sam-bankman-fried-deserve-63-78-months-in-federal-prison",
+      "wpId": 54137,
+      "payloadId": 419,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-most-dangerous-thing-in-a-federal-prison-camp",
+      "wpId": 54127,
+      "payloadId": 420,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "the-day-after-i-was-sentenced-to-18-months-in-federal-prison",
+      "wpId": 54108,
+      "payloadId": 421,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "carl-jungs-wisdom-guides-federal-judges-sentence",
+      "wpId": 54097,
+      "payloadId": 422,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "avoid-these-3-huge-mistakes-in-federal-prison-camp",
+      "wpId": 54085,
+      "payloadId": 423,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "using-the-u-shaped-curve-to-prepare-for-alderson-federal-prison",
+      "wpId": 54052,
+      "payloadId": 424,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "influence-your-case-manager-in-prison-with-your-iterative-release-plan",
+      "wpId": 54028,
+      "payloadId": 425,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "prioritizing-preparation-for-yankton-federal-prison-camp",
+      "wpId": 54015,
+      "payloadId": 426,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "preparing-your-children-for-your-time-in-federal-prison",
+      "wpId": 54003,
+      "payloadId": 427,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "making-the-most-of-your-time-in-prison-lessons-from-enrique",
+      "wpId": 53983,
+      "payloadId": 428,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-i-managed-the-dark-days-after-federal-prison",
+      "wpId": 53972,
+      "payloadId": 429,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-alec-burlakoff-got-a-shorter-sentence-and-earlier-release-from-miami-federal-prison-camp",
+      "wpId": 53966,
+      "payloadId": 430,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "surprisingtruths-about-white-collar-defendants",
+      "wpId": 53964,
+      "payloadId": 431,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "navigating-federal-prison-insights-from-the-48-laws-of-power",
+      "wpId": 53933,
+      "payloadId": 432,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "peter-hardin-from-the-military-to-top-criminal-defense-attorney",
+      "wpId": 53926,
+      "payloadId": 433,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "choosing-the-right-white-collar-defense-attorney",
+      "wpId": 53919,
+      "payloadId": 434,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "insights-from-john-teakell-veteran-defense-attorney",
+      "wpId": 53907,
+      "payloadId": 435,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "navigating-paycheck-protection-program-ppp-loan-fraud-and-federal-sentencing",
+      "wpId": 53904,
+      "payloadId": 436,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "preparing-for-federal-prison-the-power-of-a-positive-mindset",
+      "wpId": 53877,
+      "payloadId": 437,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-ayn-rands-philosophy-can-transform-your-federal-prison-experience",
+      "wpId": 53875,
+      "payloadId": 438,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-benefit-of-transparency-a-white-collar-convictions-silver-lining",
+      "wpId": 53860,
+      "payloadId": 439,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "set-boundaries-as-you-prepare-for-your-sentencing-hearing",
+      "wpId": 53859,
+      "payloadId": 440,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-prep-the-courage-to-face-the-unknown",
+      "wpId": 53851,
+      "payloadId": 441,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "discovering-life-lessons-in-federal-prison",
+      "wpId": 53841,
+      "payloadId": 442,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "my-first-day-in-marianna-federal-prison-camp",
+      "wpId": 53806,
+      "payloadId": 443,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-present-evidence-or-risk-more-time-in-federal-prison",
+      "wpId": 53830,
+      "payloadId": 444,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "long-federal-prison-sentence-threatens-to-tear-family-apart",
+      "wpId": 53813,
+      "payloadId": 445,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "my-journey-with-aristotle-a-5-part-series-for-white-collar-defendants",
+      "wpId": 53791,
+      "payloadId": 446,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "long-federal-prison-sentence-for-doctor-the-richard-sackler-enigma",
+      "wpId": 53581,
+      "payloadId": 447,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-book-of-charlie-wisdom-from-the-remarkable-american-life-of-a-109-year-old-man",
+      "wpId": 53531,
+      "payloadId": 448,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "doctors-fight-for-innocence-takes-a-dark-turn-as-wife-gets-indicted-%e2%9a%96%ef%b8%8f",
+      "wpId": 53490,
+      "payloadId": 449,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "discover-how-mitigating-factors-can-lead-to-reduced-prison-sentences",
+      "wpId": 53466,
+      "payloadId": 450,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-prioritizing-self-interest-over-responsibility-in-prison",
+      "wpId": 53470,
+      "payloadId": 451,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "longer-federal-prison-sentences-20-reasons-why",
+      "wpId": 53457,
+      "payloadId": 452,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "let-viktor-frankl-guide-you-through-federal-prison",
+      "wpId": 53462,
+      "payloadId": 453,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "master-these-5-rules-to-overcome-a-white-collar-crime-conviction",
+      "wpId": 53461,
+      "payloadId": 454,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "charlie-javice-allegedly-committed-the-most-fascinating-white-collar-crime",
+      "wpId": 53452,
+      "payloadId": 455,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-healing-power-of-solitude-in-federal-prison-camp",
+      "wpId": 53454,
+      "payloadId": 456,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "analyzing-donald-trumps-arraignment-pretrial-supervision-potential-consequences",
+      "wpId": 53451,
+      "payloadId": 457,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "a-tale-of-transformation-my-journey-from-prisoner-to-crisis-expert",
+      "wpId": 53427,
+      "payloadId": 458,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-sleep-well-in-federal-prison",
+      "wpId": 53373,
+      "payloadId": 459,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-truth-about-elizabeth-holmes-life-in-federal-prison-top-25-questions-answered",
+      "wpId": 53421,
+      "payloadId": 460,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-are-the-living-conditions-like-in-a-federal-prison-camp",
+      "wpId": 53402,
+      "payloadId": 461,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "from-conviction-to-redemption-embracing-the-underdog-mindset-in-white-collar-crime-cases",
+      "wpId": 53397,
+      "payloadId": 462,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "avoid-this-mistake-during-the-probation-interview",
+      "wpId": 53394,
+      "payloadId": 463,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "ron-throgmartins-journey-from-the-cattle-business-to-federal-prison",
+      "wpId": 53391,
+      "payloadId": 464,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-just-approved-this-huge-mistake",
+      "wpId": 53388,
+      "payloadId": 465,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dr-phil-and-i-discuss-how-to-get-a-shorter-federal-prison-sentence",
+      "wpId": 53387,
+      "payloadId": 466,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "harsh-realities-about-life-in-federal-prison-camp",
+      "wpId": 53379,
+      "payloadId": 467,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "maintaining-relationships-while-in-federal-prison-a-valuable-investment",
+      "wpId": 53374,
+      "payloadId": 468,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "benefits-of-documenting-your-journey-through-federal-prison-with-a-release-plan",
+      "wpId": 53362,
+      "payloadId": 469,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-dos-and-donts",
+      "wpId": 53346,
+      "payloadId": 470,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "donts-in-prison-early-release-how-to-get-your-job-approved-in-the-halfway-house-and-rdap",
+      "wpId": 53353,
+      "payloadId": 471,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-didnt-the-halfway-house-and-probation-officer-didnt-approve-my-job",
+      "wpId": 53352,
+      "payloadId": 472,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-advice-timeline",
+      "wpId": 53326,
+      "payloadId": 473,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-prepare-for-your-probation-report-psr",
+      "wpId": 53306,
+      "payloadId": 474,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "earned-time-credits-first-step-act-update",
+      "wpId": 53293,
+      "payloadId": 475,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "have-you-created-your-release-plan",
+      "wpId": 53261,
+      "payloadId": 476,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "jen-shah-exclusive-interview-before-going-to-federal-prison",
+      "wpId": 53226,
+      "payloadId": 477,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "are-you-required-to-write-a-release-plan",
+      "wpId": 53218,
+      "payloadId": 478,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "jon-gustin-discusses-first-step-act-halfway-house-and-home-confinement",
+      "wpId": 53215,
+      "payloadId": 479,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "common-probation-violations-on-federal-probation",
+      "wpId": 53206,
+      "payloadId": 480,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "q-and-a-with-former-bureau-of-prisons-leader-jon-gustin-part-2",
+      "wpId": 53072,
+      "payloadId": 481,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-do-celebrities-fail-and-succeed-in-federal-prison",
+      "wpId": 53069,
+      "payloadId": 482,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "do-you-know-how-to-influence-your-federal-judge-and-prosecutor",
+      "wpId": 53057,
+      "payloadId": 483,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "release-plan",
+      "wpId": 53050,
+      "payloadId": 484,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "todd-and-julie-chrisley-in-for-a-shock-%e2%9a%a0%ef%b8%8f-ex-con-reveals-the-truth-about-prison",
+      "wpId": 53019,
+      "payloadId": 485,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-time-credits-and-the-first-step-act",
+      "wpId": 53017,
+      "payloadId": 486,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-disastrous-character-reference-letters",
+      "wpId": 53013,
+      "payloadId": 487,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-step-act-auto-calculation-of-federal-time-credits-ftc",
+      "wpId": 52967,
+      "payloadId": 488,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "united-states-attorney-wants-87-months-in-federal-prison",
+      "wpId": 52966,
+      "payloadId": 489,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "who-should-lead-your-effort-to-get-a-shorter-federal-prison-sentence",
+      "wpId": 52946,
+      "payloadId": 490,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "want-to-do-less-time-in-federal-prison-new-york-times-article",
+      "wpId": 52908,
+      "payloadId": 491,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "letters-from-lewisburg",
+      "wpId": 52907,
+      "payloadId": 492,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-after-federal-prison-day-1",
+      "wpId": 52841,
+      "payloadId": 493,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-i-went-to-federal-prison-tik-tok-version",
+      "wpId": 52680,
+      "payloadId": 494,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "personal-narrative-compels-federal-judge-to-give-shorter-federal-prison-sentence",
+      "wpId": 52676,
+      "payloadId": 495,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "read-the-retainer-agreement-before-hiring-a-lawyer",
+      "wpId": 52651,
+      "payloadId": 496,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "finding-gratitude-in-federal-prison",
+      "wpId": 52618,
+      "payloadId": 497,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-life-in-federal-prison",
+      "wpId": 52607,
+      "payloadId": 498,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "12-amazing-federal-prison-tips-worth-your-time",
+      "wpId": 52570,
+      "payloadId": 499,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-happens-after-early-release",
+      "wpId": 52541,
+      "payloadId": 500,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-does-a-person-build-an-extraordinary-and-compelling-story-in-prison",
+      "wpId": 52533,
+      "payloadId": 501,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-the-pre-sentence-investigation-why-is-the-psr-important",
+      "wpId": 52532,
+      "payloadId": 502,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "who-is-involved-in-a-plea-negotiation-and-who-is-the-pre-trial-services-officer",
+      "wpId": 52528,
+      "payloadId": 503,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-are-the-three-charging-instruments",
+      "wpId": 52527,
+      "payloadId": 504,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "worthless-or-worthwhile-planning-for-fort-dix-federal-prison",
+      "wpId": 52526,
+      "payloadId": 505,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "who-is-mike-berlon-why-did-he-go-to-prison-and-what-did-he-learn",
+      "wpId": 52523,
+      "payloadId": 506,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "can-people-find-meaning-and-purpose-in-federal-prison",
+      "wpId": 52467,
+      "payloadId": 507,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "former-fbi-agent-discusses-suicide-prevention",
+      "wpId": 52464,
+      "payloadId": 508,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "brenda-campbell-blogs-from-dublin-federal-prison-camp",
+      "wpId": 52457,
+      "payloadId": 509,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lewisburgprisonadvice",
+      "wpId": 52437,
+      "payloadId": 510,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "10-tips-for-success-on-probation",
+      "wpId": 52409,
+      "payloadId": 511,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "most-common-probation-violations",
+      "wpId": 52408,
+      "payloadId": 512,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-elizabeth-holmes-should-prepare-for-the-pre-sentence-interview",
+      "wpId": 52394,
+      "payloadId": 513,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "can-theranos-coo-sunny-balwani-avoid-federal-prison",
+      "wpId": 52349,
+      "payloadId": 514,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "holmes-guilty-of-fraud",
+      "wpId": 52345,
+      "payloadId": 515,
+      "images": 0,
+      "youtube": 2
+    },
+    {
+      "slug": "top-10-federal-prison-jobs",
+      "wpId": 52327,
+      "payloadId": 516,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "corrlinks-email-in-the-federal-prison-system-for-family-members",
+      "wpId": 52314,
+      "payloadId": 517,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "elizabeth-holmes-first-day-in-federal-prison",
+      "wpId": 52304,
+      "payloadId": 518,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "ppp-fraud-sentencing-outcomes",
+      "wpId": 52298,
+      "payloadId": 519,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-white-collar-crime",
+      "wpId": 52292,
+      "payloadId": 520,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "10-28-21-entry-3",
+      "wpId": 52264,
+      "payloadId": 521,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lewisberg-itself",
+      "wpId": 52133,
+      "payloadId": 522,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lawyers",
+      "wpId": 52219,
+      "payloadId": 523,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "alberts-exposure-to-bribery-charges-chapter-15",
+      "wpId": 52160,
+      "payloadId": 524,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "chapter-fourteen-jasons-view-on-caveat-emptor",
+      "wpId": 52159,
+      "payloadId": 525,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "letters-from-lewisburg-federal-prison-a-day-in-my-life",
+      "wpId": 52012,
+      "payloadId": 526,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dumb-things-i-did-in-federal-prison",
+      "wpId": 51696,
+      "payloadId": 527,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-camp-crash-course-proactive-adjustment",
+      "wpId": 51659,
+      "payloadId": 528,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-get-a-lower-prison-sentence",
+      "wpId": 51644,
+      "payloadId": 529,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-in-montgomery-federal-prison-camp",
+      "wpId": 51605,
+      "payloadId": 530,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "51589-2",
+      "wpId": 51589,
+      "payloadId": 531,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fraud-sends-ryan-to-federal-prison-for-60-months-chapter-12",
+      "wpId": 51578,
+      "payloadId": 532,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "pre-sentence-interview-questions-the-probation-officer-will-ask-the-assistant-us-attorney",
+      "wpId": 51577,
+      "payloadId": 533,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "susan-goes-to-victorville-federal-prison-camp-chapter-11",
+      "wpId": 51576,
+      "payloadId": 534,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "cash-structuring-sends-executive-to-federal-prison-chapter-10",
+      "wpId": 51573,
+      "payloadId": 535,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "bribery-charge-lands-veteran-in-federal-prison",
+      "wpId": 51570,
+      "payloadId": 536,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "david-beverly-hills-consigliere-chapter-8",
+      "wpId": 51538,
+      "payloadId": 537,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-crime-dr-garys-seven-patient-files-chapter-7",
+      "wpId": 51537,
+      "payloadId": 538,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "tax-scam-sends-steve-to-pensacola-federal-prison-camp",
+      "wpId": 51535,
+      "payloadId": 539,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "willful-blindness-sends-executive-to-federal-prison-chapter-5",
+      "wpId": 51526,
+      "payloadId": 540,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "whistle-blowers-the-new-corporate-watchdog-chapter-4",
+      "wpId": 51525,
+      "payloadId": 541,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "personal-narrative-for-federal-sentencing",
+      "wpId": 51506,
+      "payloadId": 542,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "when-sentencing-memorandums-go-wrong-shocking-case",
+      "wpId": 51516,
+      "payloadId": 543,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-after-federal-prison-camp-chapter-2",
+      "wpId": 51512,
+      "payloadId": 544,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "chapter-one-discovering-ethics-in-motion-released-from-federal-prison",
+      "wpId": 51510,
+      "payloadId": 545,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "ethics-in-motion-preface",
+      "wpId": 51508,
+      "payloadId": 546,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "18-questions-about-white-collar-advice",
+      "wpId": 51507,
+      "payloadId": 547,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "personal-letter-to-sentencing-judge-faults-and-fixes",
+      "wpId": 51478,
+      "payloadId": 548,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "6-common-character-reference-letter-mistakes",
+      "wpId": 51454,
+      "payloadId": 549,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "8-habits-that-will-destroy-your-federal-prison-term-and-how-to-kick-them",
+      "wpId": 51440,
+      "payloadId": 550,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "personal-letter-to-sentencing-judge-7-faults-5-fixes",
+      "wpId": 51414,
+      "payloadId": 551,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "drug-tests-in-federal-prison",
+      "wpId": 51397,
+      "payloadId": 552,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "probation-instead-of-18-24-months-in-federal-prison",
+      "wpId": 51360,
+      "payloadId": 553,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "lessons-from-prisonbook",
+      "wpId": 51355,
+      "payloadId": 554,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-happens-in-federal-prison",
+      "wpId": 51349,
+      "payloadId": 555,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-in-a-female-federal-prison",
+      "wpId": 51345,
+      "payloadId": 556,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "ethics-lecture-the-usc-marshall-school-of-business",
+      "wpId": 51340,
+      "payloadId": 557,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-mitigation-plan-6-months-instead-of-37-46-months-in-federal-prison",
+      "wpId": 51334,
+      "payloadId": 558,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "personal-narrative-helped-our-client-get-probation-instead-of-prison",
+      "wpId": 51332,
+      "payloadId": 559,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-and-why-manny-avoided-federal-prison",
+      "wpId": 51330,
+      "payloadId": 560,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-being-a-criminal-defense-attorney-is-more-than-just-a-job-for-me",
+      "wpId": 51321,
+      "payloadId": 561,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "can-a-job-lead-to-a-shorter-federal-prison-sentence",
+      "wpId": 51190,
+      "payloadId": 562,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-truth-about-federal-public-defenders",
+      "wpId": 51180,
+      "payloadId": 563,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "common-residential-drug-abuse-program-questions",
+      "wpId": 50995,
+      "payloadId": 564,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "who-should-write-character-reference-letters",
+      "wpId": 50993,
+      "payloadId": 565,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prepare-what-defendants-need-to-know",
+      "wpId": 50984,
+      "payloadId": 566,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "supervised-release-after-federal-prison-chapter-27",
+      "wpId": 50949,
+      "payloadId": 567,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-should-i-know-the-halfway-house-and-home-confinement-chapter-26",
+      "wpId": 50947,
+      "payloadId": 568,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "6-ways-to-get-thrown-out-of-rdap-lose-early-release-from-fed-prison",
+      "wpId": 50950,
+      "payloadId": 569,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-tales-ex-wife-gets-ex-husband-indicted-or-did-she",
+      "wpId": 50879,
+      "payloadId": 570,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-do-i-avoid-problems-and-make-progress-in-federal-prison-chapter-25",
+      "wpId": 50866,
+      "payloadId": 571,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prison-life-how-do-i-stay-connected-with-society",
+      "wpId": 50865,
+      "payloadId": 572,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "whats-it-like-in-the-prison-society-chapter-23",
+      "wpId": 50864,
+      "payloadId": 573,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-should-i-know-before-being-admitted-to-federal-prison",
+      "wpId": 50829,
+      "payloadId": 574,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "my-first-federal-prison-blog",
+      "wpId": 50826,
+      "payloadId": 575,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-preparations-advice-from-a-federal-judge",
+      "wpId": 50798,
+      "payloadId": 576,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-sentencing-tips-personal-narrative-vs-sentencing-memorandum",
+      "wpId": 50723,
+      "payloadId": 577,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "my-interview-from-taft-federal-prison-in-2009",
+      "wpId": 50569,
+      "payloadId": 578,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "advice-to-white-collar-defendants-who-want-to-prepare-but-cant-get-started",
+      "wpId": 50533,
+      "payloadId": 579,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "3-stages-of-a-federal-prison-term-u-shaped-curve",
+      "wpId": 50483,
+      "payloadId": 580,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "use-this-book-to-prepare-for-life-in-federal-prison-and-beyond",
+      "wpId": 50440,
+      "payloadId": 581,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "pros-cons-of-making-a-restitution-payment-before-your-sentencing-hearing",
+      "wpId": 49929,
+      "payloadId": 582,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-do-you-have-productive-days-in-federal-prison-camp",
+      "wpId": 49926,
+      "payloadId": 583,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-obtain-early-release-from-prison-due-to-the-coronavirus-pandemic",
+      "wpId": 49923,
+      "payloadId": 584,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-sentence-mitigation-can-positively-impact-a-federal-sentencing-hearing",
+      "wpId": 49885,
+      "payloadId": 585,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sentencing-mitigation-vs-federal-prison-consulting",
+      "wpId": 49875,
+      "payloadId": 586,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-a-federal-sentencing-narrative",
+      "wpId": 49873,
+      "payloadId": 587,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-judge-offers-key-tip-to-prepare-for-sentencing-hearing",
+      "wpId": 49747,
+      "payloadId": 588,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-should-i-know-about-education-and-recreation-in-federal-prison",
+      "wpId": 49740,
+      "payloadId": 589,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-overcome-your-white-collar-crime-conviction",
+      "wpId": 49684,
+      "payloadId": 590,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "getting-designated-to-federal-prison",
+      "wpId": 49676,
+      "payloadId": 591,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "does-your-white-collar-defense-attorney-have-a-god-complex",
+      "wpId": 49671,
+      "payloadId": 592,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "dont-have-regret-over-how-you-prepare-for-sentencing-and-federal-prison",
+      "wpId": 49668,
+      "payloadId": 593,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "3-tips-for-defendants-facing-federal-sentencing-federal-prison",
+      "wpId": 49663,
+      "payloadId": 594,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-sentence-mitigation",
+      "wpId": 49643,
+      "payloadId": 595,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "religious-services-in-federal-prison",
+      "wpId": 49641,
+      "payloadId": 596,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "structure-of-the-day-in-federal-prison",
+      "wpId": 49636,
+      "payloadId": 597,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "12-questions-to-ask-a-criminal-defense-attorney",
+      "wpId": 49628,
+      "payloadId": 598,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "learning-say-no-federal-prison",
+      "wpId": 29297,
+      "payloadId": 599,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prison-consultant-talks-college-cheating-scandal-with-newsradio",
+      "wpId": 49573,
+      "payloadId": 600,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "justin-paperny-federal-prison-consultant-joins-dana-perino-on-fox-news",
+      "wpId": 49571,
+      "payloadId": 601,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "college-cheating-scandal-suspects",
+      "wpId": 49555,
+      "payloadId": 602,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "bring-to-federal-prison",
+      "wpId": 49500,
+      "payloadId": 603,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "justin-papernys-post-federal-prison-personal-narrative",
+      "wpId": 49446,
+      "payloadId": 604,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-to-do-if-you-are-going-to-federal-prison-fort-dix-federal-prison-camp",
+      "wpId": 49436,
+      "payloadId": 605,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "goals-of-a-sentencing-narrative",
+      "wpId": 49387,
+      "payloadId": 606,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "will-showing-up-to-federal-prison-drunk-help-me-get-into-rdap-residential-drug-abuse-program",
+      "wpId": 49332,
+      "payloadId": 607,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "pros-and-cons-of-otisville-federal-prison-camp",
+      "wpId": 49277,
+      "payloadId": 608,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "9-months-instead-of-33-41-at-butner-federal-prison-camp",
+      "wpId": 49261,
+      "payloadId": 609,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-consultant-justin-paperny",
+      "wpId": 49254,
+      "payloadId": 610,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "pensacola-federal-prison-camp",
+      "wpId": 49229,
+      "payloadId": 611,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "butner-federal-prison-camp",
+      "wpId": 49065,
+      "payloadId": 612,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "success-in-federal-prison-camp",
+      "wpId": 49058,
+      "payloadId": 613,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "ask-better-questions-before-serving-time-in-federal-prison",
+      "wpId": 48978,
+      "payloadId": 614,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "are-celebrities-in-federal-prison-camp-treated-the-same",
+      "wpId": 48828,
+      "payloadId": 615,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "is-your-white-collar-defense-attorney-helping-you-get-a-shorter-federal-prison-sentence",
+      "wpId": 48813,
+      "payloadId": 616,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-the-most-fun-you-ever-had-in-federal-prison",
+      "wpId": 48791,
+      "payloadId": 617,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prison-consulting-client-reviews-white-collar-advice-prison-professors",
+      "wpId": 48749,
+      "payloadId": 618,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "best-worst-things-to-tell-a-federal-judge",
+      "wpId": 48612,
+      "payloadId": 619,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-use-the-white-collar-advice-sentencing-tool",
+      "wpId": 48662,
+      "payloadId": 620,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "who-are-the-staff-members-inside-a-federal-prison",
+      "wpId": 48627,
+      "payloadId": 621,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "influence-but-do-not-manipulate-in-federal-prison-camp",
+      "wpId": 48564,
+      "payloadId": 622,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-innocent-white-collar-defendants-plead-guilty",
+      "wpId": 46792,
+      "payloadId": 623,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "should-your-narpresentence-investigation-reportrative-be-in-your-presentence-investigation-report",
+      "wpId": 46785,
+      "payloadId": 624,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "9-tips-to-master-your-second-day-in-federal-prison",
+      "wpId": 48660,
+      "payloadId": 625,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "12-questions-federal-prison",
+      "wpId": 30072,
+      "payloadId": 626,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "30042-2",
+      "wpId": 30042,
+      "payloadId": 627,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-defendants-important-post-offense-conduct",
+      "wpId": 30039,
+      "payloadId": 628,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "6-quick-tips-to-prepare-for-a-federal-prison-sentence",
+      "wpId": 30009,
+      "payloadId": 629,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "prepare-for-sentencing",
+      "wpId": 29975,
+      "payloadId": 630,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "drugs-booze-and-iphones-in-federal-prison-camp",
+      "wpId": 29972,
+      "payloadId": 631,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-tell-your-kids-youre-going-to-federal-prison",
+      "wpId": 29958,
+      "payloadId": 632,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "last-day-federal-prison-camp",
+      "wpId": 29948,
+      "payloadId": 633,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "is-federal-prison-camp-a-club-fed",
+      "wpId": 29904,
+      "payloadId": 634,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-federal-prison-consultants-offer-different-opinions",
+      "wpId": 29892,
+      "payloadId": 635,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "exercise-federal-prison",
+      "wpId": 29873,
+      "payloadId": 636,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "justin-paperny-discusses-post-prison-jobs",
+      "wpId": 29870,
+      "payloadId": 637,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "sheridan-federal-prison-camp",
+      "wpId": 29868,
+      "payloadId": 638,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-will-to-win-from-three-rivers-federal-prison-camp",
+      "wpId": 29826,
+      "payloadId": 639,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "failing-to-follow-federal-prison-rules-of-engagement",
+      "wpId": 29811,
+      "payloadId": 640,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "first-day-in-federal-prison-for-prison-wives",
+      "wpId": 29669,
+      "payloadId": 641,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-truth-about-passes-in-the-federal-halfway-house",
+      "wpId": 29640,
+      "payloadId": 642,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "my-day-in-a-low-security-federal-prison",
+      "wpId": 29644,
+      "payloadId": 643,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "should-you-go-to-the-halfway-house",
+      "wpId": 29637,
+      "payloadId": 644,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "know-second-day-federal-prison",
+      "wpId": 29593,
+      "payloadId": 645,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "exposed-fatal-flaw-federal-prison-camps",
+      "wpId": 29586,
+      "payloadId": 646,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-stay-motivated-through-federal-prison-camp",
+      "wpId": 29581,
+      "payloadId": 647,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "life-at-miami-federal-prison-camp",
+      "wpId": 29530,
+      "payloadId": 648,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "11-things-you-need-to-know-about-prison-consultants",
+      "wpId": 29463,
+      "payloadId": 649,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "truth-federal-prison-consultant",
+      "wpId": 29453,
+      "payloadId": 650,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "surrendering-pensacola-federal-prison-camp",
+      "wpId": 29430,
+      "payloadId": 651,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "fastest-way-leave-federal-prison",
+      "wpId": 29361,
+      "payloadId": 652,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "mornings-in-prison-master-mornings-in-federal-prison",
+      "wpId": 29358,
+      "payloadId": 653,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "under-indictment-avoid-financial-ruin-by-following-these-16-strategies",
+      "wpId": 29340,
+      "payloadId": 654,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-find-the-best-federal-prison",
+      "wpId": 29329,
+      "payloadId": 655,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-to-get-kicked-out-of-rdap",
+      "wpId": 29326,
+      "payloadId": 656,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-it-like-to-visit-in-prison",
+      "wpId": 29322,
+      "payloadId": 657,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-books-should-i-read-in-prison",
+      "wpId": 29313,
+      "payloadId": 658,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "what-is-the-best-prison-to-go-to",
+      "wpId": 29293,
+      "payloadId": 659,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "new-years-resolutions-from-federal-prison-camp",
+      "wpId": 29288,
+      "payloadId": 660,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "federal-prison-camp-gone-bad",
+      "wpId": 28814,
+      "payloadId": 661,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "white-collar-101-life-in-federal-prison",
+      "wpId": 28769,
+      "payloadId": 662,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "presentence-investigation-report-psr",
+      "wpId": 29203,
+      "payloadId": 663,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-presentence-interview",
+      "wpId": 29115,
+      "payloadId": 664,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "compassionate-release-federal-prison",
+      "wpId": 29109,
+      "payloadId": 665,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "health-care-fraud-charges-remanded-to-custody",
+      "wpId": 29099,
+      "payloadId": 666,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "bail-hearing-for-a-white-collar-defendant",
+      "wpId": 29039,
+      "payloadId": 667,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "understanding-the-bops-administrative-remedy-program",
+      "wpId": 28763,
+      "payloadId": 668,
+      "images": 1,
+      "youtube": 0
+    },
+    {
+      "slug": "bureau-of-prisons-changes-home-confinement-pay-policy",
+      "wpId": 28764,
+      "payloadId": 669,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-white-collar-offenders-fail-in-rdap",
+      "wpId": 28833,
+      "payloadId": 670,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "be-careful-in-federal-prison-if-you-have-type-a-personality",
+      "wpId": 28765,
+      "payloadId": 671,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "10-ways-to-get-more-time-in-federal-prison",
+      "wpId": 28766,
+      "payloadId": 672,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "mortgage-broker-is-going-to-federal-prison",
+      "wpId": 28768,
+      "payloadId": 673,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "to-cooperate-or-not-to-cooperate-that-is-the-question",
+      "wpId": 28818,
+      "payloadId": 674,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "how-do-i-prepare-for-the-pre-sentence-interview",
+      "wpId": 28770,
+      "payloadId": 675,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "impact-of-a-negative-psr-pre-sentence-report",
+      "wpId": 28775,
+      "payloadId": 676,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "why-some-lawyers-dont-like-prison-consultants",
+      "wpId": 28835,
+      "payloadId": 677,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-day-has-come-to-take-our-father-to-federal-prison",
+      "wpId": 28827,
+      "payloadId": 678,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-night-before-going-to-federal-prison",
+      "wpId": 28828,
+      "payloadId": 679,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "groundhog-day-in-federal-prison",
+      "wpId": 28776,
+      "payloadId": 680,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "one-day-at-bastrop-federal-prison-camp",
+      "wpId": 28777,
+      "payloadId": 681,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "character-reference-letters",
+      "wpId": 28778,
+      "payloadId": 682,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-value-in-preparing-for-federal-prison",
+      "wpId": 28806,
+      "payloadId": 683,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "adjusting-to-life-in-federal-prison",
+      "wpId": 28809,
+      "payloadId": 684,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "kpmg-phil-mickelson-and-insider-trading",
+      "wpId": 28782,
+      "payloadId": 685,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "revisions-to-the-residential-drug-abuse-program",
+      "wpId": 28783,
+      "payloadId": 686,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "urine-tests-in-federal-prison",
+      "wpId": 28785,
+      "payloadId": 687,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "differences-between-a-federal-prison-camp-and-low-security-prison",
+      "wpId": 28790,
+      "payloadId": 688,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "11-questions-to-ask-before-you-get-sentenced",
+      "wpId": 28788,
+      "payloadId": 689,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-people-you-meet-in-federal-prison",
+      "wpId": 28789,
+      "payloadId": 690,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "surrendering-to-yankton-federal-prison-camp",
+      "wpId": 28787,
+      "payloadId": 691,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "how-to-respond-if-government-agents-visit-your-office",
+      "wpId": 28820,
+      "payloadId": 692,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-scheduled-interview-or-testimony-2",
+      "wpId": 28823,
+      "payloadId": 693,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "the-surprise-or-ambush-interview",
+      "wpId": 28796,
+      "payloadId": 694,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "core-attitudes-of-the-residential-drug-abuse-program",
+      "wpId": 28797,
+      "payloadId": 695,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "when-you-lie-to-the-government-what-crime-or-crimes-are-you-committing",
+      "wpId": 28798,
+      "payloadId": 696,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "taft-federal-prison-camp",
+      "wpId": 28799,
+      "payloadId": 697,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "seth-ferranti-offers-prison-advice",
+      "wpId": 28813,
+      "payloadId": 698,
+      "images": 0,
+      "youtube": 0
+    }
+  ],
+  "skipped": [],
+  "failed": []
+}

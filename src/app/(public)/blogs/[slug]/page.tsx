@@ -5,11 +5,39 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import ShareBar from '@/components/ShareBar'
+import { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{
     slug: string
   }>
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  try {
+    const payload = await getPayload({ config })
+    const postsResult = await payload.find({
+      collection: 'posts',
+      where: { slug: { equals: slug } },
+      depth: 1,
+      overrideAccess: true,
+    })
+
+    if (postsResult.docs.length > 0) {
+      const post = postsResult.docs[0]
+      return {
+        title: `${post.title} | White Collar Advice`,
+        description: post.excerpt || `Read more about ${post.title}`,
+      }
+    }
+  } catch (err) {
+    console.error('Error generating metadata for blog post:', err)
+  }
+
+  return {
+    title: 'Blog Post | White Collar Advice',
+  }
 }
 
 // Rich helper to render Lexical rich text with WCA typography
