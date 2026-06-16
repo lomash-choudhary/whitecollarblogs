@@ -426,15 +426,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
               </div>
             </div>
 
-            {resolvedCoverImageUrl && (
-              <div className="w-full overflow-hidden rounded-2xl shadow-lg border border-[rgba(13,27,42,0.08)]">
-                <img
-                  src={resolvedCoverImageUrl}
-                  alt={post.title}
-                  className="w-full h-auto max-h-[480px] object-cover"
-                />
-              </div>
-            )}
+
             <div className="bg-white rounded-2xl border border-[rgba(13,27,42,0.08)] shadow-sm p-8 md:p-12">
 
               {/* Horizontal share bar for mobile / tablet (hidden on xl) */}
