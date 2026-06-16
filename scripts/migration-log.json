@@ -36,13 +36,6 @@
       "youtube": 1
     },
     {
-      "slug": "psr-interview-next-week-what-not-to-say",
-      "wpId": 70423,
-      "payloadId": 25,
-      "images": 0,
-      "youtube": 1
-    },
-    {
       "slug": "rule-35-motion",
       "wpId": 70371,
       "payloadId": 26,
@@ -88,13 +81,6 @@
       "slug": "federal-sentencing-mitigation-letter",
       "wpId": 70111,
       "payloadId": 32,
-      "images": 0,
-      "youtube": 1
-    },
-    {
-      "slug": "federal-indictment-process",
-      "wpId": 70054,
-      "payloadId": 33,
       "images": 0,
       "youtube": 1
     },
@@ -258,13 +244,6 @@
       "payloadId": 56,
       "images": 0,
       "youtube": 1
-    },
-    {
-      "slug": "what-matt-bowyer-did-after-the-raid",
-      "wpId": 69092,
-      "payloadId": 57,
-      "images": 3,
-      "youtube": 0
     },
     {
       "slug": "good-conduct-time-credit-federal-sentence",
@@ -4467,13 +4446,6 @@
       "youtube": 0
     },
     {
-      "slug": "what-books-should-i-read-in-prison",
-      "wpId": 29313,
-      "payloadId": 658,
-      "images": 0,
-      "youtube": 0
-    },
-    {
       "slug": "what-is-the-best-prison-to-go-to",
       "wpId": 29293,
       "payloadId": 659,
@@ -4750,6 +4722,34 @@
       "slug": "seth-ferranti-offers-prison-advice",
       "wpId": 28813,
       "payloadId": 698,
+      "images": 0,
+      "youtube": 0
+    },
+    {
+      "slug": "psr-interview-next-week-what-not-to-say",
+      "wpId": 70423,
+      "payloadId": 699,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "federal-indictment-process",
+      "wpId": 70054,
+      "payloadId": 700,
+      "images": 0,
+      "youtube": 1
+    },
+    {
+      "slug": "what-matt-bowyer-did-after-the-raid",
+      "wpId": 69092,
+      "payloadId": 701,
+      "images": 3,
+      "youtube": 0
+    },
+    {
+      "slug": "what-books-should-i-read-in-prison",
+      "wpId": 29313,
+      "payloadId": 702,
       "images": 0,
       "youtube": 0
     }

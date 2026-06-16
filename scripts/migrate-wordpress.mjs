@@ -128,13 +128,13 @@ function createEmbedParagraph(url) {
 
 function stripHtmlTagsPreserveSpaces(html) {
   if (!html) return '';
-  let cleaned = html.replace(/<[^>]+>/g, ' ');
-  if (!cleaned.trim()) {
-    return ' ';
+  const plainText = html.replace(/<[^>]+>/g, '');
+  if (!plainText.trim()) {
+    return html.trim() ? '' : ' ';
   }
-  const hasLeadingSpace = /^\s/.test(html);
-  const hasTrailingSpace = /\s$/.test(html);
-  let processed = cleaned
+  const hasLeadingSpace = /^\s/.test(html) || /^\s/.test(plainText);
+  const hasTrailingSpace = /\s$/.test(html) || /\s$/.test(plainText);
+  let processed = plainText
     .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec))
     .replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)))
     .replace(/&rsquo;/g, "'")
@@ -160,6 +160,7 @@ function stripHtmlTagsPreserveSpaces(html) {
   }
   return processed.replace(/\s+/g, ' ');
 }
+
 
 // ── INLINE FORMATTER ─────────────────────────────────────────────────────────
 // Converts inline HTML (bold, italic, links, images) into Lexical children[]
