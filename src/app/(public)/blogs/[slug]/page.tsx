@@ -47,13 +47,16 @@ function renderTextNode(node: any, index: number) {
   }
 
   if (node.type === 'image') {
+    const imageUrl = node.url || node.src || ''
+    if (!imageUrl) return null
     return (
-      <span key={index} className="block my-8">
+      <span key={index} className="block my-8 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
-          src={node.url} 
+          src={imageUrl} 
           alt={node.alt || 'Blog inline image'} 
-          className="w-full rounded-2xl shadow-md border border-slate-200/50 object-cover max-h-[500px]" 
+          className="mx-auto rounded-2xl shadow-md border border-slate-200/50 object-contain max-h-[500px]" 
+          style={{ maxWidth: node.width ? `${node.width}px` : '100%', height: 'auto' }}
         />
       </span>
     )
@@ -102,6 +105,47 @@ function renderContent(content: any) {
     const children = content.root?.children || []
     return children.map((node: any, index: number) => {
       if (!node) return null
+
+      if (node.type === 'youtube') {
+        const videoId = node.videoID || node.videoId || ''
+        if (!videoId) return null
+        return (
+          <div key={index} className="relative w-full aspect-video my-8 overflow-hidden rounded-2xl shadow-md border border-slate-200/50">
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full border-0"
+            />
+          </div>
+        )
+      }
+
+      if (node.type === 'image') {
+        const imageUrl = node.url || node.src || ''
+        if (!imageUrl) return null
+        return (
+          <div key={index} className="w-full my-8 text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={imageUrl} 
+              alt={node.alt || 'Blog inline image'} 
+              className="mx-auto rounded-2xl shadow-md border border-slate-200/50 object-contain max-h-[500px]" 
+              style={{ maxWidth: node.width ? `${node.width}px` : '100%', height: 'auto' }}
+            />
+          </div>
+        )
+      }
+
+      if (node.type === 'code') {
+        const text = node.children?.map((c: any) => c.text || '').join('') || ''
+        return (
+          <pre key={index} className="bg-[#0D1B2A]/6 text-[#0D1B2A] p-4 my-6 rounded-xl font-mono text-sm overflow-x-auto border border-slate-200/50">
+            <code>{text}</code>
+          </pre>
+        )
+      }
 
       if (node.type === 'paragraph') {
         return (
