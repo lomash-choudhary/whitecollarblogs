@@ -29,6 +29,7 @@ export default buildConfig({
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'small-group-secret-key-39c284jd82e11a',
   db: postgresAdapter({
+    push: false,
     pool: {
       connectionString: (() => {
         const raw =
