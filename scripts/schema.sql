@@ -13,26 +13,24 @@
 -- database, flip `push: true` in src/payload.config.ts, run `npm run dev` once,
 -- flip it back, then pg_dump --schema-only that database over this file.
 --
+--
+-- NOTE: pg_dump's session-level SET statements have been removed on purpose.
+-- Neon's pooled endpoint is PgBouncer in transaction mode, where a backend
+-- connection is handed to the next client after each transaction. A session
+-- SET therefore leaks: `set_config('search_path', '', false)` left a pooled
+-- backend with no search_path, and unqualified queries on it then failed with
+-- `relation "posts" does not exist`. Every statement below is schema-qualified,
+-- so none of those SETs were needed.
+--
 
 --
 -- PostgreSQL database dump
 --
 
-\restrict a5HszCYAdYjtXiTmpEzMPrGj51632KPuqaEJ1NPmfqHJNeo9WcBMfWQa6ZXNK46
 
 -- Dumped from database version 16.15
 -- Dumped by pg_dump version 16.15
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
 
 --
 -- Name: enum_authors_department; Type: TYPE; Schema: public; Owner: -
@@ -60,9 +58,7 @@ CREATE TYPE public.enum_pipeline_stages_key AS ENUM (
 );
 
 
-SET default_tablespace = '';
 
-SET default_table_access_method = heap;
 
 --
 -- Name: authors; Type: TABLE; Schema: public; Owner: -
@@ -1073,5 +1069,4 @@ ALTER TABLE ONLY public.users_sessions
 -- PostgreSQL database dump complete
 --
 
-\unrestrict a5HszCYAdYjtXiTmpEzMPrGj51632KPuqaEJ1NPmfqHJNeo9WcBMfWQa6ZXNK46
 

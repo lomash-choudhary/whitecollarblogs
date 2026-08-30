@@ -10,13 +10,14 @@ import { Posts } from './collections/Posts'
 import { Authors } from './collections/Authors'
 import { PipelineStages } from './collections/PipelineStages'
 import { Media } from './collections/Media'
-import { databaseSsl } from './utils/databaseSsl'
+import { databaseSsl, normalizeDatabaseUrl } from './utils/databaseSsl'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const DATABASE_URI =
-  process.env.DATABASE_URI || 'postgresql://postgres:postgres@127.0.0.1:5432/payload'
+const DATABASE_URI = normalizeDatabaseUrl(
+  process.env.DATABASE_URI || 'postgresql://postgres:postgres@127.0.0.1:5432/payload',
+)
 
 /**
  * Payload signs login tokens with this. A value committed to the repository is

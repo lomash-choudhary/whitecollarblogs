@@ -24,6 +24,31 @@ export function isLocalDatabase(connectionString: string): boolean {
   }
 }
 
+/**
+ * Pins a vague sslmode to an explicit one.
+ *
+ * node-postgres currently treats `require`, `prefer` and `verify-ca` as
+ * `verify-full`, and warns loudly that a future major will downgrade them to
+ * libpq semantics — which skip certificate verification. Neon hands out URLs
+ * ending in `?sslmode=require`, so spelling out what we already get today both
+ * silences the warning and stops the security level changing under us on a
+ * dependency bump.
+ */
+export function normalizeDatabaseUrl(connectionString: string): string {
+  const wanted = process.env.DATABASE_SSL_NO_VERIFY === 'true' ? 'no-verify' : 'verify-full'
+  try {
+    const url = new URL(connectionString)
+    const mode = url.searchParams.get('sslmode')
+    if (mode && ['require', 'prefer', 'verify-ca', 'verify-full'].includes(mode)) {
+      url.searchParams.set('sslmode', wanted)
+      return url.toString()
+    }
+    return connectionString
+  } catch {
+    return connectionString
+  }
+}
+
 export function databaseSsl(connectionString: string): DatabaseSsl {
   // An explicit sslmode in the URL wins; node-postgres already handles it.
   if (/[?&]sslmode=/i.test(connectionString)) return undefined
