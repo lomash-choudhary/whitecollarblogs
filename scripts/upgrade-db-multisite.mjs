@@ -26,6 +26,23 @@ if (fs.existsSync(envPath)) {
 const connectionString =
   process.env.DATABASE_URI || 'postgresql://postgres:postgres@127.0.0.1:5432/payload'
 
+// Mirror of src/utils/databaseSsl.ts — this script runs under plain node and
+// cannot import the TypeScript version. Hosted Postgres (Neon, Supabase, RDS)
+// refuses plaintext connections, local Postgres has no TLS at all.
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
+
+function databaseSsl(url) {
+  if (/[?&]sslmode=/i.test(url)) return undefined
+  let hostname
+  try {
+    hostname = new URL(url).hostname
+  } catch {
+    return undefined
+  }
+  if (LOCAL_HOSTS.has(hostname)) return undefined
+  return process.env.DATABASE_SSL_NO_VERIFY === 'true' ? { rejectUnauthorized: false } : true
+}
+
 const STATEMENTS = [
   `ALTER TABLE posts ADD COLUMN IF NOT EXISTS site varchar DEFAULT 'wcb'`,
   `ALTER TABLE posts ADD COLUMN IF NOT EXISTS external_status varchar`,
@@ -36,7 +53,11 @@ const STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS posts_site_key_idx ON posts (site)`,
 ]
 
-const client = new pg.Client({ connectionString })
+const client = new pg.Client({
+  connectionString,
+  ssl: databaseSsl(connectionString),
+  connectionTimeoutMillis: 15000,
+})
 
 try {
   await client.connect()
@@ -48,6 +69,19 @@ try {
   console.log('\nSchema is up to date for multi-site publishing.')
 } catch (err) {
   console.error('\nSchema upgrade failed:', err.message)
+  if (/insecure|SSL|self.signed/i.test(err.message)) {
+    console.error(
+      '\nThis looks like a TLS problem. Hosted providers need TLS — add ?sslmode=require\n' +
+        'to DATABASE_URI. If the certificate chain cannot be verified, re-run with\n' +
+        'DATABASE_SSL_NO_VERIFY=true.',
+    )
+  }
+  if (/relation "posts" does not exist/i.test(err.message)) {
+    console.error(
+      '\nThe posts table is missing, so this database has never been set up.\n' +
+        'Point DATABASE_URI at the right database, or create the schema first.',
+    )
+  }
   process.exitCode = 1
 } finally {
   await client.end().catch(() => {})

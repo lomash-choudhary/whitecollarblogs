@@ -10,9 +10,13 @@ import { Posts } from './collections/Posts'
 import { Authors } from './collections/Authors'
 import { PipelineStages } from './collections/PipelineStages'
 import { Media } from './collections/Media'
+import { databaseSsl } from './utils/databaseSsl'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const DATABASE_URI =
+  process.env.DATABASE_URI || 'postgresql://postgres:postgres@127.0.0.1:5432/payload'
 
 export default buildConfig({
   admin: {
@@ -31,14 +35,14 @@ export default buildConfig({
   db: postgresAdapter({
     push: false,
     pool: {
-      connectionString: (() => {
-        const raw =
-          process.env.DATABASE_URI ||
-          'postgresql://postgres:postgres@127.0.0.1:5432/payload'
-        return raw
-      })(),
+      connectionString: DATABASE_URI,
+      // Neon and friends reject plaintext connections; local Postgres has no
+      // TLS at all. databaseSsl() picks the right one for the given URL.
+      ssl: databaseSsl(DATABASE_URI),
       max: 3,
       idleTimeoutMillis: 30000,
+      // Fail fast instead of hanging a serverless function on a dead database.
+      connectionTimeoutMillis: 15000,
     },
   }),
   plugins: [
