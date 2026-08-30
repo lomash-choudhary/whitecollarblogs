@@ -104,11 +104,9 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
   const liveUrl = `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${fileName.replace(/\.md$/, '')}`
 
   try {
-    // Overridable so the dispatch can be pointed at a local stub in tests.
-    const apiBase = (process.env.GITHUB_API_BASE_URL || 'https://api.github.com').replace(/\/$/, '')
     // This call happens inside the save transaction, so it must not hang and
     // hold a database connection open if GitHub is slow or unreachable.
-    const response = await fetch(`${apiBase}/repos/${owner}/${repo}/dispatches`, {
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
       signal: AbortSignal.timeout(15000),
       method: 'POST',
       headers: {

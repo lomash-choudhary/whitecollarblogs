@@ -681,6 +681,32 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [publishNote, setPublishNote] = useState<string | null>(null)
+  const [retrying, setRetrying] = useState(false)
+  const [retryResult, setRetryResult] = useState<string | null>(null)
+
+  // A publish can fail for reasons that have nothing to do with the article —
+  // an expired token, GitHub being down. Re-saving does not help, because an
+  // unchanged post is deliberately not re-dispatched, so offer a direct retry.
+  const retryPublish = async () => {
+    if (!initialPost?.id) return
+    setRetrying(true)
+    setRetryResult(null)
+    try {
+      const res = await fetch('/api/publish-external', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: initialPost.id }),
+      })
+      const data = await res.json().catch(() => ({}))
+      setRetryResult(res.ok ? data.message || 'Sent.' : data.error || 'Retry failed.')
+      if (res.ok) router.refresh()
+    } catch {
+      setRetryResult('Could not reach the server.')
+    } finally {
+      setRetrying(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -810,13 +836,35 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     : 'This article will be served straight from this CMS.'}
               </p>
               {isEditing && initialPost?.externalStatus && (
-                <p
-                  className={`text-[10px] font-bold ${
-                    initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
-                  }`}
-                >
-                  Last publish: {initialPost.externalStatus} — {initialPost.externalMessage}
-                </p>
+                <div className="space-y-2">
+                  <p
+                    className={`text-[10px] font-bold ${
+                      initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
+                    }`}
+                  >
+                    Last publish: {initialPost.externalStatus} — {initialPost.externalMessage}
+                  </p>
+
+                  {initialPost.externalStatus === 'failed' && (
+                    <button
+                      type="button"
+                      onClick={retryPublish}
+                      disabled={retrying}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0D1B2A] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#0D1B2A]/90 disabled:opacity-50 transition-colors"
+                    >
+                      {retrying ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-3 h-3" />
+                      )}
+                      {retrying ? 'Sending…' : 'Retry publish'}
+                    </button>
+                  )}
+
+                  {retryResult && (
+                    <p className="text-[10px] font-bold text-[#0D1B2A]/70">{retryResult}</p>
+                  )}
+                </div>
               )}
             </div>
 

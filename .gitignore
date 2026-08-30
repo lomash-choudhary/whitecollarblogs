@@ -44,8 +44,6 @@ next-env.d.ts
 # temp tool directories
 .playwright-mcp/
 
-# local mock of the GitHub dispatch API
-/.mock-dispatch
 
 # local sqlite leftover (the app runs on Postgres)
 payload.db

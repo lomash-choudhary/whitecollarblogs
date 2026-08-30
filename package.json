@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:upgrade": "node scripts/upgrade-db-multisite.mjs",
-    "mock:github": "node scripts/mock-github-dispatch.mjs"
+    "db:upgrade": "node scripts/upgrade-db-multisite.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.84.1",

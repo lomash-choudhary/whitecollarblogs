@@ -18,6 +18,24 @@ const dirname = path.dirname(filename)
 const DATABASE_URI =
   process.env.DATABASE_URI || 'postgresql://postgres:postgres@127.0.0.1:5432/payload'
 
+/**
+ * Payload signs login tokens with this. A value committed to the repository is
+ * a value anyone can read, so production must supply its own or the CMS can be
+ * logged into by anyone who has seen the source. Fail loudly rather than boot
+ * with a known key.
+ */
+const PAYLOAD_SECRET = (() => {
+  const fromEnv = process.env.PAYLOAD_SECRET
+  if (fromEnv) return fromEnv
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'PAYLOAD_SECRET is not set. Generate one with `openssl rand -base64 32` and ' +
+        'add it to the environment before building or deploying.',
+    )
+  }
+  return 'development-only-secret-do-not-use-in-production'
+})()
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -31,7 +49,7 @@ export default buildConfig({
   cors: '*',
   csrf: undefined,
   editor: lexicalEditor({}),
-  secret: process.env.PAYLOAD_SECRET || 'small-group-secret-key-39c284jd82e11a',
+  secret: PAYLOAD_SECRET,
   db: postgresAdapter({
     push: false,
     pool: {
