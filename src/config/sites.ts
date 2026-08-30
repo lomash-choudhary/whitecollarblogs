@@ -55,6 +55,7 @@ export const SITES: SiteConfig[] = [
     target: 'local',
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
     blogPath: '/blogs',
+    defaultCategory: 'Software Engineer',
   },
   {
     key: 'ovopainting',
@@ -94,16 +95,18 @@ export interface PublicSite {
   target: SiteTarget
   blogPath: string
   baseUrl: string
+  defaultCategory: string
 }
 
 export function publicSites(): PublicSite[] {
-  return SITES.map(({ key, name, description, target, blogPath, baseUrl }) => ({
+  return SITES.map(({ key, name, description, target, blogPath, baseUrl, defaultCategory }) => ({
     key,
     name,
     description,
     target,
     blogPath,
     baseUrl,
+    defaultCategory: defaultCategory || 'General',
   }))
 }
 

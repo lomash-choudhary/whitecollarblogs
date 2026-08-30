@@ -454,6 +454,12 @@ function markdownToLexical(markdown: string): any {
 }
 
 export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initialPost }) => {
+  const { sites, activeSite } = useSite()
+  // An existing post keeps the website it was created for; a new post targets
+  // whichever website is selected in the sidebar.
+  const [siteKey, setSiteKey] = useState(initialPost?.site || activeSite.key)
+  const targetSite = sites.find((s) => s.key === siteKey) || activeSite
+
   const router = useRouter()
   const isEditing = Boolean(initialPost)
 
@@ -604,7 +610,19 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     }, 0)
   }
 
-  const [targetRole, setTargetRole] = useState(initialPost?.targetRole || 'Software Engineer')
+  const [targetRole, setTargetRole] = useState(
+    initialPost?.targetRole || targetSite.defaultCategory,
+  )
+
+  const changeSite = (nextKey: string) => {
+    // Categories are site-specific — "Tips for Painting" means nothing on the
+    // legal blog — so follow the new site unless the writer typed their own.
+    const previous = sites.find((s) => s.key === siteKey)
+    if (!targetRole || targetRole === previous?.defaultCategory) {
+      setTargetRole(sites.find((s) => s.key === nextKey)?.defaultCategory || '')
+    }
+    setSiteKey(nextKey)
+  }
   
   // Derive reading time dynamically from content length to avoid useEffect state updates
   const words = content.trim() ? content.trim().split(/\s+/).length : 0
@@ -658,12 +676,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
       setIsUploading(false)
     }
   }
-
-  const { sites, activeSite } = useSite()
-  // An existing post keeps the website it was created for; a new post targets
-  // whichever website is selected in the sidebar.
-  const [siteKey, setSiteKey] = useState(initialPost?.site || activeSite.key)
-  const targetSite = sites.find((s) => s.key === siteKey) || activeSite
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
