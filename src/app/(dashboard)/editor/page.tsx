@@ -65,6 +65,10 @@ export default async function EditorPage({ searchParams }: PageProps) {
             stage: typeof postDoc.stage === 'object' && postDoc.stage !== null ? (postDoc.stage as any).id : postDoc.stage,
             coverImageUrl: postDoc.coverImageUrl || '',
             coverImage: typeof postDoc.coverImage === 'object' && postDoc.coverImage !== null ? (postDoc.coverImage as any).id : postDoc.coverImage,
+            site: (postDoc as any).site || undefined,
+            externalStatus: (postDoc as any).externalStatus || undefined,
+            externalMessage: (postDoc as any).externalMessage || undefined,
+            externalUrl: (postDoc as any).externalUrl || undefined,
           }
         }
       } catch (err) {

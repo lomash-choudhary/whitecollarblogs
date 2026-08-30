@@ -24,6 +24,8 @@ import {
   Paperclip
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
+import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
+import { useSite } from '@/context/SiteContext'
 
 interface Author {
   id: string
@@ -52,116 +54,13 @@ interface BlogEditorProps {
     stage: string | number
     coverImageUrl?: string
     coverImage?: string | number
+    site?: string
+    externalStatus?: string
+    externalMessage?: string
+    externalUrl?: string
   } | null
 }
 
-interface LexicalTextNode {
-  type: 'text'
-  text: string
-  version: number
-  format?: number
-}
-
-function renderLeafToMarkdown(leaf: any): string {
-  if (!leaf || !leaf.text) return ''
-  let text = leaf.text
-  const format = leaf.format || 0
-  const isBold = (format & 1) !== 0
-  const isItalic = (format & 2) !== 0
-  const isUnderline = (format & 8) !== 0
-  const isCode = (format & 16) !== 0
-  
-  if (isCode) text = `\`${text}\``
-  if (isBold) text = `**${text}**`
-  if (isUnderline) text = `__${text}__`
-  if (isItalic) text = `*${text}*`
-  return text
-}
-
-function serializeInlineNodes(nodes: any[]): string {
-  if (!nodes) return ''
-  let text = ''
-  for (const node of nodes) {
-    if (node.type === 'link') {
-      const linkText = node.children?.map((leaf: any) => renderLeafToMarkdown(leaf)).join('') || ''
-      const url = node.fields?.url || ''
-      const rel = node.fields?.rel || []
-      const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
-      text += `[${linkText}](${url}${isNofollow ? ' "nofollow"' : ''})`
-    } else if (node.type === 'image') {
-      text += `![${node.alt || 'image'}](${node.url})`
-    } else if (node.type === 'video') {
-      text += `![video](${node.url})`
-    } else {
-      text += renderLeafToMarkdown(node)
-    }
-  }
-  return text
-}
-
-function lexicalToMarkdown(lexical: any): string {
-  if (!lexical) return ''
-  if (typeof lexical === 'string') return lexical
-  try {
-    const children = lexical.root?.children || []
-    let md = ''
-    for (const node of children) {
-      if (!node) continue
-      
-      if (node.type === 'paragraph') {
-        let pText = serializeInlineNodes(node.children)
-        md += pText + '\n\n'
-      } else if (node.type === 'heading') {
-        let level = 3
-        if (node.tag === 'h1') level = 1
-        if (node.tag === 'h2') level = 2
-        let hText = '#'.repeat(level) + ' ' + serializeInlineNodes(node.children)
-        md += hText + '\n\n'
-      } else if (node.type === 'quote') {
-        let qText = '> ' + serializeInlineNodes(node.children)
-        md += qText + '\n\n'
-      } else if (node.type === 'list') {
-        const isNumbered = node.listType === 'number'
-        if (node.children) {
-          node.children.forEach((item: any, i: number) => {
-            if (item.type === 'listitem' && item.children) {
-              let itemText = isNumbered ? `${i + 1}. ` : '- '
-              itemText += serializeInlineNodes(item.children)
-              md += itemText + '\n'
-            }
-          })
-        }
-        md += '\n'
-      } else if (node.type === 'table') {
-        const rows = node.children || []
-        rows.forEach((row: any, rowIndex: number) => {
-          if (row.type === 'tablerow') {
-            const cells = row.children || []
-            let rowText = '|'
-            cells.forEach((cell: any) => {
-              if (cell.type === 'tablecell') {
-                const cellText = cell.children?.map((leaf: any) => renderLeafToMarkdown(leaf)).join('') || ''
-                rowText += ` ${cellText} |`
-              }
-            })
-            md += rowText + '\n'
-            if (rowIndex === 0) {
-              let sepText = '|'
-              cells.forEach(() => {
-                sepText += '---|'
-              })
-              md += sepText + '\n'
-            }
-          }
-        })
-        md += '\n'
-      }
-    }
-    return md.trim()
-  } catch {
-    return ''
-  }
-}
 
 function parseInlineMarkdown(text: string): any[] {
   const nodes: any[] = []
@@ -760,9 +659,16 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     }
   }
 
+  const { sites, activeSite } = useSite()
+  // An existing post keeps the website it was created for; a new post targets
+  // whichever website is selected in the sidebar.
+  const [siteKey, setSiteKey] = useState(initialPost?.site || activeSite.key)
+  const targetSite = sites.find((s) => s.key === siteKey) || activeSite
+
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [publishNote, setPublishNote] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -788,6 +694,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
           readTime,
           author: /^\d+$/.test(String(selectedAuthor)) ? Number(selectedAuthor) : selectedAuthor,
           stage: /^\d+$/.test(String(selectedStage)) ? Number(selectedStage) : selectedStage,
+          site: siteKey,
           coverImageUrl: cleanImageUrl(coverImageUrl) || undefined,
           coverImage: uploadedMediaId || undefined,
           ...(isEditing ? {} : { views: 0, likes: 0, publishDate: new Date().toISOString() }),
@@ -799,11 +706,27 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         throw new Error(errorData.errors?.[0]?.message || 'Failed to submit article')
       }
 
+      const saved = await response.json().catch(() => null)
+      const savedDoc = saved?.doc || saved
+      const isPublishedStage =
+        stages.find((st) => String(st.id) === String(selectedStage))?.key === 'published'
+
       setSuccess(true)
-      setTimeout(() => {
-        router.push('/dashboard')
-        router.refresh()
-      }, 1500)
+
+      if (targetSite.target === 'github' && isPublishedStage) {
+        setPublishNote(
+          savedDoc?.externalMessage ||
+            `Sent to ${targetSite.name}. The site rebuilds in a couple of minutes.`,
+        )
+      }
+
+      setTimeout(
+        () => {
+          router.push('/dashboard')
+          router.refresh()
+        },
+        targetSite.target === 'github' && isPublishedStage ? 3500 : 1500,
+      )
     } catch (err: any) {
       console.error('Error submitting post:', err)
       setError(err.message || 'An unexpected error occurred while saving.')
@@ -842,11 +765,49 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               <h3 className="text-sm font-bold text-slate-800">
                 {isEditing ? 'Article Updated Successfully!' : 'Article Created Successfully!'}
               </h3>
+              {publishNote && (
+                <p className="text-xs text-emerald-700 font-bold max-w-md mx-auto">{publishNote}</p>
+              )}
               <p className="text-xs text-slate-400 font-semibold">Redirecting you to the Editorial Dashboard...</p>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Destination website — decides where "Published" actually sends this post */}
+            <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#C9A84C]/5 p-4 space-y-2">
+              <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/50">
+                Publish To Website
+              </label>
+              <select
+                value={siteKey}
+                onChange={(e) => setSiteKey(e.target.value)}
+                disabled={isEditing}
+                className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-bold px-4 py-3 rounded-xl outline-none transition-all text-[#0D1B2A] shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {sites.map((site) => (
+                  <option key={site.key} value={site.key}>
+                    {site.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[10px] text-[#0D1B2A]/50 font-semibold leading-relaxed">
+                {isEditing
+                  ? 'A post stays on the website it was created for.'
+                  : targetSite.target === 'github'
+                    ? `Choosing the "Published" stage pushes this article to ${targetSite.name} as a markdown file, refreshes its sitemap and blog listing, and redeploys that site.`
+                    : 'This article will be served straight from this CMS.'}
+              </p>
+              {isEditing && initialPost?.externalStatus && (
+                <p
+                  className={`text-[10px] font-bold ${
+                    initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
+                  }`}
+                >
+                  Last publish: {initialPost.externalStatus} — {initialPost.externalMessage}
+                </p>
+              )}
+            </div>
+
             {/* Title & Slug */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">

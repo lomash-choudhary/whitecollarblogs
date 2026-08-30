@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
+import { DEFAULT_SITE_KEY, siteWhere } from '@/config/sites'
 import ShareBar from '@/components/ShareBar'
 import { Metadata } from 'next'
 
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const payload = await getPayload({ config })
     const postsResult = await payload.find({
       collection: 'posts',
-      where: { slug: { equals: slug } },
+      where: { and: [{ slug: { equals: slug } }, siteWhere(DEFAULT_SITE_KEY)] },
       depth: 1,
       overrideAccess: true,
     })
@@ -310,7 +311,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     const payload = await getPayload({ config })
     const postsResult = await payload.find({
       collection: 'posts',
-      where: { slug: { equals: slug } },
+      where: { and: [{ slug: { equals: slug } }, siteWhere(DEFAULT_SITE_KEY)] },
       depth: 1,
       overrideAccess: true,
     })
@@ -329,6 +330,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     // Fetch up to 10 posts, then filter down to 4 matching "published" and excluding the current one
     const moreReadsResult = await payload.find({
       collection: 'posts',
+      where: siteWhere(DEFAULT_SITE_KEY),
       limit: 10,
       depth: 1,
       overrideAccess: true,

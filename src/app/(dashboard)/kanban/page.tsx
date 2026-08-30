@@ -2,9 +2,11 @@ import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { KanbanBoard } from '@/components/KanbanBoard'
+import { getActiveSite, siteWhere } from '@/utils/activeSite'
 
 
 export default async function KanbanPage() {
+  const activeSite = await getActiveSite()
   let posts: any[] = []
   let stages: any[] = []
 
@@ -24,6 +26,7 @@ export default async function KanbanPage() {
     // Fetch posts
     const postsResult = await payload.find({
       collection: 'posts',
+      where: siteWhere(activeSite.key),
       limit: 100,
       depth: 1,
     })

@@ -1,6 +1,7 @@
 import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { getActiveSite, siteWhere } from '@/utils/activeSite'
 import { 
   Eye, 
   Heart, 
@@ -28,8 +29,10 @@ export default async function AnalyticsPage() {
 
   try {
     const payload = await getPayload({ config })
+    const activeSite = await getActiveSite()
     const postsResult = await payload.find({
       collection: 'posts',
+      where: siteWhere(activeSite.key),
       limit: 100,
       depth: 2,
     })

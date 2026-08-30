@@ -10,6 +10,7 @@ import {
   BarChart3, 
   Users2
 } from 'lucide-react'
+import { SiteSwitcher } from './SiteSwitcher'
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname()
@@ -41,6 +42,9 @@ export const Sidebar: React.FC = () => {
           </span>
         </Link>
       </div>
+
+      {/* Active website selector — scopes every screen below it */}
+      <SiteSwitcher />
 
       {/* Navigation Links */}
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">

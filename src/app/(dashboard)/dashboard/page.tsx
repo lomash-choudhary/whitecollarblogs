@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { getActiveSite, siteWhere } from '@/utils/activeSite'
 import { 
   CheckCircle2, 
   Users, 
@@ -12,6 +13,7 @@ import {
 
 
 export default async function DashboardPage() {
+  const activeSite = await getActiveSite()
   let posts: any[] = []
   let stats = {
     total: 0,
@@ -25,6 +27,7 @@ export default async function DashboardPage() {
     const payload = await getPayload({ config })
     const postsResult = await payload.find({
       collection: 'posts',
+      where: siteWhere(activeSite.key),
       limit: 10,
       depth: 1,
     })

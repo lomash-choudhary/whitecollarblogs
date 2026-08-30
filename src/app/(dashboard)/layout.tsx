@@ -5,6 +5,9 @@ import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { redirect } from 'next/navigation'
+import { SiteProvider } from '@/context/SiteContext'
+import { publicSites } from '@/config/sites'
+import { getActiveSite } from '@/utils/activeSite'
 import { Inter } from 'next/font/google'
 import '../globals.css'
 
@@ -32,24 +35,28 @@ export default async function AppLayout({
     redirect('/login')
   }
 
+  const activeSite = await getActiveSite()
+
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#f8fafc] text-[#0f172a] font-sans flex flex-col">
-        <div className="min-h-screen flex bg-slate-50/50">
-          {/* Fixed Navigation Sidebar */}
-          <Sidebar />
+        <SiteProvider sites={publicSites()} initialSiteKey={activeSite.key}>
+          <div className="min-h-screen flex bg-slate-50/50">
+            {/* Fixed Navigation Sidebar */}
+            <Sidebar />
 
-          {/* Main Workspace Area */}
-          <div className="flex-1 ml-64 flex flex-col min-h-screen">
-            {/* Sticky Header */}
-            <Header />
+            {/* Main Workspace Area */}
+            <div className="flex-1 ml-64 flex flex-col min-h-screen">
+              {/* Sticky Header */}
+              <Header />
 
-            {/* Dynamic Page Views */}
-            <main className="flex-1 p-8 overflow-y-auto max-w-7xl w-full mx-auto">
-              {children}
-            </main>
+              {/* Dynamic Page Views */}
+              <main className="flex-1 p-8 overflow-y-auto max-w-7xl w-full mx-auto">
+                {children}
+              </main>
+            </div>
           </div>
-        </div>
+        </SiteProvider>
       </body>
     </html>
   )

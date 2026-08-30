@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
+import { DEFAULT_SITE_KEY, siteWhere } from '@/config/sites'
 
 interface PageProps {
   searchParams: Promise<{
@@ -25,8 +26,11 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
 
   try {
     const payload = await getPayload({ config })
+    // Only posts that belong to this CMS itself — posts written for other
+    // websites live in those repos, not on this domain.
     const postsResult = await payload.find({
       collection: 'posts',
+      where: siteWhere(DEFAULT_SITE_KEY),
       limit: 100,
       depth: 1,
     })

@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: wcb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payload
+    ports:
+      - "5432:5432"
+    volumes:
+      - wcb_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d payload"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wcb_pgdata:
