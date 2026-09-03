@@ -54,6 +54,9 @@ export async function POST(request: Request) {
       // Signatures expire after five minutes; a little slack absorbs ordinary
       // clock drift between QStash and the serverless host.
       clockTolerance: 5,
+      // Tells the SDK which region's signing keys to use. Harmless on a
+      // single-region setup, required once QSTASH_REGION is in play.
+      upstashRegion: request.headers.get('Upstash-Region') ?? undefined,
     })
     if (!valid) {
       return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 })
