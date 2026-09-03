@@ -78,6 +78,12 @@ const STATEMENTS = [
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS last_dispatched_at timestamp(3) with time zone`,
   `UPDATE public.posts SET site = 'wcb' WHERE site IS NULL`,
   `CREATE INDEX IF NOT EXISTS posts_site_key_idx ON public.posts (site)`,
+  // Scheduled publishing via QStash.
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS scheduled_for timestamp(3) with time zone`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message_id varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_status varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message varchar`,
+  `CREATE INDEX IF NOT EXISTS posts_scheduled_for_idx ON public.posts (scheduled_for)`,
 ]
 
 const client = new pg.Client({

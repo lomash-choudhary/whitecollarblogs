@@ -7,6 +7,7 @@ import {
   Check, 
   Clock, 
   Image as ImageIcon,
+  CalendarClock,
   Loader2,  
   Send,
   Upload,
@@ -58,6 +59,9 @@ interface BlogEditorProps {
     externalStatus?: string
     externalMessage?: string
     externalUrl?: string
+    scheduledFor?: string
+    scheduleStatus?: string
+    scheduleMessage?: string
   } | null
 }
 
@@ -622,6 +626,22 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
   const [selectedAuthor, setSelectedAuthor] = useState(initialPost?.author || authors[0]?.id || '')
   const [selectedStage, setSelectedStage] = useState(initialPost?.stage || stages[stages.length - 1]?.id || '')
+
+  // <input type="datetime-local"> speaks local wall-clock time with no zone,
+  // so it has to be converted to and from the UTC instant we store.
+  const toLocalInputValue = (iso?: string) => {
+    if (!iso) return ''
+    const date = new Date(iso)
+    if (Number.isNaN(date.getTime())) return ''
+    const offsetMs = date.getTimezoneOffset() * 60_000
+    return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16)
+  }
+
+  const [scheduledFor, setScheduledFor] = useState(toLocalInputValue(initialPost?.scheduledFor))
+  const isScheduledStage =
+    stages.find((st) => String(st.id) === String(selectedStage))?.key === 'scheduled'
+  // Cannot schedule into the past; give the picker a floor of "now".
+  const earliestSchedule = toLocalInputValue(new Date().toISOString())
   const [coverImageUrl, setCoverImageUrl] = useState(initialPost?.coverImageUrl || '')
   const [uploadedMediaId, setUploadedMediaId] = useState<any | null>(initialPost?.coverImage || null)
   const [isUploading, setIsUploading] = useState(false)
@@ -723,6 +743,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
           readTime,
           author: /^\d+$/.test(String(selectedAuthor)) ? Number(selectedAuthor) : selectedAuthor,
           stage: /^\d+$/.test(String(selectedStage)) ? Number(selectedStage) : selectedStage,
+          scheduledFor:
+            isScheduledStage && scheduledFor ? new Date(scheduledFor).toISOString() : null,
           site: siteKey,
           coverImageUrl: cleanImageUrl(coverImageUrl) || undefined,
           coverImage: uploadedMediaId || undefined,
@@ -965,6 +987,41 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 </select>
               </div>
             </div>
+
+            {/* Only meaningful in the Scheduled stage, so it appears with it. */}
+            {isScheduledStage && (
+              <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#C9A84C]/5 p-4 space-y-2">
+                <label
+                  htmlFor="scheduled-for"
+                  className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/50 flex items-center gap-1.5"
+                >
+                  <CalendarClock className="w-3.5 h-3.5" /> Publish On
+                </label>
+                <input
+                  id="scheduled-for"
+                  type="datetime-local"
+                  required
+                  min={earliestSchedule}
+                  value={scheduledFor}
+                  onChange={(e) => setScheduledFor(e.target.value)}
+                  className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-bold px-4 py-3 rounded-xl outline-none transition-all text-[#0D1B2A] shadow-sm"
+                />
+                <p className="text-[10px] text-[#0D1B2A]/50 font-semibold leading-relaxed">
+                  {scheduledFor
+                    ? `Publishes by itself at ${new Date(scheduledFor).toLocaleString()} (your local time). Change the stage to cancel.`
+                    : 'Pick the date and time this article should go live.'}
+                </p>
+                {isEditing && initialPost?.scheduleStatus && (
+                  <p
+                    className={`text-[10px] font-bold ${
+                      initialPost.scheduleStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
+                    }`}
+                  >
+                    {initialPost.scheduleStatus} — {initialPost.scheduleMessage}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Cover Image Tabbed Selector */}
             <div className="space-y-3">

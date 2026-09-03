@@ -31,6 +31,24 @@ function hasPublishableChange(doc: any, previousDoc: any): boolean {
   })
 }
 
+/** Resolves a stage relationship (id or populated doc) to its key. */
+async function resolveStageKey(stage: unknown, req: any): Promise<string | undefined> {
+  if (!stage) return undefined
+  if (typeof stage === 'object') return (stage as { key?: string }).key
+  try {
+    // `req` keeps this read on the request's own transaction and connection
+    // instead of competing for the small pool.
+    const stageDoc = await req.payload.findByID({
+      collection: 'pipeline-stages',
+      id: stage as string,
+      req,
+    })
+    return (stageDoc as { key?: string })?.key
+  } catch {
+    return undefined
+  }
+}
+
 export const Posts: CollectionConfig = {
   slug: 'posts',
   access: {
@@ -187,6 +205,47 @@ export const Posts: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      // When a post in the "Scheduled" stage should go live. Stored in UTC.
+      name: 'scheduledFor',
+      type: 'date',
+      required: false,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'When a scheduled post should publish itself (UTC).',
+      },
+    },
+    {
+      // QStash message id for the pending publish, so it can be cancelled or
+      // replaced when the schedule moves.
+      name: 'scheduleMessageId',
+      type: 'text',
+      required: false,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'scheduleStatus',
+      type: 'text',
+      required: false,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'idle | scheduled | cancelled | failed | published',
+      },
+    },
+    {
+      name: 'scheduleMessage',
+      type: 'textarea',
+      required: false,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
   ],
   hooks: {
     beforeValidate: [
@@ -197,6 +256,73 @@ export const Posts: CollectionConfig = {
       },
     ],
     afterChange: [
+      async ({ doc, previousDoc, req, context, operation }) => {
+        // Skip the bookkeeping update this hook makes about itself.
+        if (context?.skipScheduleSync) return doc
+
+        const post = doc as any
+        const stageKey = await resolveStageKey(post.stage, req)
+        const wantsSchedule = stageKey === 'scheduled' && Boolean(post.scheduledFor)
+
+        // The common case by far — an ordinary save of a post that has nothing
+        // to do with scheduling. Leave before spending another query on it.
+        if (!wantsSchedule && !post.scheduleMessageId) return doc
+
+        const previousStageKey =
+          operation === 'update' && previousDoc
+            ? await resolveStageKey((previousDoc as any).stage, req)
+            : undefined
+        const scheduleUnchanged =
+          previousStageKey === 'scheduled' &&
+          String((previousDoc as any)?.scheduledFor ?? '') === String(post.scheduledFor ?? '') &&
+          Boolean(post.scheduleMessageId)
+
+        // Still queued for the same moment, so the existing message stands.
+        if (wantsSchedule && scheduleUnchanged) return doc
+
+        const { schedulePublish, cancelScheduledPublish } = await import('../lib/scheduler')
+
+        // Any pending delivery is now stale, whether we are rescheduling or
+        // unscheduling. Drop it before queueing anything new.
+        const cancelled = await cancelScheduledPublish(post.scheduleMessageId)
+
+        let data: Record<string, unknown>
+        if (wantsSchedule) {
+          const result = await schedulePublish(post.id, new Date(post.scheduledFor))
+          data = {
+            scheduleMessageId: result.messageId ?? null,
+            scheduleStatus: result.status === 'scheduled' ? 'scheduled' : 'failed',
+            scheduleMessage: result.message,
+          }
+          req.payload.logger.info(
+            `[schedule] "${post.slug}" -> ${result.status}: ${result.message}`,
+          )
+        } else {
+          data = {
+            scheduleMessageId: null,
+            scheduleStatus: cancelled.ok ? 'cancelled' : 'failed',
+            scheduleMessage: cancelled.message,
+          }
+          req.payload.logger.info(`[schedule] "${post.slug}" unscheduled: ${cancelled.message}`)
+        }
+
+        try {
+          await req.payload.update({
+            collection: 'posts',
+            id: post.id,
+            data,
+            // Same transaction as the save that triggered this, otherwise a
+            // second connection deadlocks on the row lock already held here.
+            req,
+            context: { ...(context ?? {}), skipScheduleSync: true },
+            depth: 0,
+          })
+        } catch (err) {
+          req.payload.logger.error(`[schedule] could not record schedule state: ${err}`)
+        }
+
+        return doc
+      },
       async ({ doc, previousDoc, req, context, operation }) => {
         // Guard against the recursive update we do below to store the result.
         if (context?.skipExternalPublish) return doc
@@ -210,26 +336,7 @@ export const Posts: CollectionConfig = {
           return doc
         }
 
-        // Resolve the stage relationship to its key (it may be an id or a doc).
-        let stageKey: string | undefined
-        const stage = (doc as any).stage
-        if (stage && typeof stage === 'object') {
-          stageKey = stage.key
-        } else if (stage) {
-          try {
-            // `req` keeps these reads on the request's own transaction and
-            // connection instead of competing for the small pool.
-            const stageDoc = await req.payload.findByID({
-              collection: 'pipeline-stages',
-              id: stage,
-              req,
-            })
-            stageKey = (stageDoc as any)?.key
-          } catch {
-            stageKey = undefined
-          }
-        }
-
+        const stageKey = await resolveStageKey((doc as any).stage, req)
         if (stageKey !== 'published') return doc
 
         // Author is needed for the byline in the generated markdown.

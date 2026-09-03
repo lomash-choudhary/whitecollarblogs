@@ -47,3 +47,8 @@ next-env.d.ts
 
 # local sqlite leftover (the app runs on Postgres)
 payload.db
+
+# agents skills
+.agents
+skills-lock.json
+

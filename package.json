@@ -15,6 +15,7 @@
     "@payloadcms/next": "^3.84.1",
     "@payloadcms/richtext-lexical": "^3.84.1",
     "@payloadcms/storage-s3": "^3.84.1",
+    "@upstash/qstash": "^2.11.3",
     "bcryptjs": "^3.0.3",
     "graphql": "^16.14.0",
     "lucide-react": "^1.16.0",

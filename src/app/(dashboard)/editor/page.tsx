@@ -69,6 +69,9 @@ export default async function EditorPage({ searchParams }: PageProps) {
             externalStatus: (postDoc as any).externalStatus || undefined,
             externalMessage: (postDoc as any).externalMessage || undefined,
             externalUrl: (postDoc as any).externalUrl || undefined,
+            scheduledFor: (postDoc as any).scheduledFor || undefined,
+            scheduleStatus: (postDoc as any).scheduleStatus || undefined,
+            scheduleMessage: (postDoc as any).scheduleMessage || undefined,
           }
         }
       } catch (err) {
