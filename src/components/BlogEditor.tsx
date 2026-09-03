@@ -455,9 +455,10 @@ function markdownToLexical(markdown: string): any {
 
 export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initialPost }) => {
   const { sites, activeSite } = useSite()
-  // An existing post keeps the website it was created for; a new post targets
-  // whichever website is selected in the sidebar.
-  const [siteKey, setSiteKey] = useState(initialPost?.site || activeSite.key)
+  // The destination comes from the sidebar switcher, so the form has no picker
+  // for it. A new post targets whichever website is selected there; an existing
+  // post keeps the one it was created for.
+  const siteKey = initialPost?.site || activeSite.key
   const targetSite = sites.find((s) => s.key === siteKey) || activeSite
 
   const router = useRouter()
@@ -613,16 +614,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [targetRole, setTargetRole] = useState(
     initialPost?.targetRole || targetSite.defaultCategory,
   )
-
-  const changeSite = (nextKey: string) => {
-    // Categories are site-specific — "Tips for Painting" means nothing on the
-    // legal blog — so follow the new site unless the writer typed their own.
-    const previous = sites.find((s) => s.key === siteKey)
-    if (!targetRole || targetRole === previous?.defaultCategory) {
-      setTargetRole(sites.find((s) => s.key === nextKey)?.defaultCategory || '')
-    }
-    setSiteKey(nextKey)
-  }
   
   // Derive reading time dynamically from content length to avoid useEffect state updates
   const words = content.trim() ? content.trim().split(/\s+/).length : 0
@@ -811,62 +802,42 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Destination website — decides where "Published" actually sends this post */}
-            <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#C9A84C]/5 p-4 space-y-2">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/50">
-                Publish To Website
-              </label>
-              <select
-                value={siteKey}
-                onChange={(e) => setSiteKey(e.target.value)}
-                disabled={isEditing}
-                className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-bold px-4 py-3 rounded-xl outline-none transition-all text-[#0D1B2A] shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {sites.map((site) => (
-                  <option key={site.key} value={site.key}>
-                    {site.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-[10px] text-[#0D1B2A]/50 font-semibold leading-relaxed">
-                {isEditing
-                  ? 'A post stays on the website it was created for.'
-                  : targetSite.target === 'github'
-                    ? `Choosing the "Published" stage pushes this article to ${targetSite.name} as a markdown file, refreshes its sitemap and blog listing, and redeploys that site.`
-                    : 'This article will be served straight from this CMS.'}
-              </p>
-              {isEditing && initialPost?.externalStatus && (
-                <div className="space-y-2">
-                  <p
-                    className={`text-[10px] font-bold ${
-                      initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
-                    }`}
+            {/* No website picker here — the sidebar switcher decides the
+                destination. This only reports how the last publish went. */}
+            {isEditing && initialPost?.externalStatus && (
+              <div className="rounded-2xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/40 p-4 space-y-2">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/50">
+                  {targetSite.name} publish status
+                </p>
+                <p
+                  className={`text-[11px] font-bold ${
+                    initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
+                  }`}
+                >
+                  {initialPost.externalStatus} — {initialPost.externalMessage}
+                </p>
+
+                {initialPost.externalStatus === 'failed' && (
+                  <button
+                    type="button"
+                    onClick={retryPublish}
+                    disabled={retrying}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0D1B2A] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#0D1B2A]/90 disabled:opacity-50 transition-colors"
                   >
-                    Last publish: {initialPost.externalStatus} — {initialPost.externalMessage}
-                  </p>
+                    {retrying ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-3 h-3" />
+                    )}
+                    {retrying ? 'Sending…' : 'Retry publish'}
+                  </button>
+                )}
 
-                  {initialPost.externalStatus === 'failed' && (
-                    <button
-                      type="button"
-                      onClick={retryPublish}
-                      disabled={retrying}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0D1B2A] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#0D1B2A]/90 disabled:opacity-50 transition-colors"
-                    >
-                      {retrying ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-3 h-3" />
-                      )}
-                      {retrying ? 'Sending…' : 'Retry publish'}
-                    </button>
-                  )}
-
-                  {retryResult && (
-                    <p className="text-[10px] font-bold text-[#0D1B2A]/70">{retryResult}</p>
-                  )}
-                </div>
-              )}
-            </div>
+                {retryResult && (
+                  <p className="text-[10px] font-bold text-[#0D1B2A]/70">{retryResult}</p>
+                )}
+              </div>
+            )}
 
             {/* Title & Slug */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
