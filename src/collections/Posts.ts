@@ -210,7 +210,6 @@ export const Posts: CollectionConfig = {
       name: 'scheduledFor',
       type: 'date',
       required: false,
-      index: true,
       admin: {
         position: 'sidebar',
         description: 'When a scheduled post should publish itself (UTC).',

@@ -83,7 +83,6 @@ const STATEMENTS = [
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message_id varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_status varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message varchar`,
-  `CREATE INDEX IF NOT EXISTS posts_scheduled_for_idx ON public.posts (scheduled_for)`,
 ]
 
 const client = new pg.Client({
