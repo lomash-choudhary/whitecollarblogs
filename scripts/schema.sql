@@ -102,6 +102,7 @@ ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.id;
 CREATE TABLE public.media (
     id integer NOT NULL,
     alt character varying,
+    prefix character varying,
     updated_at timestamp(3) with time zone DEFAULT now() NOT NULL,
     created_at timestamp(3) with time zone DEFAULT now() NOT NULL,
     url character varying,

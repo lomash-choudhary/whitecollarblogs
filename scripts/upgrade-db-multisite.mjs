@@ -83,6 +83,12 @@ const STATEMENTS = [
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message_id varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_status varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS schedule_message varchar`,
+  // s3Storage() is configured with a `prefix`, and the cloud-storage plugin
+  // then adds a hidden `prefix` field to the media collection. Payload selects
+  // it on every media query, so without this column *reading or writing any
+  // media row* fails — an upload surfaces only as "There was a problem while
+  // uploading the file."
+  `ALTER TABLE public.media ADD COLUMN IF NOT EXISTS prefix varchar`,
 ]
 
 const client = new pg.Client({
