@@ -25,7 +25,12 @@ function anchorId(title: string): string {
 
 /* ─────────────────────────────── Inline ─────────────────────────────────── */
 
-export function renderTextNode(node: any, index: number): React.ReactNode {
+/**
+ * `isDark` is the surrounding panel, not a theme. Every mark that paints
+ * itself navy — inline code, bold, strikethrough — is invisible inside the
+ * navy takeaways box, so the box asks for the dark set instead.
+ */
+export function renderTextNode(node: any, index: number, isDark = false): React.ReactNode {
   if (!node) return null
 
   if (node.type === 'link') {
@@ -43,7 +48,7 @@ export function renderTextNode(node: any, index: number): React.ReactNode {
       className: 'text-[#C9A84C] hover:underline font-semibold',
     }
 
-    const children = node.children?.map((c: any, i: number) => renderTextNode(c, i))
+    const children = node.children?.map((c: any, i: number) => renderTextNode(c, i, isDark))
 
     if (url.startsWith('/') || url.startsWith('#')) {
       return (
@@ -95,21 +100,30 @@ export function renderTextNode(node: any, index: number): React.ReactNode {
   let element: React.ReactNode = text
   if ((format & 16) !== 0)
     element = (
-      <code className="bg-[#0D1B2A]/6 text-[#0D1B2A] px-1.5 py-0.5 rounded text-[0.9em] font-mono">
+      <code
+        className={`px-1.5 py-0.5 rounded text-[0.9em] font-mono ${
+          isDark ? 'bg-white/15 text-white' : 'bg-[#0D1B2A]/6 text-[#0D1B2A]'
+        }`}
+      >
         {element}
       </code>
     )
-  if ((format & 1) !== 0) element = <strong className="font-bold text-[#0D1B2A]">{element}</strong>
+  if ((format & 1) !== 0)
+    element = <strong className={isDark ? 'font-bold text-white' : 'font-bold text-[#0D1B2A]'}>{element}</strong>
   if ((format & 2) !== 0) element = <em className="italic">{element}</em>
   if ((format & 4) !== 0)
-    element = <span className="line-through text-[#0D1B2A]/40">{element}</span>
+    element = (
+      <span className={isDark ? 'line-through text-white/50' : 'line-through text-[#0D1B2A]/40'}>
+        {element}
+      </span>
+    )
   if ((format & 8) !== 0) element = <span className="underline">{element}</span>
 
   return <React.Fragment key={index}>{element}</React.Fragment>
 }
 
-function renderInline(nodes: any[]): React.ReactNode {
-  return (nodes || []).map((c: any, i: number) => renderTextNode(c, i))
+function renderInline(nodes: any[], isDark = false): React.ReactNode {
+  return (nodes || []).map((c: any, i: number) => renderTextNode(c, i, isDark))
 }
 
 /* ─────────────────────────────── Callouts ───────────────────────────────── */
@@ -217,7 +231,7 @@ function Takeaways({ node, index }: { node: any; index: number }) {
 
       {(node.intro || []).map((run: any[], i: number) => (
         <p key={i} className="text-white/75 leading-relaxed mb-4 font-body">
-          {renderInline(run)}
+          {renderInline(run, true)}
         </p>
       ))}
 
@@ -239,7 +253,7 @@ function Takeaways({ node, index }: { node: any; index: number }) {
               <path d="m9 12 2 2 4-4" />
               <circle cx="12" cy="12" r="9" />
             </svg>
-            <span>{renderInline(run)}</span>
+            <span>{renderInline(run, true)}</span>
           </li>
         ))}
       </ul>
