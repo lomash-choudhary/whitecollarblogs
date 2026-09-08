@@ -745,12 +745,23 @@ function itemMatch(line: string): { ordered: boolean; text: string; start: numbe
  * A change of marker type at the SAME level ends the list, so a bullet run
  * followed by a numbered run renders as two lists rather than one with a
  * confused appearance.
+ *
+ * An item may be soft-wrapped over several lines. The continuation joins the
+ * item it sits under, exactly as a soft-wrapped paragraph joins its first line
+ * — without that, a wrapped bullet ended the list, became a paragraph of its
+ * own and left the bullets after it in a SECOND list. Inside `## Key
+ * Takeaways` the stray paragraph was collected as the box's intro, so half a
+ * sentence appeared above the bullets. Continuation text is gathered as raw
+ * markdown and parsed once the whole item is known, so emphasis may span the
+ * wrap.
  */
 function parseList(cursor: Cursor, depth = 0): ListBlock {
   const first = itemMatch(cursor.lines[cursor.i].trim())
   const ordered = Boolean(first?.ordered)
   const start = ordered && first ? Math.max(1, first.start) : 1
   const items: ListItem[] = []
+  /** Raw markdown of each item, index-aligned with `items`. */
+  const texts: string[] = []
 
   while (cursor.i < cursor.lines.length) {
     const raw = cursor.lines[cursor.i]
@@ -766,7 +777,21 @@ function parseList(cursor: Cursor, depth = 0): ListBlock {
     }
 
     const match = itemMatch(line)
-    if (!match) break
+    if (!match) {
+      // Lazy continuation of the item above. A line that opens a block of its
+      // own (a heading, a fence, a table row) still ends the list, the same
+      // test a paragraph and a blockquote use.
+      //
+      // Nesting is handled by recursion rather than by indentation here: the
+      // deepest open list is the one still reading lines, so a wrap under a
+      // nested item joins that item and not its parent.
+      if (!texts.length || isBlockStart(line)) break
+      const previous = texts[texts.length - 1]
+      texts[texts.length - 1] =
+        previous + (previous.endsWith('\n') ? '' : ' ') + stripBreakMarker(line) + hardBreak(raw)
+      cursor.i++
+      continue
+    }
 
     const indent = raw.length - raw.trimStart().length
     if (indent < depth) break
@@ -779,9 +804,16 @@ function parseList(cursor: Cursor, depth = 0): ListBlock {
 
     if (match.ordered !== ordered) break
 
-    items.push({ children: parseInline(match.text) })
+    items.push({ children: [] })
+    texts.push(stripBreakMarker(match.text) + hardBreak(raw))
     cursor.i++
   }
+
+  // Parsed at the end because an item's text is only complete once its
+  // continuation lines have been read.
+  items.forEach((item, index) => {
+    item.children = parseInline(texts[index])
+  })
 
   return { type: 'list', ordered, start, items }
 }

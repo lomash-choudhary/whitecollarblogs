@@ -19,10 +19,47 @@ const FORMAT_STRIKETHROUGH = 4
 const FORMAT_UNDERLINE = 8
 const FORMAT_CODE = 16
 
+/**
+ * Punctuation that `parseInline` treats as markup, so a literal one in the
+ * text has to leave here with a backslash in front of it.
+ *
+ * The backslash itself is in the set and the class is applied in one pass, so
+ * an already-escaped `\*` cannot be double-escaped into `\\*` (a literal
+ * backslash followed by real emphasis).
+ *
+ * Without this, `\*not italic\*` typed by a writer parsed correctly, was
+ * stored as plain text `*not italic*`, and came back out of the editor as real
+ * italic — the escape survived one save and was gone by the next.
+ */
+const INLINE_PUNCTUATION = /[\\`*_~[\]<]/g
+
+/** A line that would open a block if it were written back unescaped. */
+const LEADING_BLOCK_MARKER = /^(\s*)(#{1,6}\s|[-*+]\s|\d{1,9}[.)]\s|>|:::|\||-{3,}\s*$)/
+
+/** Escapes markup punctuation in text the writer meant literally. */
+function escapeInline(text: string): string {
+  return text.replace(INLINE_PUNCTUATION, '\\$&')
+}
+
+/**
+ * Escapes a line that starts with a block marker — `# `, `- `, `1. `, `>`,
+ * `:::`, `|`, `---`. Inline escaping does not cover these: they are only
+ * special at the start of a line, and `-` and `#` are ordinary characters
+ * everywhere else.
+ */
+function escapeBlockStarts(markdown: string): string {
+  return markdown
+    .split('\n')
+    .map((line) => line.replace(LEADING_BLOCK_MARKER, (_all, indent, marker) => `${indent}\\${marker}`))
+    .join('\n')
+}
+
 export function renderLeafToMarkdown(leaf: any): string {
   if (!leaf || typeof leaf.text !== 'string' || !leaf.text) return ''
-  let text = leaf.text
   const format = leaf.format || 0
+  // Inline code is literal to the parser, so escaping inside it would show the
+  // backslashes to the reader.
+  let text = (format & FORMAT_CODE) !== 0 ? leaf.text : escapeInline(leaf.text)
 
   // Innermost first: `code` wraps the bare text, emphasis wraps that.
   if ((format & FORMAT_CODE) !== 0) text = `\`${text}\``
@@ -93,7 +130,10 @@ function serializeBlock(node: any, depth = 0): string {
 
   switch (node.type) {
     case 'paragraph':
-      return `${serializeInlineNodes(node.children)}\n\n`
+      // A paragraph is the only block whose text sits at the start of a line
+      // with nothing in front of it, so it is the only one that can be read
+      // back as a heading, a bullet or a divider.
+      return `${escapeBlockStarts(serializeInlineNodes(node.children))}\n\n`
 
     case 'heading': {
       const level = Math.min(6, Math.max(1, parseInt(String(node.tag || 'h3').slice(1), 10) || 3))
