@@ -22,10 +22,18 @@ import {
   List,
   ListOrdered,
   Table,
-  Paperclip
+  Paperclip,
+  Strikethrough,
+  Minus,
+  SquareCode,
+  Image as ImageIconLucide,
+  ListChecks,
+  Info,
+  HelpCircle
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
+import { markdownToLexical } from '@/utils/markdownToLexical'
 import { useSite } from '@/context/SiteContext'
 
 interface Author {
@@ -65,397 +73,6 @@ interface BlogEditorProps {
   } | null
 }
 
-
-function parseInlineMarkdown(text: string): any[] {
-  const nodes: any[] = []
-  let i = 0
-  const len = text.length
-  
-  let currentPlainText = ''
-  
-  const flushPlainText = () => {
-    if (currentPlainText) {
-      nodes.push({
-        type: 'text',
-        text: currentPlainText,
-        version: 1,
-        format: 0
-      })
-      currentPlainText = ''
-    }
-  }
-  
-  while (i < len) {
-    // Check for inline code
-    if (text[i] === '`') {
-      const closingIdx = text.indexOf('`', i + 1)
-      if (closingIdx !== -1) {
-        flushPlainText()
-        const codeText = text.substring(i + 1, closingIdx)
-        nodes.push({
-          type: 'text',
-          text: codeText,
-          version: 1,
-          format: 16
-        })
-        i = closingIdx + 1
-        continue
-      }
-    }
-
-    // Check for Markdown Image: ![alt](url)
-    if (text.startsWith('![', i)) {
-      const closeBracketIdx = text.indexOf(']', i + 2)
-      if (closeBracketIdx !== -1 && text[closeBracketIdx + 1] === '(') {
-        const closeParenIdx = text.indexOf(')', closeBracketIdx + 2)
-        if (closeParenIdx !== -1) {
-          flushPlainText()
-          const altText = text.substring(i + 2, closeBracketIdx)
-          const url = text.substring(closeBracketIdx + 2, closeParenIdx).trim()
-          
-          const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg)$/) || altText.toLowerCase().startsWith('video')
-          
-          nodes.push({
-            type: isVideo ? 'video' : 'image',
-            version: 1,
-            url,
-            alt: altText
-          })
-          
-          i = closeParenIdx + 1
-          continue
-        }
-      }
-    }
-
-    // Check for Markdown Link: [text](url) or [text](url "title")
-    if (text[i] === '[') {
-      const closeBracketIdx = text.indexOf(']', i + 1)
-      if (closeBracketIdx !== -1 && text[closeBracketIdx + 1] === '(') {
-        const closeParenIdx = text.indexOf(')', closeBracketIdx + 2)
-        if (closeParenIdx !== -1) {
-          flushPlainText()
-          const linkText = text.substring(i + 1, closeBracketIdx)
-          const linkContent = text.substring(closeBracketIdx + 2, closeParenIdx).trim()
-          
-          let url = linkContent
-          let title = ''
-          
-          const titleMatch = linkContent.match(/^([^\s]+)\s+["'](.*?)["']$/)
-          if (titleMatch) {
-            url = titleMatch[1]
-            title = titleMatch[2].trim()
-          }
-          
-          const isNofollow = title.toLowerCase() === 'nofollow'
-          
-          nodes.push({
-            type: 'link',
-            version: 1,
-            fields: {
-              url,
-              newTab: url.startsWith('http'),
-              rel: isNofollow ? ['nofollow'] : []
-            },
-            children: [
-              {
-                type: 'text',
-                text: linkText,
-                version: 1
-              }
-            ]
-          })
-          
-          i = closeParenIdx + 1
-          continue
-        }
-      }
-    }
-    
-    // Check for bold and italic: ***text***
-    if (text.startsWith('***', i)) {
-      const closingIdx = text.indexOf('***', i + 3)
-      if (closingIdx !== -1) {
-        flushPlainText()
-        const innerText = text.substring(i + 3, closingIdx)
-        nodes.push({
-          type: 'text',
-          text: innerText,
-          version: 1,
-          format: 1 | 2
-        })
-        i = closingIdx + 3
-        continue
-      }
-    }
-    
-    // Check for bold: **text**
-    if (text.startsWith('**', i)) {
-      const closingIdx = text.indexOf('**', i + 2)
-      if (closingIdx !== -1) {
-        flushPlainText()
-        const innerText = text.substring(i + 2, closingIdx)
-        nodes.push({
-          type: 'text',
-          text: innerText,
-          version: 1,
-          format: 1
-        })
-        i = closingIdx + 2
-        continue
-      }
-    }
-
-    // Check for underline: __text__
-    if (text.startsWith('__', i)) {
-      const closingIdx = text.indexOf('__', i + 2)
-      if (closingIdx !== -1) {
-        flushPlainText()
-        const innerText = text.substring(i + 2, closingIdx)
-        nodes.push({
-          type: 'text',
-          text: innerText,
-          version: 1,
-          format: 8
-        })
-        i = closingIdx + 2
-        continue
-      }
-    }
-    
-    // Check for italic: *text*
-    if (text[i] === '*') {
-      const closingIdx = text.indexOf('*', i + 1)
-      if (closingIdx !== -1) {
-        flushPlainText()
-        const innerText = text.substring(i + 1, closingIdx)
-        nodes.push({
-          type: 'text',
-          text: innerText,
-          version: 1,
-          format: 2
-        })
-        i = closingIdx + 1
-        continue
-      }
-    }
-    
-    // Just treat the current character as plain text if no formatting token matched
-    currentPlainText += text[i]
-    i++
-  }
-  
-  flushPlainText()
-  
-  if (nodes.length === 0) {
-    nodes.push({ type: 'text', text: '', version: 1, format: 0 })
-  }
-  
-  return nodes
-}
-
-function markdownToLexical(markdown: string): any {
-  if (!markdown) {
-    return {
-      root: {
-        type: 'root',
-        format: '',
-        indent: 0,
-        version: 1,
-        children: []
-      }
-    }
-  }
-
-  const lines = markdown.split(/\r?\n/)
-  const children: any[] = []
-  
-  let currentList: any = null
-
-  const commitList = () => {
-    if (currentList) {
-      children.push(currentList)
-      currentList = null
-    }
-  }
-
-  let i = 0
-  while (i < lines.length) {
-    const line = lines[i]
-    const trimmed = line.trim()
-    
-    if (trimmed === '') {
-      commitList()
-      i++
-      continue
-    }
-
-    // Table (starts with | and has columns separated by |)
-    if (trimmed.startsWith('|')) {
-      commitList()
-      const tableRows: any[] = []
-      
-      while (i < lines.length) {
-        const nextLine = lines[i].trim()
-        if (!nextLine.startsWith('|')) {
-          break
-        }
-        
-        // Skip separator line (like |---|---|)
-        if (nextLine.match(/^\|(?:\s*:?-+:?\s*\|)+$/)) {
-          i++
-          continue
-        }
-        
-        const cells = nextLine.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1)
-        
-        tableRows.push({
-          type: 'tablerow',
-          version: 1,
-          children: cells.map(cellText => ({
-            type: 'tablecell',
-            version: 1,
-            children: parseInlineMarkdown(cellText)
-          }))
-        })
-        
-        i++
-      }
-      
-      if (tableRows.length > 0) {
-        children.push({
-          type: 'table',
-          version: 1,
-          children: tableRows
-        })
-      }
-      continue
-    }
-
-    // Heading
-    if (trimmed.startsWith('#')) {
-      commitList()
-      const match = trimmed.match(/^(#{1,6})\s+(.*)$/)
-      if (match) {
-        const level = match[1].length
-        const headingText = match[2]
-        children.push({
-          type: 'heading',
-          tag: `h${level}`,
-          format: '',
-          indent: 0,
-          version: 1,
-          children: parseInlineMarkdown(headingText)
-        })
-        i++
-        continue
-      }
-    }
-
-    // Blockquote
-    if (trimmed.startsWith('>')) {
-      commitList()
-      const quoteText = trimmed.replace(/^>\s*/, '')
-      children.push({
-        type: 'quote',
-        format: '',
-        indent: 0,
-        version: 1,
-        children: parseInlineMarkdown(quoteText)
-      })
-      i++
-      continue
-    }
-
-    // Unordered list
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-      const listText = trimmed.substring(2)
-      if (!currentList || currentList.listType !== 'bullet') {
-        commitList()
-        currentList = {
-          type: 'list',
-          listType: 'bullet',
-          children: [],
-          version: 1,
-          format: '',
-          indent: 0
-        }
-      }
-      currentList.children.push({
-        type: 'listitem',
-        version: 1,
-        children: parseInlineMarkdown(listText)
-      })
-      i++
-      continue
-    }
-
-    // Ordered list
-    const orderedMatch = trimmed.match(/^(\d+)\.\s+(.*)$/)
-    if (orderedMatch) {
-      const listText = orderedMatch[2]
-      if (!currentList || currentList.listType !== 'number') {
-        commitList()
-        currentList = {
-          type: 'list',
-          listType: 'number',
-          children: [],
-          version: 1,
-          format: '',
-          indent: 0
-        }
-      }
-      currentList.children.push({
-        type: 'listitem',
-        version: 1,
-        children: parseInlineMarkdown(listText)
-      })
-      i++
-      continue
-    }
-
-    // Paragraph
-    commitList()
-    let paraText = trimmed
-    while (i + 1 < lines.length) {
-      const nextLine = lines[i + 1].trim()
-      if (
-        nextLine === '' ||
-        nextLine.startsWith('#') ||
-        nextLine.startsWith('>') ||
-        nextLine.startsWith('- ') ||
-        nextLine.startsWith('* ') ||
-        nextLine.match(/^(\d+)\.\s+/)
-      ) {
-        break
-      }
-      paraText += ' ' + nextLine
-      i++
-    }
-    
-    children.push({
-      type: 'paragraph',
-      format: '',
-      indent: 0,
-      version: 1,
-      children: parseInlineMarkdown(paraText)
-    })
-    
-    i++
-  }
-
-  commitList()
-
-  return {
-    root: {
-      type: 'root',
-      format: '',
-      indent: 0,
-      version: 1,
-      children
-    }
-  }
-}
 
 export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initialPost }) => {
   const { sites, activeSite } = useSite()
@@ -599,6 +216,44 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
       case 'link-nofollow':
         replacement = `[${selectedText || 'link text'}](https://example.com "nofollow")`
         cursorOffset = selectedText ? 0 : 32
+        break
+      case 'strike':
+        replacement = `~~${selectedText || 'struck text'}~~`
+        cursorOffset = selectedText ? 0 : 2
+        break
+      case 'h3':
+        replacement = `\n### ${selectedText || 'Heading 3'}\n`
+        break
+      case 'codeblock':
+        // Fenced, so the whole block survives the save. An indented block or a
+        // bare newline would be read back as an ordinary paragraph.
+        replacement = `\n\`\`\`\n${selectedText || 'code here'}\n\`\`\`\n`
+        break
+      case 'divider':
+        replacement = `\n---\n`
+        break
+      case 'image':
+        replacement = `\n![${selectedText || 'describe the image'}](https://example.com/image.jpg "optional caption")\n`
+        break
+      case 'takeaways':
+        // The heading is the syntax: every site turns "Key Takeaways" plus the
+        // bullets under it into its own styled box.
+        replacement = `\n## Key Takeaways\n\n- ${selectedText || 'First takeaway'}\n- Second takeaway\n- Third takeaway\n`
+        break
+      case 'callout-note':
+        replacement = `\n:::note\n${selectedText || 'Something worth knowing.'}\n:::\n`
+        break
+      case 'callout-tip':
+        replacement = `\n:::tip\n${selectedText || 'A helpful tip.'}\n:::\n`
+        break
+      case 'callout-warning':
+        replacement = `\n:::warning\n${selectedText || 'Something to watch out for.'}\n:::\n`
+        break
+      case 'callout-key':
+        replacement = `\n:::key ${selectedText || 'Key point'}\nWhy it matters.\n:::\n`
+        break
+      case 'faq':
+        replacement = `\n## FAQ\n\n### ${selectedText || 'First question?'}\n\nThe answer.\n\n### Second question?\n\nThe answer.\n`
         break
       default:
         return
@@ -1151,125 +806,225 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 </span>
               </div>
 
-              {/* Formatting Toolbar */}
-              <div className="flex flex-wrap items-center gap-1 p-1.5 bg-slate-50 border border-slate-200/80 rounded-t-xl border-b-0">
-                <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5 mr-1.5">
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('bold')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Bold (**bold**)"
-                  >
-                    <Bold className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('italic')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Italic (*italic*)"
-                  >
-                    <Italic className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('underline')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Underline (__underline__)"
-                  >
-                    <Underline className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('code')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Inline Code (`code`)"
-                  >
-                    <Code className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+              {/* Toolbar and textarea live in one bordered box: a gap between them
+                  reads as two separate controls, and the focus ring has to cover both. */}
+              <div className="rounded-xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/30 shadow-sm overflow-hidden transition-all focus-within:border-[#C9A84C] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#C9A84C]/15">
+                {/* justify-between spreads the groups over the full width instead of
+                    stacking them on the left and wrapping while the right half is empty. */}
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-2 py-1.5 bg-slate-50 border-b border-slate-200/80">
+                  <div className="flex items-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('bold')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Bold (**bold**)"
+                    >
+                      <Bold className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('italic')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Italic (*italic*)"
+                    >
+                      <Italic className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('underline')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Underline (__underline__)"
+                    >
+                      <Underline className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('code')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Inline Code (`code`)"
+                    >
+                      <Code className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('strike')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Strikethrough (~~text~~)"
+                    >
+                      <Strikethrough className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
-                <div className="flex items-center gap-0.5 border-r border-slate-200 pr-1.5 mr-1.5">
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('h1')}
-                    className="px-2 py-1 text-[10px] font-extrabold hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Heading 1 (# Heading)"
-                  >
-                    H1
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('h2')}
-                    className="px-2 py-1 text-[10px] font-extrabold hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Heading 2 (## Heading)"
-                  >
-                    H2
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('quote')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Blockquote (> Quote)"
-                  >
-                    <Quote className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('link')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
-                    title="Insert Follow Link"
-                  >
-                    <Link2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('link-nofollow')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-500 rounded-lg transition-colors cursor-pointer"
-                    title="Insert Nofollow Link (Crawler Ignore)"
-                  >
-                    <Link2 className="w-3.5 h-3.5 text-rose-500/80" />
-                  </button>
-                </div>
+                  <div className="flex items-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('h1')}
+                      className="px-2 py-1 text-[10px] font-extrabold hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Heading 1 (# Heading)"
+                    >
+                      H1
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('h2')}
+                      className="px-2 py-1 text-[10px] font-extrabold hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Heading 2 (## Heading)"
+                    >
+                      H2
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('h3')}
+                      className="px-2 py-1 text-[10px] font-extrabold hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Heading 3 (### Heading)"
+                    >
+                      H3
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('quote')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Blockquote (> Quote)"
+                    >
+                      <Quote className="w-3.5 h-3.5" />
+                    </button>
+                    <span aria-hidden className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('link')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Insert Follow Link"
+                    >
+                      <Link2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('link-nofollow')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-500 rounded-lg transition-colors cursor-pointer"
+                      title="Insert Nofollow Link (Crawler Ignore)"
+                    >
+                      <Link2 className="w-3.5 h-3.5 text-rose-500/80" />
+                    </button>
+                  </div>
 
-                <div className="flex items-center gap-0.5">
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('ul')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Bullet List (- Item)"
-                  >
-                    <List className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('ol')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
-                    title="Numbered List (1. Item)"
-                  >
-                    <ListOrdered className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyFormatting('table')}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
-                    title="Insert Table"
-                  >
-                    <Table className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={triggerFileUpload}
-                    className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer border-l border-slate-200 pl-1.5 ml-0.5"
-                    title="Upload & Insert File"
-                  >
-                    <Paperclip className="w-3.5 h-3.5" />
-                  </button>
-                  {isMediaUploading && (
-                    <span className="text-[10px] text-amber-600 font-bold flex items-center gap-1 ml-2 animate-pulse">
-                      <Loader2 className="w-3 h-3 animate-spin" /> Uploading file...
+                  <div className="flex items-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('ul')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Bullet List (- Item)"
+                    >
+                      <List className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('ol')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Numbered List (1. Item)"
+                    >
+                      <ListOrdered className="w-3.5 h-3.5" />
+                    </button>
+                    <span aria-hidden className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('table')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Insert Table"
+                    >
+                      <Table className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('codeblock')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Code Block (```)"
+                    >
+                      <SquareCode className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('image')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Insert Image by URL"
+                    >
+                      <ImageIconLucide className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyFormatting('divider')}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Horizontal Rule (---)"
+                    >
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span aria-hidden className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
+                    <span className="flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => applyFormatting('takeaways')}
+                        className="p-1.5 hover:bg-[#C9A84C]/20 text-[#0D1B2A] rounded-lg transition-colors cursor-pointer"
+                        title="Key Takeaways box (## Key Takeaways + bullets)"
+                      >
+                        <ListChecks className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormatting('callout-key')}
+                        className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                        title="Key point callout (:::key)"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormatting('callout-tip')}
+                        className="p-1.5 hover:bg-emerald-100 text-emerald-700 rounded-lg transition-colors cursor-pointer"
+                        title="Tip callout (:::tip)"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormatting('callout-warning')}
+                        className="p-1.5 hover:bg-amber-100 text-amber-700 rounded-lg transition-colors cursor-pointer"
+                        title="Warning callout (:::warning)"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormatting('faq')}
+                        className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                        title="FAQ section (## FAQ + ### questions)"
+                      >
+                        <HelpCircle className="w-3.5 h-3.5" />
+                      </button>
                     </span>
-                  )}
+                    <span aria-hidden className="w-px h-5 bg-slate-200 shrink-0 mx-1" />
+                    <button
+                      type="button"
+                      onClick={triggerFileUpload}
+                      className="p-1.5 hover:bg-slate-200/70 text-slate-600 rounded-lg transition-colors cursor-pointer"
+                      title="Upload & Insert File"
+                    >
+                      <Paperclip className="w-3.5 h-3.5" />
+                    </button>
+                    {isMediaUploading && (
+                      <span className="text-[10px] text-amber-600 font-bold flex items-center gap-1 ml-2 animate-pulse">
+                        <Loader2 className="w-3 h-3 animate-spin" /> Uploading file...
+                      </span>
+                    )}
+                  </div>
                 </div>
+                <textarea
+                  ref={contentRef}
+                  required
+                  rows={10}
+                  placeholder="Write your beautiful markdown-formatted post here..."
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="w-full bg-transparent border-0 text-xs font-semibold p-4 outline-none focus:ring-0 text-[#0D1B2A] leading-relaxed resize-y block"
+                />
               </div>
 
               <input
@@ -1279,20 +1034,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 className="hidden"
                 accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               />
-
-              <textarea 
-                ref={contentRef}
-                required
-                rows={10}
-                placeholder="Write your beautiful markdown-formatted post here..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full bg-[#F5F0E8]/30 border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:bg-white focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold p-4 rounded-b-xl outline-none transition-all text-[#0D1B2A] shadow-sm leading-relaxed border-t-0"
-              />
               
               <div className="flex justify-between items-center px-1">
                 <span className="text-[9px] text-[#0D1B2A]/40 font-semibold">
-                  Supports markdown formatting (*italic*, **bold**, __underline__, `# heading`, &gt; quote).
+                  Markdown: **bold** *italic* __underline__ ~~strike~~ `code` &bull; # heading &bull; &gt; quote &bull; - list &bull; | table | &bull; ``` code block &bull; --- rule &bull; ![alt](url) &bull; ## Key Takeaways &bull; :::tip :::warning :::key &bull; ## FAQ. Every one of these renders on all four websites.
                 </span>
               </div>
             </div>

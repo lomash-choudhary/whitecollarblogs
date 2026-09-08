@@ -52,3 +52,6 @@ payload.db
 .agents
 skills-lock.json
 
+./AGENTS.md
+./CLAUDE.md
+./memory.md

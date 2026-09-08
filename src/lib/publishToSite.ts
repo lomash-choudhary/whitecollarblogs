@@ -9,8 +9,9 @@
  * generated from that content folder, so both update on their own.
  */
 
-import { getSite, type SiteConfig } from '@/config/sites'
+import { DISPATCH_EVENT_TYPE, getSite, missingSiteEnv, type SiteConfig } from '@/config/sites'
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
+import { firstParagraphText, parseMarkdownBlocks } from './markdownBlocks'
 import { buildMarkdownFile, slugify, type Frontmatter } from './markdownFile'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
@@ -33,12 +34,15 @@ function formatPublishDate(value: any): string {
   })
 }
 
+/**
+ * First real paragraph of the article, for the excerpt and meta description.
+ *
+ * Parsed rather than pattern-matched on raw lines: a post that opens with a
+ * code fence, a callout or a Key Takeaways box has no line the old prefix
+ * checks recognised, so the excerpt came out as a stray ":::" or a bare "```".
+ */
 function firstParagraph(markdown: string): string {
-  const para = markdown
-    .split('\n\n')
-    .map((block) => block.trim())
-    .find((block) => block && !block.startsWith('#') && !block.startsWith('|') && !block.startsWith('!['))
-  return para ? para.replace(/\s+/g, ' ').slice(0, 300) : ''
+  return firstParagraphText(parseMarkdownBlocks(markdown)).slice(0, 300)
 }
 
 /**
@@ -90,18 +94,25 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
     return { ok: true, status: 'skipped', message: `"${site.name}" is served by this CMS directly — nothing to dispatch.` }
   }
 
-  const token = process.env[site.github.tokenEnv]
-  if (!token) {
+  // Repo coordinates and the token all come from this site's env vars, so one
+  // check covers them: without them there is nowhere to send the article.
+  const missing = missingSiteEnv(site)
+  if (missing.length > 0) {
     return {
       ok: false,
       status: 'failed',
-      message: `Missing ${site.github.tokenEnv} env var — cannot reach the ${site.name} repository.`,
+      message: `${site.name} is not configured yet — set ${missing.join(
+        ', ',
+      )} in this app's environment, then publish again. The post itself is saved.`,
     }
   }
 
+  const token = process.env[site.github.tokenEnv] as string
   const { fileName, content } = buildPostMarkdown(post, site, author)
-  const { owner, repo, branch, eventType } = site.github
-  const liveUrl = `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${fileName.replace(/\.md$/, '')}`
+  const { owner, repo } = site.github
+  const liveUrl = site.baseUrl
+    ? `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${fileName.replace(/\.md$/, '')}`
+    : undefined
 
   try {
     // This call happens inside the save transaction, so it must not hang and
@@ -117,12 +128,13 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
         'User-Agent': 'whitecollarblogs-cms',
       },
       body: JSON.stringify({
-        event_type: eventType,
+        event_type: DISPATCH_EVENT_TYPE,
         client_payload: {
           slug: fileName.replace(/\.md$/, ''),
           file_name: fileName,
           title: String(post.title || ''),
-          branch,
+          // No branch: the workflow runs on, and commits to, the receiving
+          // repo's default branch whatever we send.
           // base64 keeps the markdown byte-identical through JSON + shell.
           content_base64: Buffer.from(content, 'utf8').toString('base64'),
         },
