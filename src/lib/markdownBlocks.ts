@@ -45,18 +45,12 @@ export interface InlineLink {
   children: InlineText[]
 }
 
-export interface InlineImage {
-  type: 'image'
-  url: string
-  alt: string
-}
-
 /** A hard line break: a line ended with two spaces or a backslash. */
 export interface InlineBreak {
   type: 'break'
 }
 
-export type Inline = InlineText | InlineLink | InlineImage | InlineBreak
+export type Inline = InlineText | InlineLink | InlineBreak
 
 /* ─────────────────────────────── Blocks ─────────────────────────────────── */
 
@@ -192,11 +186,11 @@ function pushText(nodes: Inline[], text: string, marks: Partial<InlineText>): vo
  * Parses one line of inline markdown.
  *
  * Order matters: inline code wins over everything (its contents are literal),
- * then images before links because `![` starts with `[`, then the longest
- * emphasis delimiter first so `***x***` is not read as `**` followed by a
- * stray `*`. `__` is UNDERLINE here, not bold — that is the convention the CMS
- * editor and its serializer have always used, and changing it would silently
- * reformat every article already published.
+ * then the image syntax before links because `![` starts with `[`, then the
+ * longest emphasis delimiter first so `***x***` is not read as `**` followed
+ * by a stray `*`. `__` is UNDERLINE here, not bold — that is the convention
+ * the CMS editor and its serializer have always used, and changing it would
+ * silently reformat every article already published.
  */
 export function parseInline(
   input: string,
@@ -285,12 +279,17 @@ export function parseInline(
       }
     }
 
-    // Image: ![alt](url)
+    // An image is a block, never a run of text. `![alt](url)` on its own line
+    // is a figure; the same syntax inside a sentence is consumed and dropped.
+    // It is still matched here rather than ignored, because falling through
+    // would leave the `[alt](url)` half to the link case below and render a
+    // stray `!` in front of a link nobody wrote. The run is deliberately NOT
+    // flushed: the text on either side has to stay one node, or a save would
+    // rewrite the sentence into two runs and the round-trip would stop being
+    // a fixed point.
     if (char === '!' && text[i + 1] === '[') {
       const parsed = parseBracketLink(text, i + 1)
       if (parsed) {
-        flush()
-        nodes.push({ type: 'image', url: parsed.url, alt: parsed.label })
         i = parsed.end
         continue
       }
@@ -407,8 +406,7 @@ export function inlineToPlainText(nodes: Inline[]): string {
     .map((node) => {
       if (node.type === 'text') return node.text
       if (node.type === 'link') return inlineToPlainText(node.children)
-      if (node.type === 'break') return ' '
-      return node.alt || ''
+      return ' '
     })
     .join('')
 }

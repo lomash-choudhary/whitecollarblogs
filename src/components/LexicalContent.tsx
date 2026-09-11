@@ -64,33 +64,11 @@ export function renderTextNode(node: any, index: number, isDark = false): React.
     )
   }
 
-  if (node.type === 'image') {
-    const imageUrl = node.url || node.src || ''
-    if (!imageUrl) return null
-    return (
-      <span key={index} className="block my-8 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageUrl}
-          alt={node.alt || 'Blog inline image'}
-          className="mx-auto rounded-2xl shadow-md border border-slate-200/50 object-contain max-h-[500px]"
-          style={{ maxWidth: node.width ? `${node.width}px` : '100%', height: 'auto' }}
-        />
-      </span>
-    )
-  }
-
-  if (node.type === 'video') {
-    return (
-      <span key={index} className="block my-8">
-        <video
-          src={node.url}
-          controls
-          className="w-full rounded-2xl shadow-md border border-slate-200/50 max-h-[500px]"
-        />
-      </span>
-    )
-  }
+  // An image is a block, never a run of text: `![alt](url)` on its own line is
+  // a figure, handled by the block case below. Inside a sentence the parser
+  // drops it, so a leaf like this can only be legacy content — render nothing
+  // rather than a thumbnail sitting on the baseline mid-sentence.
+  if (node.type === 'image' || node.type === 'video') return null
 
   if (node.type === 'linebreak') return <br key={index} />
 

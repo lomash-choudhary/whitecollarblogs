@@ -59,15 +59,6 @@ function inlineToLexical(nodes: Inline[]): any[] {
 
     if (node.type === 'break') return { type: 'linebreak', version: 1 }
 
-    if (node.type === 'image') {
-      // An image sitting inside a sentence stays inline; one on its own line
-      // is a block and is handled by blockToLexical.
-      const isVideo =
-        /\.(mp4|webm|ogg|ogv|mov|m4v)$/i.test(node.url) ||
-        node.alt.toLowerCase().startsWith('video')
-      return { type: isVideo ? 'video' : 'image', version: 1, url: node.url, alt: node.alt }
-    }
-
     return { type: 'text', version: 1, text: node.text, format: textFormat(node) }
   })
 

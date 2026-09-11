@@ -81,10 +81,11 @@ export function serializeInlineNodes(nodes: any[]): string {
       const rel = node.fields?.rel || []
       const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
       text += `[${linkText}](${url}${isNofollow ? ' "nofollow"' : ''})`
-    } else if (node.type === 'image') {
-      text += `![${node.alt || 'image'}](${node.url})`
-    } else if (node.type === 'video') {
-      text += `![${node.alt || 'video'}](${node.url})`
+    } else if (node.type === 'image' || node.type === 'video') {
+      // An image is a block, never a run of text. A leaf like this can only be
+      // legacy content saved before inline images were removed; writing it back
+      // would produce markdown the parser now drops on the next read.
+      continue
     } else if (node.type === 'linebreak') {
       // Two trailing spaces would be stripped by an editor that trims
       // whitespace; the backslash form always survives.
