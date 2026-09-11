@@ -52,6 +52,13 @@ payload.db
 .agents
 skills-lock.json
 
-./AGENTS.md
-./CLAUDE.md
-./memory.md
+# Agent guidance and working notes — local only, never part of the repo.
+# A leading "./" never matches in .gitignore; anchor with a leading "/" instead.
+/AGENTS.md
+/CLAUDE.md
+/memory.md
+/MULTISITE_PUBLISHING.md
+/PUSH_CHECKLIST.md
+
+# Markdown conformance fixture — a local test input, not shipped content
+/test.md
