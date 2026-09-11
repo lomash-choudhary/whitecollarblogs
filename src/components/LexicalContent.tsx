@@ -340,7 +340,7 @@ function renderBlock(node: any, index: number): React.ReactNode {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
-            alt={node.alt || 'Blog inline image'}
+            alt={node.alt || 'Blog image'}
             className="mx-auto rounded-2xl shadow-md border border-slate-200/50 object-contain max-h-[500px]"
             style={{ maxWidth: node.width ? `${node.width}px` : '100%', height: 'auto' }}
           />
