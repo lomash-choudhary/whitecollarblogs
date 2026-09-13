@@ -13,6 +13,7 @@ import { DISPATCH_EVENT_TYPE, getSite, missingSiteEnv, type SiteConfig } from '@
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
 import { firstParagraphText, parseMarkdownBlocks } from './markdownBlocks'
 import { buildMarkdownFile, slugify, type Frontmatter } from './markdownFile'
+import { findImagePlaceholders } from './imagePlaceholders'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
 export interface PublishResult {
@@ -109,6 +110,24 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
 
   const token = process.env[site.github.tokenEnv] as string
   const { fileName, content } = buildPostMarkdown(post, site, author)
+
+  // An unresolved image tag is ordinary bracketed text to the parser, so it
+  // would ship to the live site as a visible paragraph reading "[Feature image
+  // — below H1 …]". Refusing here is the last point where a writer can still be
+  // told; the site itself has no idea the line was meant to be a picture.
+  const unresolved = findImagePlaceholders(content)
+  if (unresolved.length > 0) {
+    return {
+      ok: false,
+      status: 'failed',
+      message: `${unresolved.length} image ${
+        unresolved.length === 1 ? 'tag has' : 'tags have'
+      } not been generated yet (${unresolved
+        .map((p) => p.label)
+        .join(', ')}). Open the post and press "Generate images" in the editor toolbar, then publish again. The post itself is saved.`,
+    }
+  }
+
   const { owner, repo } = site.github
   const liveUrl = site.baseUrl
     ? `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${fileName.replace(/\.md$/, '')}`

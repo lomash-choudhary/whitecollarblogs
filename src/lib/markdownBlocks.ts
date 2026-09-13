@@ -1013,8 +1013,16 @@ export interface ArticleSection {
 export interface ArticleOutline {
   /** Blocks before the first heading. */
   intro: Block[]
+  /**
+   * The first takeaways box, if the article has one — a *reference* to a block
+   * that is still sitting in `intro` or in one of `sections`, never a block
+   * removed from the flow. It is here so a template can build a table-of-
+   * contents entry and a schema payload without walking every section; render
+   * the box from the block list, or it renders twice.
+   */
   takeaways: TakeawaysBlock | null
   sections: ArticleSection[]
+  /** The first FAQ, on the same terms as `takeaways` above. */
   faq: FaqBlock | null
   conclusion: ArticleSection | null
 }
@@ -1026,12 +1034,20 @@ const CONCLUSION_HEADING =
  * Regroups a flat block list under its h1/h2 headings.
  *
  * The three painting sites all render an article as a sticky table of contents
- * beside h2-delimited sections, with the takeaways box and the FAQ pulled out
- * into their own styled panels. That reshaping is identical on all three, so it
+ * beside h2-delimited sections. That reshaping is identical on all three, so it
  * lives here rather than being written three slightly different ways.
  *
  * Each section keeps its blocks in the order they were written — a section with
  * two tables keeps both, and a list typed after a table still renders after it.
+ * **The takeaways box and the FAQ are part of that order too.** They used to be
+ * lifted out of the flow onto `outline.takeaways` / `outline.faq` and drawn by
+ * the template in one fixed slot between the intro and the first section, which
+ * meant an article whose first line was a `#` — a heading opens a section, `#`
+ * included, so the feature image and the intro paragraph landed *inside* that
+ * section — rendered its takeaways box above its own title. The box moved
+ * because of a heading three lines above it. That is the named-slot failure
+ * this file exists to avoid, and the CMS preview never had it: it renders the
+ * block list straight through and always drew the box where it was typed.
  */
 export function groupIntoSections(blocks: Block[]): ArticleOutline {
   const outline: ArticleOutline = {
@@ -1045,16 +1061,13 @@ export function groupIntoSections(blocks: Block[]): ArticleOutline {
   let current: ArticleSection | null = null
 
   for (const block of blocks) {
-    if (block.type === 'takeaways') {
-      // Keep the first one; a second is a writing mistake, not two boxes.
-      if (!outline.takeaways) outline.takeaways = block
-      continue
-    }
-
-    if (block.type === 'faq') {
-      if (!outline.faq) outline.faq = block
-      continue
-    }
+    // Noted, not removed. Recording the first of each lets a template build a
+    // TOC entry and a FAQPage schema cheaply; the block itself falls through to
+    // the flow below so it renders where the writer put it. A second box is
+    // left in the flow as well — two `## Key Takeaways` headings are two boxes
+    // on the page, the same answer the editor's preview gives.
+    if (block.type === 'takeaways' && !outline.takeaways) outline.takeaways = block
+    if (block.type === 'faq' && !outline.faq) outline.faq = block
 
     if (block.type === 'heading' && block.level <= 2) {
       const section: ArticleSection = {

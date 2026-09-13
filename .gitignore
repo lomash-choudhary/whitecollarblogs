@@ -62,3 +62,9 @@ skills-lock.json
 
 # Markdown conformance fixture — a local test input, not shipped content
 /test.md
+
+# Writer drafts pasted in to try the editor on. They are article content, not
+# app source, and they belong in the CMS rather than in git. Put new ones in
+# /drafts so they are ignored without a rule per filename.
+/drafts/
+/Cabinet Painting vs Refinishing_ What's the Difference_.md

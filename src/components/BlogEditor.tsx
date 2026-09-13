@@ -29,9 +29,12 @@ import {
   Image as ImageIconLucide,
   ListChecks,
   Info,
-  HelpCircle
+  HelpCircle,
+  Sparkles
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
+import { findImagePlaceholders, replaceImagePlaceholder } from '@/lib/imagePlaceholders'
+import { describeSaveError } from '@/lib/saveError'
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
 import { markdownToLexical } from '@/utils/markdownToLexical'
 import { useSite } from '@/context/SiteContext'
@@ -349,6 +352,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [publishNote, setPublishNote] = useState<string | null>(null)
   const [retrying, setRetrying] = useState(false)
   const [retryResult, setRetryResult] = useState<string | null>(null)
+  const [isGeneratingImages, setIsGeneratingImages] = useState(false)
+  const [imageProgress, setImageProgress] = useState<{ done: number; total: number } | null>(null)
+
+  // Recomputed as the writer types, so the button's count is always the number
+  // of tags actually left in the body rather than a stale one from load.
+  const pendingImages = React.useMemo(() => findImagePlaceholders(content), [content])
 
   // A publish can fail for reasons that have nothing to do with the article —
   // an expired token, GitHub being down. Re-saving does not help, because an
@@ -372,6 +381,74 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     } finally {
       setRetrying(false)
     }
+  }
+
+  /**
+   * Turns every `[Feature image — …]` tag in the body into a real image.
+   *
+   * Deliberately a button rather than something the save hook does. Generation
+   * takes tens of seconds per image, and a save that quietly waited on it would
+   * hold a database connection open across the whole call — the pool is three
+   * wide. A button also lets the writer look at the result and run it again
+   * before the article goes anywhere.
+   *
+   * Each tag is resolved in its own request and the textarea is updated as each
+   * one lands, so a failure on the fourth image keeps the first three.
+   */
+  const generateImages = async () => {
+    const total = findImagePlaceholders(content).length
+    if (total === 0) return
+
+    setIsGeneratingImages(true)
+    setImageProgress({ done: 0, total })
+    setError('')
+
+    let working = content
+    // Index of the tag to try next. A resolved tag leaves the list, so this
+    // only moves forward past one that failed — without it, a tag the model
+    // refuses would be retried until the loop ran out.
+    let cursor = 0
+    let done = 0
+    const failures: string[] = []
+
+    for (let attempt = 0; attempt < total; attempt++) {
+      const placeholder = findImagePlaceholders(working)[cursor]
+      if (!placeholder) break
+
+      try {
+        const res = await fetch('/api/generate-image', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            direction: placeholder.direction,
+            alt: placeholder.alt,
+            label: placeholder.label,
+          }),
+        })
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok || !data?.url) {
+          throw new Error(data?.error || 'Image generation failed.')
+        }
+
+        working = replaceImagePlaceholder(working, placeholder, data.url, data.alt)
+        setContent(working)
+        done += 1
+        setImageProgress({ done, total })
+      } catch (err: any) {
+        failures.push(`line ${placeholder.line}: ${err?.message || 'failed'}`)
+        cursor += 1
+      }
+    }
+
+    if (failures.length > 0) {
+      setError(
+        `${done} of ${total} images generated. Still to do — ${failures.join('; ')}. The tags that failed are untouched, so you can fix the wording and generate again.`,
+      )
+    }
+
+    setIsGeneratingImages(false)
+    setImageProgress(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -408,8 +485,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.errors?.[0]?.message || 'Failed to submit article')
+        // Payload names the bad field in its top-level message and puts the
+        // reason a level down, so read the whole body rather than the summary.
+        const errorData = await response.json().catch(() => null)
+        throw new Error(describeSaveError(errorData, 'Failed to submit article. Please try again.'))
       }
 
       const saved = await response.json().catch(() => null)
@@ -1015,6 +1094,33 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                       </span>
                     )}
                   </div>
+
+                  {/* Second child of the justify-between row, so it sits at the far
+                      right instead of crowding the formatting groups. It appears only
+                      when the body actually has tags to resolve. */}
+                  {pendingImages.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={generateImages}
+                      disabled={isGeneratingImages}
+                      className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      title={pendingImages
+                        .map((p) => `${p.label}${p.placement ? ` (${p.placement})` : ''}: ${p.alt}`)
+                        .join('\n')}
+                    >
+                      {isGeneratingImages ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          Generating {imageProgress ? `${imageProgress.done + 1}/${imageProgress.total}` : ''}
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
+                          Generate {pendingImages.length} image{pendingImages.length === 1 ? '' : 's'}
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
                 <textarea
                   ref={contentRef}
@@ -1038,6 +1144,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               <div className="flex justify-between items-center px-1">
                 <span className="text-[9px] text-[#0D1B2A]/40 font-semibold">
                   Markdown: **bold** *italic* __underline__ ~~strike~~ `code` &bull; # heading &bull; &gt; quote &bull; - list &bull; | table | &bull; ``` code block &bull; --- rule &bull; ![alt](url) &bull; ## Key Takeaways &bull; :::tip :::warning :::key &bull; ## FAQ. Every one of these renders on all four websites.
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center px-1">
+                <span className="text-[9px] text-[#0D1B2A]/40 font-semibold">
+                  Image tags: put <code className="font-mono">[Feature image &mdash; Alt text: &quot;...&quot; Photo direction: ...]</code> on its own line, exactly where the picture belongs, then press Generate. The image replaces the tag in place &mdash; any note about where it goes is for you, not the generator.
                 </span>
               </div>
             </div>
