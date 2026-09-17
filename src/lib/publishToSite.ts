@@ -16,12 +16,24 @@ import { buildMarkdownFile, slugify, type Frontmatter } from './markdownFile'
 import { findImagePlaceholders } from './imagePlaceholders'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
+/**
+ * The dispatch runs inside the save transaction, so it must not hang and hold
+ * one of the three pool connections open while GitHub is slow or unreachable.
+ */
+const DISPATCH_TIMEOUT_MS = 15_000
+
 export interface PublishResult {
   ok: boolean
   status: 'dispatched' | 'skipped' | 'failed'
   message: string
   liveUrl?: string
   fileName?: string
+}
+
+/** ISO 8601, for `article:published_time`. Empty when the date is unusable. */
+function isoPublishDate(value: any): string {
+  const date = value ? new Date(value) : new Date()
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString()
 }
 
 function formatPublishDate(value: any): string {
@@ -51,25 +63,45 @@ function firstParagraph(markdown: string): string {
  * target website expects. Exported so it can be previewed/tested without
  * actually calling GitHub.
  */
-export function buildPostMarkdown(post: any, site: SiteConfig, author?: any): { fileName: string; content: string } {
+export function buildPostMarkdown(
+  post: any,
+  site: SiteConfig,
+  author?: any,
+): { slug: string; fileName: string; content: string } {
   const body = typeof post.content === 'string' ? post.content : lexicalToMarkdown(post.content)
   const slug = slugify(post.slug || post.title)
   const excerpt = (post.excerpt || '').trim() || firstParagraph(body)
   const heroImage = cleanImageUrl(post.coverImageUrl) || post.resolvedCoverImageUrl || site.defaultHeroImage || ''
 
+  const metaTitle = (post.metaTitle || '').trim() || post.title
+  const metaDescription = (post.metaDescription || '').trim() || excerpt
+  const heroImageAlt = (post.coverImageAlt || '').trim() || post.title
+
   const frontmatter: Frontmatter = {
     slug,
     title: post.title,
-    metaTitle: post.metaTitle || post.title,
-    metaDescription: excerpt,
+    metaTitle,
+    metaDescription,
     excerpt,
     category: post.targetRole || site.defaultCategory || 'Guides',
     targetKeyword: post.targetKeyword || post.title,
     publishDate: formatPublishDate(post.publishDate),
+    // The machine-readable twin of publishDate. `article:published_time` wants
+    // ISO 8601; the printed form above is what a template shows a reader, and
+    // OVO was putting that straight into the tag, where it is ignored.
+    publishedTime: isoPublishDate(post.publishDate),
     readTime: post.readTime || '5 min read',
     heroImage,
-    heroImageAlt: post.title,
+    heroImageAlt,
     heroImageCaption: excerpt,
+    // The SEO box. Written unconditionally rather than only when set: an empty
+    // value is dropped by buildMarkdownFile, so clearing a field in the CMS
+    // removes the key from the file and the site falls back again.
+    metaKeywords: (post.metaKeywords || '').trim(),
+    canonicalUrl: (post.canonicalUrl || '').trim(),
+    ogImage: cleanImageUrl(post.ogImageUrl) || '',
+    // No `ogImageAlt` key: it falls back to `heroImageAlt` in every reader, so
+    // writing the same string twice would only be a second place to go stale.
     authorName: author?.name || 'Editorial Team',
     authorRole: author?.role || 'Contributor',
     authorImage: cleanImageUrl(author?.avatar) || '',
@@ -79,6 +111,7 @@ export function buildPostMarkdown(post: any, site: SiteConfig, author?: any): { 
   }
 
   return {
+    slug,
     fileName: `${slug}.md`,
     content: buildMarkdownFile(frontmatter, body),
   }
@@ -109,7 +142,7 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
   }
 
   const token = process.env[site.github.tokenEnv] as string
-  const { fileName, content } = buildPostMarkdown(post, site, author)
+  const { slug, fileName, content } = buildPostMarkdown(post, site, author)
 
   // An unresolved image tag is ordinary bracketed text to the parser, so it
   // would ship to the live site as a visible paragraph reading "[Feature image
@@ -130,14 +163,12 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
 
   const { owner, repo } = site.github
   const liveUrl = site.baseUrl
-    ? `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${fileName.replace(/\.md$/, '')}`
+    ? `${site.baseUrl.replace(/\/$/, '')}${site.blogPath}/${slug}`
     : undefined
 
   try {
-    // This call happens inside the save transaction, so it must not hang and
-    // hold a database connection open if GitHub is slow or unreachable.
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(DISPATCH_TIMEOUT_MS),
       method: 'POST',
       headers: {
         Accept: 'application/vnd.github+json',
@@ -149,7 +180,7 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
       body: JSON.stringify({
         event_type: DISPATCH_EVENT_TYPE,
         client_payload: {
-          slug: fileName.replace(/\.md$/, ''),
+          slug,
           file_name: fileName,
           title: String(post.title || ''),
           // No branch: the workflow runs on, and commits to, the receiving
@@ -180,7 +211,7 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
   } catch (err: any) {
     const reason =
       err?.name === 'TimeoutError' || err?.name === 'AbortError'
-        ? 'GitHub did not respond within 15 seconds.'
+        ? `GitHub did not respond within ${DISPATCH_TIMEOUT_MS / 1000} seconds.`
         : err?.message || 'unknown network error'
     return {
       ok: false,

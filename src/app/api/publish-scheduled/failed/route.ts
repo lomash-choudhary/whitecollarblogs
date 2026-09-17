@@ -12,20 +12,12 @@
  * publish path is evidently broken.
  */
 import { NextResponse } from 'next/server'
-import { Receiver, SignatureError } from '@upstash/qstash'
+import { SignatureError } from '@upstash/qstash'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { isDevMode, schedulerFailureUrl } from '@/lib/scheduler'
+import { schedulerFailureUrl, schedulerReceiver } from '@/lib/scheduler'
 
 export const dynamic = 'force-dynamic'
-
-function receiver(): Receiver | null {
-  if (isDevMode()) return new Receiver({ devMode: true })
-  const currentSigningKey = process.env.QSTASH_CURRENT_SIGNING_KEY
-  const nextSigningKey = process.env.QSTASH_NEXT_SIGNING_KEY
-  if (!currentSigningKey || !nextSigningKey) return null
-  return new Receiver({ currentSigningKey, nextSigningKey })
-}
 
 /** The original message body, which QStash returns base64 encoded. */
 function decodeSourceBody(sourceBody?: string): { postId?: string } {
@@ -38,7 +30,7 @@ function decodeSourceBody(sourceBody?: string): { postId?: string } {
 }
 
 export async function POST(request: Request) {
-  const verifier = receiver()
+  const verifier = schedulerReceiver()
   if (!verifier) {
     return NextResponse.json({ error: 'Scheduling is not configured.' }, { status: 503 })
   }

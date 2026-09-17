@@ -68,6 +68,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result, { status: result.ok ? 200 : 502 })
   } catch (err: any) {
-    return NextResponse.json({ error: err?.message || 'Unexpected error.' }, { status: 500 })
+    // An unexpected throw here is a database failure, and those messages quote
+    // connection details back at you — a Postgres error carries the host and
+    // user out of DATABASE_URI. It goes to the server log, never to the browser.
+    console.error('[publish-external] unexpected failure:', err)
+    return NextResponse.json(
+      { error: 'The re-publish failed unexpectedly. Check the server logs, then try again.' },
+      { status: 500 },
+    )
   }
 }

@@ -89,6 +89,15 @@ const STATEMENTS = [
   // media row* fails — an upload surfaces only as "There was a problem while
   // uploading the file."
   `ALTER TABLE public.media ADD COLUMN IF NOT EXISTS prefix varchar`,
+  // The SEO box on a post. All nullable: every existing row keeps working and
+  // falls back to the title/excerpt exactly as it did before these existed.
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS meta_title varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS meta_description varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS meta_keywords varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS canonical_url varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS cover_image_alt varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS og_image_url varchar`,
+  `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS target_keyword varchar`,
 ]
 
 const client = new pg.Client({

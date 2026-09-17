@@ -30,5 +30,10 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  // "drafts" holds the characterization harness AGENTS.md prescribes for any
+  // change on the markdown path. It is gitignored but "**/*.ts" still swept it
+  // into the build's type check, so a harness sitting there failed
+  // `npm run build` on its own `require` shims. ".kilo" is another checkout of
+  // this repo and is not this build's source.
+  "exclude": ["node_modules", "drafts", ".kilo"]
 }

@@ -80,9 +80,11 @@ function githubTarget(envPrefix: string): GithubTargetConfig {
   }
 }
 
-/** Public origin of a site, from <PREFIX>_SITE_BASE_URL. Only used to show a
+/**
+ * Public origin of a site, from <PREFIX>_SITE_BASE_URL. Only used to show a
  * writer where the article will appear, so an unset var costs a link, not a
- * publish. */
+ * publish.
+ */
 function siteBaseUrl(envPrefix: string): string {
   return process.env[`${envPrefix}_SITE_BASE_URL`] || ''
 }
@@ -171,8 +173,7 @@ export function missingSiteEnv(site: SiteConfig): string[] {
 export const DEFAULT_SITE_KEY = 'wcb'
 
 export function getSite(key?: string | null): SiteConfig {
-  if (!key) return SITES[0]
-  return SITES.find((s) => s.key === key) || SITES[0]
+  return SITES.find((site) => site.key === key) || SITES[0]
 }
 
 export function isKnownSite(key?: string | null): boolean {

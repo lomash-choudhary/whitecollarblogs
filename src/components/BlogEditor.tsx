@@ -30,10 +30,19 @@ import {
   ListChecks,
   Info,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  Search,
+  ChevronDown,
+  FileDown
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import { findImagePlaceholders, replaceImagePlaceholder } from '@/lib/imagePlaceholders'
+import {
+  formatSeoBlock,
+  joinSeoBlock,
+  readDocFrontMatter,
+  readSeoBlock,
+} from '@/lib/docFrontMatter'
 import { describeSaveError } from '@/lib/saveError'
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
 import { markdownToLexical } from '@/utils/markdownToLexical'
@@ -59,6 +68,13 @@ interface BlogEditorProps {
     title: string
     slug: string
     excerpt?: string
+    metaTitle?: string
+    metaDescription?: string
+    metaKeywords?: string
+    canonicalUrl?: string
+    coverImageAlt?: string
+    ogImageUrl?: string
+    targetKeyword?: string
     content: any
     targetRole?: string
     readTime?: string
@@ -77,6 +93,115 @@ interface BlogEditorProps {
 }
 
 
+/**
+ * Uploads one file into the `media` collection and returns the created doc.
+ *
+ * Shared by the cover-image picker and the in-body attachment button so both
+ * send the same request and read the same error out of a rejected upload.
+ */
+async function uploadToMedia(file: File, alt: string): Promise<any> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('alt', alt)
+
+  const res = await fetch('/api/media', {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  })
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.errors?.[0]?.message || 'Upload failed. Make sure you are logged in.')
+  }
+
+  return (await res.json()).doc
+}
+
+/**
+ * A relationship id as Payload expects it: numeric for a Postgres serial id,
+ * left as a string for anything else.
+ */
+function relationValue(id: string | number): string | number {
+  return /^\d+$/.test(String(id)) ? Number(id) : id
+}
+
+/** How an uploaded file is written into the body, by what kind of file it is. */
+function attachmentMarkdown(fileName: string, url: string, mimeType: string): string {
+  if (mimeType.startsWith('image/')) return `\n![${fileName}](${url})\n`
+  if (mimeType.startsWith('video/')) return `\n![video](${url})\n`
+  return `\n[📄 Download ${fileName}](${url})\n`
+}
+
+interface MarkdownSnippet {
+  replacement: string
+  /**
+   * Characters to walk the caret back from the end of the inserted text, so it
+   * lands inside the placeholder rather than after the closing delimiter. Zero
+   * whenever the writer had a selection, which is already the text they want.
+   */
+  cursorOffset?: number
+}
+
+/**
+ * What each toolbar button inserts. A table rather than a switch because every
+ * entry is data: the syntax it writes is the syntax `markdownBlocks` reads
+ * back, so the two are compared by reading them side by side.
+ */
+const MARKDOWN_SNIPPETS: Record<string, (selected: string) => MarkdownSnippet> = {
+  bold: (s) => ({ replacement: `**${s || 'bold text'}**`, cursorOffset: s ? 0 : 2 }),
+  italic: (s) => ({ replacement: `*${s || 'italic text'}*`, cursorOffset: s ? 0 : 1 }),
+  underline: (s) => ({ replacement: `__${s || 'underlined text'}__`, cursorOffset: s ? 0 : 2 }),
+  strike: (s) => ({ replacement: `~~${s || 'struck text'}~~`, cursorOffset: s ? 0 : 2 }),
+  code: (s) => ({ replacement: `\`${s || 'code block'}\``, cursorOffset: s ? 0 : 1 }),
+
+  link: (s) => ({
+    replacement: `[${s || 'link text'}](https://example.com)`,
+    cursorOffset: s ? 0 : 21,
+  }),
+  'link-nofollow': (s) => ({
+    replacement: `[${s || 'link text'}](https://example.com "nofollow")`,
+    cursorOffset: s ? 0 : 32,
+  }),
+
+  h1: (s) => ({ replacement: `\n# ${s || 'Heading 1'}\n` }),
+  h2: (s) => ({ replacement: `\n## ${s || 'Heading 2'}\n` }),
+  h3: (s) => ({ replacement: `\n### ${s || 'Heading 3'}\n` }),
+
+  quote: (s) => ({ replacement: `\n> ${s || 'Quote'}\n` }),
+  ul: (s) => ({ replacement: `\n- ${s || 'List item'}\n` }),
+  ol: (s) => ({ replacement: `\n1. ${s || 'List item'}\n` }),
+  divider: () => ({ replacement: `\n---\n` }),
+  image: (s) => ({
+    replacement: `\n![${s || 'describe the image'}](https://example.com/image.jpg "optional caption")\n`,
+  }),
+  table: (s) => ({
+    replacement: s
+      ? `\n| ${s} | Column 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n`
+      : `\n| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n| Cell 3 | Cell 4 |\n`,
+  }),
+  // Fenced, so the whole block survives the save. An indented block or a bare
+  // newline would be read back as an ordinary paragraph.
+  codeblock: (s) => ({ replacement: `\n\`\`\`\n${s || 'code here'}\n\`\`\`\n` }),
+
+  // The heading is the syntax: every site turns "Key Takeaways" plus the
+  // bullets under it into its own styled box, and "## FAQ" plus "###"
+  // questions into the accordion.
+  takeaways: (s) => ({
+    replacement: `\n## Key Takeaways\n\n- ${s || 'First takeaway'}\n- Second takeaway\n- Third takeaway\n`,
+  }),
+  faq: (s) => ({
+    replacement: `\n## FAQ\n\n### ${s || 'First question?'}\n\nThe answer.\n\n### Second question?\n\nThe answer.\n`,
+  }),
+
+  'callout-note': (s) => ({ replacement: `\n:::note\n${s || 'Something worth knowing.'}\n:::\n` }),
+  'callout-tip': (s) => ({ replacement: `\n:::tip\n${s || 'A helpful tip.'}\n:::\n` }),
+  'callout-warning': (s) => ({
+    replacement: `\n:::warning\n${s || 'Something to watch out for.'}\n:::\n`,
+  }),
+  'callout-key': (s) => ({ replacement: `\n:::key ${s || 'Key point'}\nWhy it matters.\n:::\n` }),
+}
+
 export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initialPost }) => {
   const { sites, activeSite } = useSite()
   // The destination comes from the sidebar switcher, so the form has no picker
@@ -93,7 +218,70 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   // Synced by default for new posts. If editing, preserve the existing slug without dynamic updates.
   const [isSyncedWithTitle, setIsSyncedWithTitle] = useState(!isEditing)
   const [excerpt, setExcerpt] = useState(initialPost?.excerpt || '')
-  const [content, setContent] = useState(initialPost ? lexicalToMarkdown(initialPost.content) : '')
+
+  // The SEO fields. Every one is optional and falls back on the site side
+  // (src/lib/articleSeo.ts), so an untouched post publishes exactly the tags
+  // it always did.
+  //
+  // These are state rather than the source of truth. When the body opens with
+  // an SEO block — which it does for anything that came out of a Google Doc —
+  // the block is what the writer edits and these mirror it. The panel below is
+  // the fallback for an article that has no block, and it is only rendered
+  // then, because two editable copies of one value can only disagree.
+  const [seoOpen, setSeoOpen] = useState(false)
+  const [metaTitle, setMetaTitle] = useState(initialPost?.metaTitle || '')
+  const [metaDescription, setMetaDescription] = useState(initialPost?.metaDescription || '')
+  const [metaKeywords, setMetaKeywords] = useState(initialPost?.metaKeywords || '')
+  const [canonicalUrl, setCanonicalUrl] = useState(initialPost?.canonicalUrl || '')
+  const [coverImageAlt, setCoverImageAlt] = useState(initialPost?.coverImageAlt || '')
+  const [ogImageUrl, setOgImageUrl] = useState(initialPost?.ogImageUrl || '')
+  const [targetKeyword, setTargetKeyword] = useState(initialPost?.targetKeyword || '')
+  const seoFilledCount = [
+    metaTitle,
+    metaDescription,
+    metaKeywords,
+    canonicalUrl,
+    coverImageAlt,
+    ogImageUrl,
+    targetKeyword,
+  ].filter((value) => value.trim()).length
+
+  // The stored body never contains the block — it is written back on top of it
+  // here, and taken off again on save. Keeping it out of the column is what
+  // stops it reaching a renderer: nothing in `markdownBlocks.ts` knows what a
+  // `Meta Title:` line means, so a stored one would publish as the article's
+  // opening paragraph on whichever site the post goes to.
+  const [content, setContent] = useState(() => {
+    if (!initialPost) return ''
+    return joinSeoBlock(
+      formatSeoBlock({
+        metaTitle: initialPost.metaTitle,
+        metaDescription: initialPost.metaDescription,
+        metaKeywords: initialPost.metaKeywords,
+        targetKeyword: initialPost.targetKeyword,
+        canonicalUrl: initialPost.canonicalUrl,
+        coverImageAlt: initialPost.coverImageAlt,
+        ogImageUrl: initialPost.ogImageUrl,
+      }),
+      lexicalToMarkdown(initialPost.content),
+    )
+  })
+
+  /** The block at the top of the body, and the article below it. */
+  const seoBlock = React.useMemo(() => readSeoBlock(content), [content])
+
+  // Mirrors the block into the fields, so deleting it leaves the panel holding
+  // what it said rather than an empty form.
+  React.useEffect(() => {
+    if (!seoBlock.present) return
+    setMetaTitle(seoBlock.fields.metaTitle || '')
+    setMetaDescription(seoBlock.fields.metaDescription || '')
+    setMetaKeywords(seoBlock.fields.metaKeywords || '')
+    setTargetKeyword(seoBlock.fields.targetKeyword || '')
+    setCanonicalUrl(seoBlock.fields.canonicalUrl || '')
+    setCoverImageAlt(seoBlock.fields.coverImageAlt || '')
+    setOgImageUrl(seoBlock.fields.ogImageUrl || '')
+  }, [seoBlock])
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const mediaInputRef = React.useRef<HTMLInputElement>(null)
   const [isMediaUploading, setIsMediaUploading] = useState(false)
@@ -108,51 +296,25 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     
     setIsMediaUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('alt', file.name)
-      
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-      
-      if (!res.ok) {
-        throw new Error('Upload failed')
+      const doc = await uploadToMedia(file, file.name)
+      const textarea = contentRef.current
+      if (doc?.url && textarea) {
+        const markdownInsert = attachmentMarkdown(
+          doc.filename || file.name,
+          doc.url,
+          file.type || '',
+        )
+        const start = textarea.selectionStart
+        const text = textarea.value
+        setContent(text.substring(0, start) + markdownInsert + text.substring(textarea.selectionEnd))
+
+        setTimeout(() => {
+          textarea.focus()
+          const caret = start + markdownInsert.length
+          textarea.setSelectionRange(caret, caret)
+        }, 0)
       }
-      
-      const data = await res.json()
-      if (data.doc?.url) {
-        const fileUrl = data.doc.url
-        const fileName = data.doc.filename || file.name
-        const mimeType = file.type || ''
-        
-        let markdownInsert = ''
-        if (mimeType.startsWith('image/')) {
-          markdownInsert = `\n![${fileName}](${fileUrl})\n`
-        } else if (mimeType.startsWith('video/')) {
-          markdownInsert = `\n![video](${fileUrl})\n`
-        } else {
-          markdownInsert = `\n[📄 Download ${fileName}](${fileUrl})\n`
-        }
-        
-        const textarea = contentRef.current
-        if (textarea) {
-          const start = textarea.selectionStart
-          const end = textarea.selectionEnd
-          const text = textarea.value
-          const newValue = text.substring(0, start) + markdownInsert + text.substring(end)
-          setContent(newValue)
-          
-          setTimeout(() => {
-             textarea.focus()
-             const newCursorPos = start + markdownInsert.length
-             textarea.setSelectionRange(newCursorPos, newCursorPos)
-          }, 0)
-        }
-      }
-    } catch (err) {
+    } catch {
       alert('Failed to upload file. Please verify it is a valid format.')
     } finally {
       setIsMediaUploading(false)
@@ -167,109 +329,20 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     const textarea = contentRef.current
     if (!textarea) return
 
+    const build = MARKDOWN_SNIPPETS[formatType]
+    if (!build) return
+
     const start = textarea.selectionStart
     const end = textarea.selectionEnd
     const text = textarea.value
-    const selectedText = text.substring(start, end)
-    
-    let replacement = ''
-    let cursorOffset = 0
+    const { replacement, cursorOffset = 0 } = build(text.substring(start, end))
 
-    switch (formatType) {
-      case 'bold':
-        replacement = `**${selectedText || 'bold text'}**`
-        cursorOffset = selectedText ? 0 : 2
-        break
-      case 'italic':
-        replacement = `*${selectedText || 'italic text'}*`
-        cursorOffset = selectedText ? 0 : 1
-        break
-      case 'underline':
-        replacement = `__${selectedText || 'underlined text'}__`
-        cursorOffset = selectedText ? 0 : 2
-        break
-      case 'code':
-        replacement = `\`${selectedText || 'code block'}\``
-        cursorOffset = selectedText ? 0 : 1
-        break
-      case 'h1':
-        replacement = `\n# ${selectedText || 'Heading 1'}\n`
-        break
-      case 'h2':
-        replacement = `\n## ${selectedText || 'Heading 2'}\n`
-        break
-      case 'quote':
-        replacement = `\n> ${selectedText || 'Quote'}\n`
-        break
-      case 'ul':
-        replacement = `\n- ${selectedText || 'List item'}\n`
-        break
-      case 'ol':
-        replacement = `\n1. ${selectedText || 'List item'}\n`
-        break
-      case 'table':
-        replacement = selectedText 
-          ? `\n| ${selectedText} | Column 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n`
-          : `\n| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |\n| Cell 3 | Cell 4 |\n`
-        break
-      case 'link':
-        replacement = `[${selectedText || 'link text'}](https://example.com)`
-        cursorOffset = selectedText ? 0 : 21
-        break
-      case 'link-nofollow':
-        replacement = `[${selectedText || 'link text'}](https://example.com "nofollow")`
-        cursorOffset = selectedText ? 0 : 32
-        break
-      case 'strike':
-        replacement = `~~${selectedText || 'struck text'}~~`
-        cursorOffset = selectedText ? 0 : 2
-        break
-      case 'h3':
-        replacement = `\n### ${selectedText || 'Heading 3'}\n`
-        break
-      case 'codeblock':
-        // Fenced, so the whole block survives the save. An indented block or a
-        // bare newline would be read back as an ordinary paragraph.
-        replacement = `\n\`\`\`\n${selectedText || 'code here'}\n\`\`\`\n`
-        break
-      case 'divider':
-        replacement = `\n---\n`
-        break
-      case 'image':
-        replacement = `\n![${selectedText || 'describe the image'}](https://example.com/image.jpg "optional caption")\n`
-        break
-      case 'takeaways':
-        // The heading is the syntax: every site turns "Key Takeaways" plus the
-        // bullets under it into its own styled box.
-        replacement = `\n## Key Takeaways\n\n- ${selectedText || 'First takeaway'}\n- Second takeaway\n- Third takeaway\n`
-        break
-      case 'callout-note':
-        replacement = `\n:::note\n${selectedText || 'Something worth knowing.'}\n:::\n`
-        break
-      case 'callout-tip':
-        replacement = `\n:::tip\n${selectedText || 'A helpful tip.'}\n:::\n`
-        break
-      case 'callout-warning':
-        replacement = `\n:::warning\n${selectedText || 'Something to watch out for.'}\n:::\n`
-        break
-      case 'callout-key':
-        replacement = `\n:::key ${selectedText || 'Key point'}\nWhy it matters.\n:::\n`
-        break
-      case 'faq':
-        replacement = `\n## FAQ\n\n### ${selectedText || 'First question?'}\n\nThe answer.\n\n### Second question?\n\nThe answer.\n`
-        break
-      default:
-        return
-    }
+    setContent(text.substring(0, start) + replacement + text.substring(end))
 
-    const newValue = text.substring(0, start) + replacement + text.substring(end)
-    setContent(newValue)
-
-    // Reset selection/focus
     setTimeout(() => {
       textarea.focus()
-      const newCursorPos = start + replacement.length - cursorOffset
-      textarea.setSelectionRange(newCursorPos, newCursorPos)
+      const caret = start + replacement.length - cursorOffset
+      textarea.setSelectionRange(caret, caret)
     }, 0)
   }
 
@@ -296,8 +369,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   }
 
   const [scheduledFor, setScheduledFor] = useState(toLocalInputValue(initialPost?.scheduledFor))
-  const isScheduledStage =
-    stages.find((st) => String(st.id) === String(selectedStage))?.key === 'scheduled'
+  const selectedStageKey = stages.find((st) => String(st.id) === String(selectedStage))?.key
+  const isScheduledStage = selectedStageKey === 'scheduled'
   // Cannot schedule into the past; give the picker a floor of "now".
   const earliestSchedule = toLocalInputValue(new Date().toISOString())
   const [coverImageUrl, setCoverImageUrl] = useState(initialPost?.coverImageUrl || '')
@@ -315,28 +388,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     setError(null)
     
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('alt', `Cover for ${title || 'blog'}`)
-
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.errors?.[0]?.message || 'Upload failed. Make sure you are logged in.')
-      }
-
-      const data = await res.json()
-      if (data.doc?.id) {
-        setUploadedMediaId(data.doc.id)
-        setCoverImageUrl(data.doc.url)
-      } else {
-        throw new Error('Invalid response from media server.')
-      }
+      const doc = await uploadToMedia(file, `Cover for ${title || 'blog'}`)
+      if (!doc?.id) throw new Error('Invalid response from media server.')
+      setUploadedMediaId(doc.id)
+      setCoverImageUrl(doc.url)
     } catch (err: any) {
       setError(err.message || 'Failed to upload image.')
       setCoverImageUrl('')
@@ -349,7 +404,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [publishNote, setPublishNote] = useState<string | null>(null)
   const [retrying, setRetrying] = useState(false)
   const [retryResult, setRetryResult] = useState<string | null>(null)
   const [isGeneratingImages, setIsGeneratingImages] = useState(false)
@@ -358,6 +412,97 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   // Recomputed as the writer types, so the button's count is always the number
   // of tags actually left in the body rather than a stale one from load.
   const pendingImages = React.useMemo(() => findImagePlaceholders(content), [content])
+
+  // What a Google Docs export still has left to give: the SEO block it opens
+  // with, and its own title line. Recomputed with the body so the button
+  // disappears the moment there is nothing left to lift, and read past the
+  // editor's own block, or it would offer to import the lines it just wrote
+  // and never stop offering.
+  const pendingImport = React.useMemo(() => readDocFrontMatter(seoBlock.body), [seoBlock.body])
+
+  /**
+   * Moves a pasted Google Docs export's front matter into the fields it was
+   * written for, and its title line into the title box.
+   *
+   * A field is only filled when it is **empty**. The document is authoritative
+   * about its own metadata, but the person at the keyboard is authoritative
+   * about the form they have already filled in — silently overwriting a meta
+   * description someone just rewrote would be the worst kind of helpful.
+   *
+   * The title line is removed from the body either way, because that is the
+   * defect being fixed: left in, it publishes a second `<h1>` under the page's
+   * own title on all four sites. Nothing is lost when the title box already
+   * holds it.
+   */
+  const applyDocImport = (markdown: string): string => {
+    const { body, fields, consumed } = readDocFrontMatter(markdown)
+    if (consumed.length === 0) return markdown
+
+    /**
+     * A box the writer has already filled in wins over the document. Both of
+     * these are visible on the form without scrolling, so a skipped value is
+     * a value they can see — which is why the import does not announce it.
+     */
+    const fill = (value: string | undefined, current: string, set: (next: string) => void) => {
+      if (!value || current.trim()) return
+      set(value)
+    }
+
+    fill(fields.title, title, (next) => {
+      setTitle(next)
+      // Only when the doc gave no slug of its own: the sync would otherwise
+      // overwrite the SEO team's slug with one derived from the title.
+      if (isSyncedWithTitle && !fields.slug) {
+        setSlug(next.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''))
+      }
+    })
+    fill(fields.slug, slug, (next) => {
+      setSlug(next)
+      setIsSyncedWithTitle(false)
+    })
+
+    // The SEO fields are not set here. They go back into the body as the block
+    // above the article, which is where the writer edits them from now on —
+    // the effect above copies them into the columns. What is already typed
+    // wins over the document, the same rule `fill` applies to title and slug.
+    const block = formatSeoBlock({
+      metaTitle: metaTitle.trim() || fields.metaTitle,
+      metaDescription: metaDescription.trim() || fields.metaDescription,
+      metaKeywords: metaKeywords.trim() || fields.metaKeywords,
+      targetKeyword: targetKeyword.trim() || fields.targetKeyword,
+      canonicalUrl: canonicalUrl.trim() || fields.canonicalUrl,
+      coverImageAlt: coverImageAlt.trim() || fields.coverImageAlt,
+      ogImageUrl: ogImageUrl.trim() || fields.ogImageUrl,
+    })
+
+    return joinSeoBlock(block, body)
+  }
+
+  /**
+   * Runs the import when the paste is a whole document rather than a snippet.
+   *
+   * Anchored to "this paste replaces everything" — an empty box, or a select-all
+   * before pasting — because that is the writer dropping in a downloaded export,
+   * which is the only moment the leading `#` is reliably the article's title
+   * and not a heading they meant to write. A paste into the middle of an
+   * article is left completely alone.
+   */
+  const handleContentPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget
+    const replacesEverything =
+      textarea.value.trim() === '' ||
+      (textarea.selectionStart === 0 && textarea.selectionEnd === textarea.value.length)
+    if (!replacesEverything) return
+
+    const pasted = e.clipboardData.getData('text/plain')
+    if (!pasted.trim()) return
+
+    const { consumed } = readDocFrontMatter(pasted)
+    if (consumed.length === 0) return
+
+    e.preventDefault()
+    setContent(applyDocImport(pasted))
+  }
 
   // A publish can fail for reasons that have nothing to do with the article —
   // an expired token, GitHub being down. Re-saving does not help, because an
@@ -401,7 +546,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
     setIsGeneratingImages(true)
     setImageProgress({ done: 0, total })
-    setError('')
+    setError(null)
 
     let working = content
     // Index of the tag to try next. A resolved tag leaves the list, so this
@@ -456,7 +601,30 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     setIsLoading(true)
     setError(null)
 
-    const lexicalContent = markdownToLexical(content)
+    // The block comes off the top before the body is stored, and the values
+    // it carried are what gets saved. Read straight from the parse rather than
+    // from the mirrored state: at submit they agree, but only one of the two
+    // is guaranteed to have seen the writer's last keystroke.
+    const lexicalContent = markdownToLexical(seoBlock.body)
+    const seo = seoBlock.present
+      ? {
+          metaTitle: seoBlock.fields.metaTitle || '',
+          metaDescription: seoBlock.fields.metaDescription || '',
+          metaKeywords: seoBlock.fields.metaKeywords || '',
+          canonicalUrl: seoBlock.fields.canonicalUrl || '',
+          coverImageAlt: seoBlock.fields.coverImageAlt || '',
+          ogImageUrl: seoBlock.fields.ogImageUrl || '',
+          targetKeyword: seoBlock.fields.targetKeyword || '',
+        }
+      : {
+          metaTitle,
+          metaDescription,
+          metaKeywords,
+          canonicalUrl: canonicalUrl.trim(),
+          coverImageAlt,
+          ogImageUrl,
+          targetKeyword,
+        }
 
     try {
       const url = isEditing ? `/api/posts/${initialPost?.id}` : '/api/posts'
@@ -473,11 +641,16 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
           content: lexicalContent,
           targetRole,
           readTime,
-          author: /^\d+$/.test(String(selectedAuthor)) ? Number(selectedAuthor) : selectedAuthor,
-          stage: /^\d+$/.test(String(selectedStage)) ? Number(selectedStage) : selectedStage,
+          author: relationValue(selectedAuthor),
+          stage: relationValue(selectedStage),
           scheduledFor:
             isScheduledStage && scheduledFor ? new Date(scheduledFor).toISOString() : null,
           site: siteKey,
+          // Sent as '' rather than undefined when cleared: undefined leaves the
+          // old value in the row, so emptying a meta box would look like it
+          // saved and keep publishing the value the writer just deleted.
+          ...seo,
+          ogImageUrl: cleanImageUrl(seo.ogImageUrl),
           coverImageUrl: cleanImageUrl(coverImageUrl) || undefined,
           coverImage: uploadedMediaId || undefined,
           ...(isEditing ? {} : { views: 0, likes: 0, publishDate: new Date().toISOString() }),
@@ -491,27 +664,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         throw new Error(describeSaveError(errorData, 'Failed to submit article. Please try again.'))
       }
 
-      const saved = await response.json().catch(() => null)
-      const savedDoc = saved?.doc || saved
-      const isPublishedStage =
-        stages.find((st) => String(st.id) === String(selectedStage))?.key === 'published'
-
       setSuccess(true)
 
-      if (targetSite.target === 'github' && isPublishedStage) {
-        setPublishNote(
-          savedDoc?.externalMessage ||
-            `Sent to ${targetSite.name}. The site rebuilds in a couple of minutes.`,
-        )
-      }
-
-      setTimeout(
-        () => {
-          router.push('/dashboard')
-          router.refresh()
-        },
-        targetSite.target === 'github' && isPublishedStage ? 3500 : 1500,
-      )
+      setTimeout(() => {
+        router.push('/dashboard')
+        router.refresh()
+      }, 1500)
     } catch (err: any) {
       console.error('Error submitting post:', err)
       setError(err.message || 'An unexpected error occurred while saving.')
@@ -547,47 +705,51 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               <Check className="w-6 h-6" />
             </div>
             <div className="space-y-1">
+              {/* What the writer did, not what the machinery did with it. A
+                  publish to another site is a GitHub dispatch, a rebuild and a
+                  deploy, and none of those are the writer's business or under
+                  their control — naming them invited a question about a repo
+                  they have never seen. */}
               <h3 className="text-sm font-bold text-slate-800">
-                {isEditing ? 'Article Updated Successfully!' : 'Article Created Successfully!'}
+                {selectedStageKey === 'published'
+                  ? 'Article published'
+                  : selectedStageKey === 'scheduled'
+                    ? 'Article scheduled'
+                    : isEditing
+                      ? 'Article updated'
+                      : 'Article saved'}
               </h3>
-              {publishNote && (
-                <p className="text-xs text-emerald-700 font-bold max-w-md mx-auto">{publishNote}</p>
-              )}
               <p className="text-xs text-slate-400 font-semibold">Redirecting you to the Editorial Dashboard...</p>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* No website picker here — the sidebar switcher decides the
-                destination. This only reports how the last publish went. */}
-            {isEditing && initialPost?.externalStatus && (
+            {/* Only a publish that failed is reported, because only that one
+                needs the writer to do something. A successful dispatch, the
+                repo it went to and the rebuild behind it are machinery, and
+                saying so raised more questions than it answered. */}
+            {isEditing && initialPost?.externalStatus === 'failed' && (
               <div className="rounded-2xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/40 p-4 space-y-2">
                 <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/50">
-                  {targetSite.name} publish status
+                  This article did not publish
                 </p>
-                <p
-                  className={`text-[11px] font-bold ${
-                    initialPost.externalStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
-                  }`}
-                >
-                  {initialPost.externalStatus} — {initialPost.externalMessage}
+                <p className="text-[11px] font-bold text-rose-600">
+                  {initialPost.externalMessage}
                 </p>
 
-                {initialPost.externalStatus === 'failed' && (
-                  <button
-                    type="button"
-                    onClick={retryPublish}
-                    disabled={retrying}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0D1B2A] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#0D1B2A]/90 disabled:opacity-50 transition-colors"
-                  >
-                    {retrying ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <RefreshCw className="w-3 h-3" />
-                    )}
-                    {retrying ? 'Sending…' : 'Retry publish'}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={retryPublish}
+                  disabled={retrying}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0D1B2A] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#0D1B2A]/90 disabled:opacity-50 transition-colors"
+                >
+                  {retrying ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-3 h-3" />
+                  )}
+                  {retrying ? 'Sending…' : 'Retry publish'}
+                </button>
 
                 {retryResult && (
                   <p className="text-[10px] font-bold text-[#0D1B2A]/70">{retryResult}</p>
@@ -1095,9 +1257,21 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     )}
                   </div>
 
-                  {/* Second child of the justify-between row, so it sits at the far
-                      right instead of crowding the formatting groups. It appears only
-                      when the body actually has tags to resolve. */}
+                  {/* Second child of the justify-between row, so both of these sit at
+                      the far right instead of crowding the formatting groups. Each
+                      appears only when the body actually has something for it to do. */}
+                  <div className="flex items-center gap-0.5">
+                  {pendingImport.consumed.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setContent(applyDocImport(content))}
+                      className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer"
+                      title={`Moves the document's ${pendingImport.consumed.join(', ')} out of the body and into the fields above. A field you have already filled in is left alone.`}
+                    >
+                      <FileDown className="w-3.5 h-3.5 text-[#C9A84C]" />
+                      Read SEO block
+                    </button>
+                  )}
                   {pendingImages.length > 0 && (
                     <button
                       type="button"
@@ -1121,6 +1295,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                       )}
                     </button>
                   )}
+                  </div>
                 </div>
                 <textarea
                   ref={contentRef}
@@ -1129,6 +1304,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                   placeholder="Write your beautiful markdown-formatted post here..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
+                  onPaste={handleContentPaste}
                   className="w-full bg-transparent border-0 text-xs font-semibold p-4 outline-none focus:ring-0 text-[#0D1B2A] leading-relaxed resize-y block"
                 />
               </div>
@@ -1141,18 +1317,149 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               />
               
-              <div className="flex justify-between items-center px-1">
-                <span className="text-[9px] text-[#0D1B2A]/40 font-semibold">
-                  Markdown: **bold** *italic* __underline__ ~~strike~~ `code` &bull; # heading &bull; &gt; quote &bull; - list &bull; | table | &bull; ``` code block &bull; --- rule &bull; ![alt](url) &bull; ## Key Takeaways &bull; :::tip :::warning :::key &bull; ## FAQ. Every one of these renders on all four websites.
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center px-1">
-                <span className="text-[9px] text-[#0D1B2A]/40 font-semibold">
-                  Image tags: put <code className="font-mono">[Feature image &mdash; Alt text: &quot;...&quot; Photo direction: ...]</code> on its own line, exactly where the picture belongs, then press Generate. The image replaces the tag in place &mdash; any note about where it goes is for you, not the generator.
-                </span>
-              </div>
             </div>
+
+            {/* SEO & meta tags — the fallback surface, for an article whose
+                body carries no SEO block.
+
+                Rendered only then. When the block is there it is the thing the
+                writer edits, and a panel showing the same seven values would
+                be a second place to change them that could disagree with the
+                first. Collapsed by default even here: every field falls back,
+                so most articles never need it opened.
+
+                Deleting the block from the body brings this back, holding
+                whatever the block last said. */}
+            {!seoBlock.present && (
+            <div className="rounded-xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/30 shadow-sm overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setSeoOpen((open) => !open)}
+                className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#F5F0E8]/60 transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/60">
+                  <Search className="w-3.5 h-3.5 text-[#C9A84C]" />
+                  SEO &amp; meta tags
+                  {seoFilledCount > 0 && (
+                    <span className="normal-case tracking-normal font-bold text-[9px] text-[#C9A84C]">
+                      {seoFilledCount} set
+                    </span>
+                  )}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-[#0D1B2A]/40 transition-transform ${seoOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {seoOpen && (
+                <div className="px-4 pb-4 pt-1 space-y-4 border-t border-[rgba(13,27,42,0.08)]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Meta title
+                        <span className="ml-2 normal-case tracking-normal font-semibold text-[#0D1B2A]/35">
+                          {metaTitle.trim().length}/60
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={metaTitle}
+                        onChange={(e) => setMetaTitle(e.target.value)}
+                        placeholder={title || 'Falls back to the article title'}
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Target keyword
+                      </label>
+                      <input
+                        type="text"
+                        value={targetKeyword}
+                        onChange={(e) => setTargetKeyword(e.target.value)}
+                        placeholder="cost to paint kitchen cabinets"
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                      Meta description
+                      <span className="ml-2 normal-case tracking-normal font-semibold text-[#0D1B2A]/35">
+                        {metaDescription.trim().length}/160
+                      </span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={metaDescription}
+                      onChange={(e) => setMetaDescription(e.target.value)}
+                      placeholder={excerpt || 'Falls back to the excerpt'}
+                      className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A] resize-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Meta keywords
+                      </label>
+                      <input
+                        type="text"
+                        value={metaKeywords}
+                        onChange={(e) => setMetaKeywords(e.target.value)}
+                        placeholder="cabinet painting, kitchen cabinets, cost"
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Canonical URL
+                      </label>
+                      <input
+                        type="text"
+                        value={canonicalUrl}
+                        onChange={(e) => setCanonicalUrl(e.target.value)}
+                        placeholder={`${targetSite.baseUrl || ''}${targetSite.blogPath}/${slug || 'your-slug'}`}
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Cover image alt text
+                      </label>
+                      <input
+                        type="text"
+                        value={coverImageAlt}
+                        onChange={(e) => setCoverImageAlt(e.target.value)}
+                        placeholder="Sprayed white cabinet doors drying on a rack"
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                        Social share image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={ogImageUrl}
+                        onChange={(e) => setOgImageUrl(e.target.value)}
+                        placeholder={coverImageUrl || 'Falls back to the cover image'}
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      />
+                    </div>
+                  </div>
+
+                </div>
+              )}
+            </div>
+            )}
 
             {/* Submit Button */}
             <div className="flex justify-end pt-4 border-t border-slate-100">

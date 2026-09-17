@@ -36,6 +36,13 @@ const INLINE_PUNCTUATION = /[\\`*_~[\]<]/g
 /** A line that would open a block if it were written back unescaped. */
 const LEADING_BLOCK_MARKER = /^(\s*)(#{1,6}\s|[-*+]\s|\d{1,9}[.)]\s|>|:::|\||-{3,}\s*$)/
 
+/** A table's alignment row, one cell per column alignment. */
+const ALIGNMENT_RULES: Record<string, string> = {
+  left: '---',
+  center: ':---:',
+  right: '---:',
+}
+
 /** Escapes markup punctuation in text the writer meant literally. */
 function escapeInline(text: string): string {
   return text.replace(INLINE_PUNCTUATION, '\\$&')
@@ -54,7 +61,7 @@ function escapeBlockStarts(markdown: string): string {
     .join('\n')
 }
 
-export function renderLeafToMarkdown(leaf: any): string {
+function renderLeafToMarkdown(leaf: any): string {
   if (!leaf || typeof leaf.text !== 'string' || !leaf.text) return ''
   const format = leaf.format || 0
   // Inline code is literal to the parser, so escaping inside it would show the
@@ -70,31 +77,37 @@ export function renderLeafToMarkdown(leaf: any): string {
   return text
 }
 
-export function serializeInlineNodes(nodes: any[]): string {
+function serializeInlineNodes(nodes: any[]): string {
   if (!Array.isArray(nodes)) return ''
   let text = ''
   for (const node of nodes) {
     if (!node) continue
-    if (node.type === 'link') {
-      const linkText = (node.children || []).map(renderLeafToMarkdown).join('')
-      const url = node.fields?.url || ''
-      const rel = node.fields?.rel || []
-      const isNofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
-      text += `[${linkText}](${url}${isNofollow ? ' "nofollow"' : ''})`
-    } else if (node.type === 'image' || node.type === 'video') {
+    switch (node.type) {
+      case 'link': {
+        const linkText = (node.children || []).map(renderLeafToMarkdown).join('')
+        const rel = node.fields?.rel || []
+        const nofollow = Array.isArray(rel) ? rel.includes('nofollow') : rel === 'nofollow'
+        text += `[${linkText}](${node.fields?.url || ''}${nofollow ? ' "nofollow"' : ''})`
+        break
+      }
+
       // An image is a block, never a run of text. A leaf like this can only be
       // legacy content saved before inline images were removed; writing it back
-      // would produce markdown the parser now drops on the next read.
-      continue
-    } else if (node.type === 'linebreak') {
-      // Two trailing spaces would be stripped by an editor that trims
-      // whitespace; the backslash form always survives.
-      text += '\\\n'
-    } else if (node.type === 'list') {
-      // A nested list inside a list item is handled by serializeBlock.
-      continue
-    } else {
-      text += renderLeafToMarkdown(node)
+      // would produce markdown the parser now drops on the next read. A nested
+      // list is handled by serializeBlock instead.
+      case 'image':
+      case 'video':
+      case 'list':
+        break
+
+      case 'linebreak':
+        // Two trailing spaces would be stripped by an editor that trims
+        // whitespace; the backslash form always survives.
+        text += '\\\n'
+        break
+
+      default:
+        text += renderLeafToMarkdown(node)
     }
   }
   return text
@@ -126,7 +139,7 @@ function serializeListItems(node: any, depth: number): string {
   return md
 }
 
-function serializeBlock(node: any, depth = 0): string {
+function serializeBlock(node: any): string {
   if (!node) return ''
 
   switch (node.type) {
@@ -145,7 +158,7 @@ function serializeBlock(node: any, depth = 0): string {
       // Prefer the structured blocks; fall back to the flat inline children
       // stored by older documents.
       const inner = Array.isArray(node.blocks) && node.blocks.length
-        ? node.blocks.map((b: any) => serializeBlock(b, depth)).join('')
+        ? node.blocks.map((b: any) => serializeBlock(b)).join('')
         : `${serializeInlineNodes(node.children)}\n`
       return (
         inner
@@ -157,7 +170,7 @@ function serializeBlock(node: any, depth = 0): string {
     }
 
     case 'list':
-      return `${serializeListItems(node, depth)}\n`
+      return `${serializeListItems(node, 0)}\n`
 
     case 'code': {
       const code = (node.children || []).map((c: any) => c?.text || '').join('')
@@ -175,14 +188,13 @@ function serializeBlock(node: any, depth = 0): string {
     case 'horizontalRule':
       return '---\n\n'
 
-    case 'image': {
-      const caption = node.caption ? ` "${String(node.caption).replace(/"/g, '')}"` : ''
-      return `![${node.alt || ''}](${node.url}${caption})\n\n`
-    }
-
+    // Both write the `![alt](url "caption")` figure syntax; the parser tells
+    // them apart by the file extension, or by an alt of "video".
+    case 'image':
     case 'video': {
       const caption = node.caption ? ` "${String(node.caption).replace(/"/g, '')}"` : ''
-      return `![${node.alt || 'video'}](${node.url}${caption})\n\n`
+      const alt = node.alt || (node.type === 'video' ? 'video' : '')
+      return `![${alt}](${node.url}${caption})\n\n`
     }
 
     case 'youtube':
@@ -209,10 +221,10 @@ function serializeBlock(node: any, depth = 0): string {
 
       const header = cellsOf(rows[0])
       const width = header.length
-      const separator = Array.from({ length: width }, (_, i) => {
-        const a = align[i] || 'left'
-        return a === 'center' ? ':---:' : a === 'right' ? '---:' : '---'
-      })
+      const separator = Array.from(
+        { length: width },
+        (_, i) => ALIGNMENT_RULES[align[i]] || ALIGNMENT_RULES.left,
+      )
 
       let md = `| ${header.join(' | ')} |\n| ${separator.join(' | ')} |\n`
       for (const row of rows.slice(1)) {
@@ -224,7 +236,7 @@ function serializeBlock(node: any, depth = 0): string {
     }
 
     case 'callout': {
-      const inner = (node.blocks || []).map((b: any) => serializeBlock(b, depth)).join('').trim()
+      const inner = (node.blocks || []).map((b: any) => serializeBlock(b)).join('').trim()
       const title = node.title ? ` ${node.title}` : ''
       return `:::${node.variant || 'note'}${title}\n${inner}\n:::\n\n`
     }
@@ -245,7 +257,7 @@ function serializeBlock(node: any, depth = 0): string {
       const items = (node.items || [])
         .map((item: any) => {
           const answer = (item.answer || [])
-            .map((b: any) => serializeBlock(b, depth))
+            .map((b: any) => serializeBlock(b))
             .join('')
           return `### ${item.question}\n\n${answer}`
         })

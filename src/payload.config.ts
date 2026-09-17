@@ -95,10 +95,10 @@ if (S3_STORAGE_ENABLED) {
     .map(([name]) => name)
 
   if (missing.length > 0) {
+    const several = missing.length > 1
     throw new Error(
-      `S3 credentials are set but ${missing.join(' and ')} ` +
-        `${missing.length > 1 ? 'are' : 'is'} not. Add ` +
-        `${missing.length > 1 ? 'them' : 'it'} to the environment, or unset ` +
+      `S3 credentials are set but ${missing.join(' and ')} ${several ? 'are' : 'is'} not. ` +
+        `Add ${several ? 'them' : 'it'} to the environment, or unset ` +
         `S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY to store uploads on the local disk.`,
     )
   }

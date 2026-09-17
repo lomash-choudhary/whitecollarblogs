@@ -74,6 +74,27 @@ function extensionFor(mimeType: string): string {
   return 'jpg'
 }
 
+/**
+ * What to tell the writer when the image API refuses.
+ *
+ * The key, the model id and the quota are the three a person can actually act
+ * on, so each is named rather than folded into a generic failure. The model id
+ * is quoted; the API key never is.
+ */
+function apiFailureHint(status: number, model: string): string {
+  switch (status) {
+    case 429:
+      return 'The image API is rate limited right now — wait a minute and generate again.'
+    case 404:
+      return `The image API has no model called "${model}". Check GEMINI_IMAGE_MODEL is a current image model id.`
+    case 400:
+    case 403:
+      return `The image API rejected the request. Check GEMINI_API_KEY is valid, and that GEMINI_IMAGE_MODEL ("${model}") is an image model rather than a text one.`
+    default:
+      return 'The image API is unavailable — try again in a moment.'
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const payload = await getPayload({ config })
@@ -112,6 +133,7 @@ export async function POST(request: Request) {
     const direction = String(body?.direction || '').trim()
     const alt = String(body?.alt || '').trim()
     const label = String(body?.label || '')
+    const altText = alt || direction
     if (!direction && !alt) {
       return NextResponse.json(
         { error: 'This tag has no photo direction and no alt text, so there is nothing to draw. Add one and generate again.' },
@@ -139,18 +161,8 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const detail = await response.text().catch(() => '')
-      // The key and the quota are the two that a writer can actually act on,
-      // so they are named rather than folded into a generic failure.
-      const hint =
-        response.status === 429
-          ? 'The image API is rate limited right now — wait a minute and generate again.'
-          : response.status === 404
-            ? `The image API has no model called "${model}". Check GEMINI_IMAGE_MODEL is a current image model id.`
-            : response.status === 400 || response.status === 403
-              ? `The image API rejected the request. Check GEMINI_API_KEY is valid, and that GEMINI_IMAGE_MODEL ("${model}") is an image model rather than a text one.`
-              : 'The image API is unavailable — try again in a moment.'
       payload.logger.error(`generate-image: ${response.status} ${detail.slice(0, 500)}`)
-      return NextResponse.json({ error: hint }, { status: 502 })
+      return NextResponse.json({ error: apiFailureHint(response.status, model) }, { status: 502 })
     }
 
     const image = extractImage(await response.json())
@@ -166,7 +178,7 @@ export async function POST(request: Request) {
 
     const media: any = await payload.create({
       collection: 'media',
-      data: { alt: alt || direction },
+      data: { alt: altText },
       file: { data: buffer, mimetype: image.mimeType, name, size: buffer.length },
     })
 
@@ -177,7 +189,7 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json({ url: media.url, alt: alt || direction })
+    return NextResponse.json({ url: media.url, alt: altText })
   } catch (err: any) {
     const timedOut = err?.name === 'TimeoutError' || err?.name === 'AbortError'
     if (timedOut) {

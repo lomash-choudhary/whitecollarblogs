@@ -5,8 +5,14 @@
  *   [Feature image — below H1, above intro. Alt text: "Painted vs refinished
  *    cabinets." Photo direction: split image, sprayed white doors on one side.]
  *
+ *   **Feature image (below H1, above intro):** Alt text: "Painted vs refinished
+ *   cabinets." Photo direction: split image, sprayed white doors on one side.
+ *
  * Drafts arrive from the SEO writer with these already in them, so the syntax
- * is dictated by what is already being pasted rather than chosen here.
+ * is dictated by what is already being pasted rather than chosen here — which
+ * is why there are two forms and not one. The second is what the SEO team's
+ * own template produces; the first is this repo's original convention and is
+ * kept because published drafts already use it.
  *
  * The placement note ("below H1, above intro") is **read and never acted on**.
  * The tag is already sitting on the line the image belongs on, so the position
@@ -37,6 +43,34 @@
  * tag that had been through a save ended with a stray trailing backslash.
  */
 const PLACEHOLDER_LINE = /^[ \t]*\\?\[([^\]\n]+?)\\?\][ \t]*$/
+
+/**
+ * The same brief written as a **bold label** instead of a bracketed line:
+ *
+ *   **Feature image (below H1, above intro):** Alt text: "…" Photo direction: …
+ *
+ * This is the form the SEO team's drafts actually arrive in — the brackets are
+ * the CMS's own convention and the writers never typed them. Unmatched, the
+ * whole brief published as the article's opening paragraph, telling a reader
+ * which photo to take.
+ *
+ * The bold is optional because a copy-paste out of Google Docs into the plain
+ * markdown textarea drops it, and the placement note sits in parentheses on the
+ * label rather than after a dash.
+ *
+ * Unlike the bracketed form this one is just an ordinary line, so it needs a
+ * second guard or `**Image quality matters** on a repaint…` becomes a picture.
+ * It must therefore carry one of the two field labels — every real tag has at
+ * least `Alt text:` — on top of the "image" test every tag has to pass.
+ */
+const EMPHASIS_DELIMITERS = /\*\*|__/g
+
+/**
+ * `Feature image (below H1, above intro)` — the placement note parenthesised on
+ * the label. Without pulling it back out, `label` keeps the whole note and
+ * `placement`, the field this module reads it into, comes back empty.
+ */
+const LABEL_PARENTHETICAL = /^(.*?)\s*\(([^)]*)\)\s*$/
 
 /**
  * Separator between the label and the rest: an em dash, an en dash, a hyphen
@@ -123,18 +157,25 @@ export function findImagePlaceholders(markdown: string): ImagePlaceholder[] {
     const index = offset
     offset += rawLine.length + 1
 
-    const match = rawLine.match(PLACEHOLDER_LINE)
-    if (!match) return
+    const bracketed = rawLine.match(PLACEHOLDER_LINE)
+    const body = bracketed
+      ? bracketed[1].trim()
+      : rawLine.replace(EMPHASIS_DELIMITERS, '').trim()
+    if (!body) return
+    // An unbracketed line is only a tag if it names one of the two fields.
+    if (!bracketed && !ALT_LABEL.test(body) && !DIRECTION_LABEL.test(body)) return
 
-    const body = match[1].trim()
     const separator = body.match(LABEL_SEPARATOR)
-    const label = (separator ? body.slice(0, separator.index) : body).trim()
+    const written = (separator ? body.slice(0, separator.index) : body).trim()
+    const parenthesised = written.match(LABEL_PARENTHETICAL)
+    const label = (parenthesised ? parenthesised[1] : written).trim()
     if (!/image/i.test(label)) return
 
     const remainder = separator
       ? body.slice((separator.index || 0) + separator[0].length).trim()
       : ''
     const fields = splitFields(remainder || body)
+    const placement = fields.placement || (parenthesised ? parenthesised[2].trim() : '')
     // A tag with no `Alt text:` still needs an alt: the photo direction
     // describes the picture, so it reads better than the bare label would.
     const alt = fields.alt || fields.direction || remainder || label
@@ -145,7 +186,7 @@ export function findImagePlaceholders(markdown: string): ImagePlaceholder[] {
       index,
       line: i + 1,
       label,
-      placement: fields.placement,
+      placement,
       alt,
       direction,
     })

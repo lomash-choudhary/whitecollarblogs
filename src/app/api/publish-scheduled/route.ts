@@ -8,29 +8,23 @@
  * forever.
  */
 import { NextResponse } from 'next/server'
-import { Receiver, SignatureError } from '@upstash/qstash'
+import { SignatureError } from '@upstash/qstash'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { isDevMode, schedulerCallbackUrl } from '@/lib/scheduler'
+import { schedulerCallbackUrl, schedulerReceiver } from '@/lib/scheduler'
 
 // Publishing can involve a GitHub dispatch, so give it room beyond the default.
 export const maxDuration = 60
 export const dynamic = 'force-dynamic'
 
-function receiver(): Receiver | null {
-  // The dev server signs with its own deterministic keys, which the SDK knows.
-  if (isDevMode()) return new Receiver({ devMode: true })
-
-  const currentSigningKey = process.env.QSTASH_CURRENT_SIGNING_KEY
-  const nextSigningKey = process.env.QSTASH_NEXT_SIGNING_KEY
-  if (!currentSigningKey || !nextSigningKey) return null
-  return new Receiver({ currentSigningKey, nextSigningKey })
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : 'unknown error'
 }
 
 export async function POST(request: Request) {
   // Verification is not optional. Without keys configured the endpoint refuses
   // to act rather than falling back to trusting the caller.
-  const verifier = receiver()
+  const verifier = schedulerReceiver()
   if (!verifier) {
     console.error('[schedule] QSTASH signing keys are not configured; refusing the request.')
     return NextResponse.json({ error: 'Scheduling is not configured.' }, { status: 503 })
@@ -62,12 +56,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 })
     }
   } catch (err: unknown) {
-    if (err instanceof SignatureError) {
-      console.error(`[schedule] rejected an unsigned or forged request: ${err.message}`)
-      return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 })
-    }
-    const detail = err instanceof Error ? err.message : 'unknown error'
-    console.error(`[schedule] signature verification failed: ${detail}`)
+    console.error(
+      err instanceof SignatureError
+        ? `[schedule] rejected an unsigned or forged request: ${err.message}`
+        : `[schedule] signature verification failed: ${errorMessage(err)}`,
+    )
     return NextResponse.json({ error: 'Invalid signature.' }, { status: 401 })
   }
 
@@ -93,10 +86,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, reason: 'Post no longer exists.' }, { status: 200 })
     }
 
-    const stageKey =
-      typeof (post as { stage?: unknown }).stage === 'object'
-        ? ((post as { stage?: { key?: string } }).stage?.key ?? null)
-        : null
+    const stage = (post as { stage?: { key?: string } | null }).stage
+    const stageKey = stage && typeof stage === 'object' ? (stage.key ?? null) : null
 
     // Someone may have published, unscheduled or reverted the post since. Any
     // of those means this delivery is stale — acknowledge it and stop retrying.
@@ -138,7 +129,7 @@ export async function POST(request: Request) {
     payload.logger.info(`[schedule] published post ${postId} on time`)
     return NextResponse.json({ ok: true, postId }, { status: 200 })
   } catch (err: unknown) {
-    const detail = err instanceof Error ? err.message : 'unknown error'
+    const detail = errorMessage(err)
     console.error(`[schedule] failed to publish ${postId}: ${detail}`)
     // A real failure — let QStash retry.
     return NextResponse.json({ error: detail }, { status: 500 })

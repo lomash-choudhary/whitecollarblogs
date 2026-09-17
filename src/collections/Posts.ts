@@ -16,18 +16,36 @@ const PUBLISHABLE_FIELDS = [
   'stage',
   'publishDate',
   'site',
+  // The SEO box. A meta tag only reaches a site through a re-publish, so
+  // editing one has to count as a publishable change — otherwise a corrected
+  // meta description saves, reports success, and never leaves the CMS.
+  'metaTitle',
+  'metaDescription',
+  'metaKeywords',
+  'canonicalUrl',
+  'coverImageAlt',
+  'ogImageUrl',
+  'targetKeyword',
 ] as const
+
+/** Of those, the ones stored as a relationship, which may arrive populated. */
+const RELATIONSHIP_FIELDS = new Set<string>(['author', 'stage'])
 
 function relationId(value: unknown): unknown {
   return value && typeof value === 'object' ? (value as { id?: unknown }).id : value
 }
 
+/** Comparable value of one field, so a populated relation matches its own id. */
+function publishableValue(doc: any, field: string): unknown {
+  const value = doc?.[field]
+  return RELATIONSHIP_FIELDS.has(field) ? relationId(value) : value
+}
+
 function hasPublishableChange(doc: any, previousDoc: any): boolean {
   return PUBLISHABLE_FIELDS.some((field) => {
-    const next = field === 'author' || field === 'stage' ? relationId(doc?.[field]) : doc?.[field]
-    const prev =
-      field === 'author' || field === 'stage' ? relationId(previousDoc?.[field]) : previousDoc?.[field]
-    return JSON.stringify(next ?? null) !== JSON.stringify(prev ?? null)
+    const next = publishableValue(doc, field)
+    const previous = publishableValue(previousDoc, field)
+    return JSON.stringify(next ?? null) !== JSON.stringify(previous ?? null)
   })
 }
 
@@ -135,6 +153,96 @@ export const Posts: CollectionConfig = {
       admin: {
         placeholder: 'e.g. Software Engineer',
       },
+    },
+    /**
+     * Everything a published article's meta tags are built from.
+     *
+     * A `collapsible` is presentational — its children are ordinary top-level
+     * fields and get ordinary top-level columns (`meta_title`, ...), so this
+     * groups the box in the admin panel without nesting anything in Postgres.
+     *
+     * Every one of these is optional and falls back (see `resolveArticleSeo`
+     * in src/lib/articleSeo.ts). A writer who fills in nothing gets the same
+     * tags they get today; a writer who fills one in controls that tag on
+     * whichever of the four sites the post is published to.
+     */
+    {
+      type: 'collapsible',
+      label: 'SEO & meta tags',
+      admin: {
+        initCollapsed: true,
+        description:
+          'Drives <title>, description, keywords, canonical, robots, the Open Graph tags and the Twitter card on every site. Leave a box empty to fall back to the title or excerpt.',
+      },
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              '<title>, og:title and twitter:title. The site name is appended to <title> automatically — do not type it. Falls back to the article title.',
+            placeholder: 'Cost to Paint Kitchen Cabinets in 2026',
+          },
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          required: false,
+          admin: {
+            description:
+              'meta description, og:description and twitter:description. Falls back to the excerpt. Search engines cut it off around 160 characters.',
+          },
+        },
+        {
+          name: 'metaKeywords',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'meta keywords, comma separated. Leave empty and the site falls back to its own site-wide keywords rather than publishing an empty tag.',
+            placeholder: 'cabinet painting, kitchen cabinets, cost',
+          },
+        },
+        {
+          name: 'canonicalUrl',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'Overrides <link rel="canonical"> and og:url. Leave empty — the site builds its own from the slug, which is right unless this article also lives somewhere else.',
+            placeholder: 'https://www.ovopainting.com/resources/paint-sheen-guide',
+          },
+        },
+        {
+          name: 'coverImageAlt',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'Alt text for the cover image, and the fallback for og:image:alt. Falls back to the meta title, which describes the article rather than the picture.',
+          },
+        },
+        {
+          name: 'ogImageUrl',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'og:image and twitter:image. Only fill this in when the share card should differ from the cover image.',
+            placeholder: 'https://…supabase.co/…/share-card.jpg',
+          },
+        },
+        {
+          name: 'targetKeyword',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'The phrase this article is written to rank for. Not published as a meta tag — it travels with the article so each site can use it in its own copy.',
+          },
+        },
+      ],
     },
     {
       name: 'views',
@@ -326,7 +434,8 @@ export const Posts: CollectionConfig = {
         // Guard against the recursive update we do below to store the result.
         if (context?.skipExternalPublish) return doc
 
-        const site = getSite((doc as any).site)
+        const post = doc as any
+        const site = getSite(post.site)
         if (site.target !== 'github') return doc
 
         // A view/like counter bump must not re-publish the article. Only send
@@ -335,11 +444,11 @@ export const Posts: CollectionConfig = {
           return doc
         }
 
-        const stageKey = await resolveStageKey((doc as any).stage, req)
+        const stageKey = await resolveStageKey(post.stage, req)
         if (stageKey !== 'published') return doc
 
         // Author is needed for the byline in the generated markdown.
-        let author = (doc as any).author
+        let author = post.author
         if (author && typeof author !== 'object') {
           try {
             author = await req.payload.findByID({ collection: 'authors', id: author, req })
@@ -353,16 +462,16 @@ export const Posts: CollectionConfig = {
         if (req.context) (req.context as Record<string, unknown>).skipExternalPublish = true
 
         const { publishPostToSite } = await import('../lib/publishToSite')
-        const result = await publishPostToSite(doc, author)
+        const result = await publishPostToSite(post, author)
 
         req.payload.logger.info(
-          `[multi-site] ${operation} "${(doc as any).slug}" -> ${site.key}: ${result.status} — ${result.message}`,
+          `[multi-site] ${operation} "${post.slug}" -> ${site.key}: ${result.status} — ${result.message}`,
         )
 
         try {
           await req.payload.update({
             collection: 'posts',
-            id: (doc as any).id,
+            id: post.id,
             data: {
               externalStatus: result.status,
               externalMessage: result.message,

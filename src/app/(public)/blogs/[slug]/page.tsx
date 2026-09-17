@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -7,6 +8,8 @@ import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import { DEFAULT_SITE_KEY, siteWhere } from '@/config/sites'
 import ShareBar from '@/components/ShareBar'
 import { renderContent, extractHeadings } from '@/components/LexicalContent'
+import { buildArticleMetadata } from '@/lib/articleSeo'
+import { seoSite } from '@/lib/seoSite'
 import { Metadata } from 'next'
 
 interface PageProps {
@@ -27,11 +30,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     })
 
     if (postsResult.docs.length > 0) {
-      const post = postsResult.docs[0]
-      return {
-        title: `${post.title} | White Collar Advice`,
-        description: post.excerpt || `Read more about ${post.title}`,
-      }
+      const post = postsResult.docs[0] as any
+      const author = typeof post.author === 'object' && post.author ? post.author : null
+      // The same builder the three website repos use, so an article published
+      // here and the same article published to OVO carry the same tag set.
+      return buildArticleMetadata(
+        {
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt || '',
+          heroImage: cleanImageUrl(post.coverImageUrl) || coverImageSrc(post),
+          heroImageAlt: post.coverImageAlt || '',
+          authorName: author?.name || '',
+          metaTitle: post.metaTitle || '',
+          metaDescription: post.metaDescription || '',
+          metaKeywords: post.metaKeywords || '',
+          canonicalUrl: post.canonicalUrl || '',
+          ogImage: cleanImageUrl(post.ogImageUrl) || '',
+          publishedTime: post.publishDate ? new Date(post.publishDate).toISOString() : '',
+        },
+        seoSite(),
+      )
     }
   } catch (err) {
     console.error('Error generating metadata for blog post:', err)
@@ -40,6 +59,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: 'Blog Post | White Collar Advice',
   }
+}
+
+/** Cover image of a post whose image was uploaded rather than pasted. */
+function coverImageSrc(post: any): string {
+  const media = post?.coverImage
+  return (media && typeof media === 'object' && (media.url as string)) || ''
 }
 
 export default async function BlogDetailsPage({ params }: PageProps) {

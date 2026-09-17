@@ -3,8 +3,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { PublicSite } from '@/config/sites'
-
-export const SITE_COOKIE = 'wcb_active_site'
+import { SITE_COOKIE } from '@/config/siteCookie'
 
 interface SiteContextValue {
   sites: PublicSite[]

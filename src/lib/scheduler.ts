@@ -11,7 +11,7 @@
  * publishes a new one, so a post never has two pending deliveries.
  */
 
-import { Client } from '@upstash/qstash'
+import { Client, Receiver } from '@upstash/qstash'
 
 /**
  * QStash ships a local dev server so scheduling can be exercised without a
@@ -40,7 +40,7 @@ export function schedulerFailureUrl(): string {
   return `${baseUrl()}/api/publish-scheduled/failed`
 }
 
-export function isSchedulerConfigured(): boolean {
+function isSchedulerConfigured(): boolean {
   if (!schedulerCallbackUrl().startsWith('http')) return false
   return isDevMode() || Boolean(process.env.QSTASH_TOKEN)
 }
@@ -54,6 +54,28 @@ function qstash(): Client {
     client = isDevMode() ? new Client({}) : new Client({ token: process.env.QSTASH_TOKEN as string })
   }
   return client
+}
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : 'unknown error'
+}
+
+/**
+ * Verifier for a QStash webhook, or null when the signing keys are unset.
+ *
+ * Both callback routes share it so neither can drift into accepting a request
+ * the other would reject: a null here must always mean 503 and do nothing,
+ * never a fall back to trusting the caller.
+ */
+export function schedulerReceiver(): Receiver | null {
+  // The dev server signs with its own deterministic keys, which the SDK knows.
+  if (isDevMode()) return new Receiver({ devMode: true })
+
+  const currentSigningKey = process.env.QSTASH_CURRENT_SIGNING_KEY
+  const nextSigningKey = process.env.QSTASH_NEXT_SIGNING_KEY
+  if (!currentSigningKey || !nextSigningKey) return null
+
+  return new Receiver({ currentSigningKey, nextSigningKey })
 }
 
 export interface ScheduleResult {
@@ -80,7 +102,7 @@ export async function cancelScheduledPublish(messageId?: string | null): Promise
     await qstash().messages.cancel(messageId)
     return { ok: true, status: 'cancelled', message: 'Scheduled publish cancelled.' }
   } catch (err: unknown) {
-    const detail = err instanceof Error ? err.message : 'unknown error'
+    const detail = errorMessage(err)
     // A message that already fired cannot be cancelled, and does not need to be.
     if (/not found|404/i.test(detail)) {
       return { ok: true, status: 'skipped', message: 'That schedule had already run.' }
@@ -150,7 +172,10 @@ export async function schedulePublish(
       messageId: res.messageId,
     }
   } catch (err: unknown) {
-    const detail = err instanceof Error ? err.message : 'unknown error'
-    return { ok: false, status: 'failed', message: `Could not schedule the publish: ${detail}` }
+    return {
+      ok: false,
+      status: 'failed',
+      message: `Could not schedule the publish: ${errorMessage(err)}`,
+    }
   }
 }

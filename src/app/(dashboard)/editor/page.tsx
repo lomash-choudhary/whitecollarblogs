@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
@@ -53,11 +54,22 @@ export default async function EditorPage({ searchParams }: PageProps) {
           depth: 0,
         })
         if (postDoc) {
+          // Multi-site and scheduling columns are not in the generated types.
+          const extra = postDoc as any
           initialPost = {
             id: postDoc.id,
             title: postDoc.title,
             slug: postDoc.slug,
             excerpt: postDoc.excerpt || '',
+            // The SEO box. Read off `extra` like the other columns Payload's
+            // generated types do not know about yet.
+            metaTitle: extra.metaTitle || '',
+            metaDescription: extra.metaDescription || '',
+            metaKeywords: extra.metaKeywords || '',
+            canonicalUrl: extra.canonicalUrl || '',
+            coverImageAlt: extra.coverImageAlt || '',
+            ogImageUrl: extra.ogImageUrl || '',
+            targetKeyword: extra.targetKeyword || '',
             content: postDoc.content,
             targetRole: postDoc.targetRole || 'Software Engineer',
             readTime: postDoc.readTime || '3 min read',
@@ -65,13 +77,13 @@ export default async function EditorPage({ searchParams }: PageProps) {
             stage: typeof postDoc.stage === 'object' && postDoc.stage !== null ? (postDoc.stage as any).id : postDoc.stage,
             coverImageUrl: postDoc.coverImageUrl || '',
             coverImage: typeof postDoc.coverImage === 'object' && postDoc.coverImage !== null ? (postDoc.coverImage as any).id : postDoc.coverImage,
-            site: (postDoc as any).site || undefined,
-            externalStatus: (postDoc as any).externalStatus || undefined,
-            externalMessage: (postDoc as any).externalMessage || undefined,
-            externalUrl: (postDoc as any).externalUrl || undefined,
-            scheduledFor: (postDoc as any).scheduledFor || undefined,
-            scheduleStatus: (postDoc as any).scheduleStatus || undefined,
-            scheduleMessage: (postDoc as any).scheduleMessage || undefined,
+            site: extra.site || undefined,
+            externalStatus: extra.externalStatus || undefined,
+            externalMessage: extra.externalMessage || undefined,
+            externalUrl: extra.externalUrl || undefined,
+            scheduledFor: extra.scheduledFor || undefined,
+            scheduleStatus: extra.scheduleStatus || undefined,
+            scheduleMessage: extra.scheduleMessage || undefined,
           }
         }
       } catch (err) {

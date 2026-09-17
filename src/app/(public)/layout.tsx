@@ -21,7 +21,17 @@ export default function PublicLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable} scroll-smooth`}>
+    // `data-scroll-behavior` is what makes Next turn the smooth scrolling below
+    // off for the length of a route change. Without it a navigation animates
+    // its way back to the top instead of arriving there, and Next 16 warns in
+    // the console rather than assuming. `globals.css` sets
+    // `html { scroll-behavior: smooth }`, so both layouts that import it need
+    // the attribute.
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${playfair.variable} ${dmSans.variable} scroll-smooth`}
+    >
       <body className="min-h-full bg-[#F5F0E8] text-[#0D1B2A] font-body antialiased flex flex-col">
 
         {/* ── Navigation ── */}

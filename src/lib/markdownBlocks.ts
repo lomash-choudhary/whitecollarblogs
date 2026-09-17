@@ -175,8 +175,6 @@ export type Block =
 
 /* ───────────────────────────── Inline parser ────────────────────────────── */
 
-const EMPTY_TEXT: InlineText = { type: 'text', text: '' }
-
 function pushText(nodes: Inline[], text: string, marks: Partial<InlineText>): void {
   if (!text) return
   nodes.push({ type: 'text', text, ...marks })
@@ -248,12 +246,7 @@ export function parseInline(
     if (!inLink && (char === 'h' || char === 'w') && BARE_URL.test(text.slice(i))) {
       const match = text.slice(i).match(BARE_URL)
       if (match) {
-        // Trailing sentence punctuation belongs to the sentence, not the URL.
-        let raw = match[0]
-        const trailing = raw.match(/[.,;:!?)\]]+$/)
-        if (trailing && !(trailing[0] === ')' && (raw.match(/\(/g) || []).length > (raw.match(/\)/g) || []).length - 1)) {
-          raw = raw.slice(0, raw.length - trailing[0].length)
-        }
+        const raw = trimUrlPunctuation(match[0])
         if (raw.length > 8) {
           flush()
           nodes.push({
@@ -340,6 +333,24 @@ export function parseInline(
   return nodes
 }
 
+const TRAILING_PUNCTUATION = /[.,;:!?)\]]+$/
+
+/**
+ * Drops sentence punctuation that followed a bare URL rather than belonging to
+ * it. A closing paren is kept when the URL opened one, so a Wikipedia link
+ * ending in `(disambiguation)` survives.
+ */
+function trimUrlPunctuation(url: string): string {
+  const trailing = url.match(TRAILING_PUNCTUATION)
+  if (!trailing) return url
+
+  const opened = (url.match(/\(/g) || []).length
+  const closed = (url.match(/\)/g) || []).length
+  if (trailing[0] === ')' && opened > closed - 1) return url
+
+  return url.slice(0, url.length - trailing[0].length)
+}
+
 /** Reads `[label](url)` / `[label](url "title")` starting at the `[`. */
 function parseBracketLink(
   text: string,
@@ -416,8 +427,40 @@ export function inlineToPlainText(nodes: Inline[]): string {
 const FENCE = /^(```|~~~)\s*([A-Za-z0-9+#._-]*)\s*$/
 const DIRECTIVE_OPEN = /^:::\s*(note|tip|warning|key|takeaways|info|caution)\s*(.*)$/i
 const DIRECTIVE_CLOSE = /^:::\s*$/
+/** Every keyword `DIRECTIVE_OPEN` accepts, mapped to the variant it renders as. */
+const CALLOUT_VARIANTS: Record<string, CalloutVariant> = {
+  note: 'note',
+  info: 'note',
+  tip: 'tip',
+  warning: 'warning',
+  caution: 'warning',
+  key: 'key',
+  takeaways: 'key',
+}
 const DIVIDER = /^(?:-{3,}|\*{3,}|_{3,})$/
 const HEADING = /^(#{1,6})\s+(.*)$/
+/**
+ * The `(H2)` level marker the SEO team writes in front of every heading.
+ *
+ * Their drafts are written in Google Docs against a heading outline, and each
+ * heading carries its own level as visible text — `## **(H2) Key Takeaways**`.
+ * It is a production instruction, not content: left in, it prints on the live
+ * page, lands in the table of contents, and lands in the anchor slug
+ * (`#h2-key-takeaways`). It also broke the two heading conventions outright —
+ * `TAKEAWAYS_HEADING` and `FAQ_HEADING` are anchored at the start of the text,
+ * so `(H2) Key Takeaways` matched neither and every draft published with no
+ * takeaways box and no FAQ accordion.
+ *
+ * Group 1 keeps any emphasis delimiters the marker was written inside, because
+ * the marker sits *within* the bold (`**(H2) Key Takeaways**`) far more often
+ * than outside it; dropping them would leave an unbalanced `**` at the end of
+ * the line. Group 2 is the level, for a marker that arrives with no `#`.
+ *
+ * `[H2]` is accepted alongside `(H2)`, with an optional backslash on either
+ * bracket: `lexicalToMarkdown` escapes `[` and `]`, so a bracketed marker comes
+ * back from the very first save as `\[H2\]`.
+ */
+const HEADING_MARKER = /^((?:\*\*|__|\*|_)*)[ \t]*\\?[([][ \t]*[Hh]([1-6])[ \t]*\\?[)\]][ \t]*/
 const BULLET = /^([-*+])\s+(.*)$/
 const ORDERED = /^(\d{1,9})[.)]\s+(.*)$/
 const STANDALONE_IMAGE = /^!\[([^\]]*)\]\(([^)\s]+)(?:\s+["'](.*)["'])?\)$/
@@ -457,6 +500,11 @@ export function slugifyHeading(text: string): string {
 /** Strips emphasis so a heading reads cleanly in a table of contents. */
 function plainHeading(text: string): string {
   return inlineToPlainText(parseInline(text)).trim()
+}
+
+/** Drops a leading `(H2)` level marker, keeping the emphasis it was inside. */
+function stripHeadingMarker(text: string): string {
+  return text.replace(HEADING_MARKER, '$1')
 }
 
 function splitTableRow(line: string): string[] {
@@ -533,15 +581,7 @@ function parseBlockRange(cursor: Cursor, stopAtDirectiveClose = false): Block[] 
       cursor.i++
       const inner = parseBlockRange(cursor, true)
       if (cursor.i < cursor.lines.length) cursor.i++ // consume the closing :::
-      const keyword = directive[1].toLowerCase()
-      const variant: CalloutVariant =
-        keyword === 'tip'
-          ? 'tip'
-          : keyword === 'warning' || keyword === 'caution'
-            ? 'warning'
-            : keyword === 'key' || keyword === 'takeaways'
-              ? 'key'
-              : 'note'
+      const variant = CALLOUT_VARIANTS[directive[1].toLowerCase()] || 'note'
       blocks.push({ type: 'callout', variant, title: directive[2].trim(), blocks: inner })
       continue
     }
@@ -556,7 +596,7 @@ function parseBlockRange(cursor: Cursor, stopAtDirectiveClose = false): Block[] 
     // Heading
     const heading = line.match(HEADING)
     if (heading) {
-      const text = heading[2].replace(/\s+#+\s*$/, '')
+      const text = stripHeadingMarker(heading[2].replace(/\s+#+\s*$/, ''))
       cursor.i++
       if (!text.trim()) continue
       blocks.push({
@@ -567,6 +607,28 @@ function parseBlockRange(cursor: Cursor, stopAtDirectiveClose = false): Block[] 
         children: parseInline(text),
       })
       continue
+    }
+
+    // A heading that lost its `#` on the way out of the writer's document but
+    // kept its `(H2)` marker. Checked *after* `HEADING`, so when both are
+    // present the hashes win and the marker is only stripped — a marker that
+    // set the level would silently restructure an article whose two halves
+    // disagree, which is the one thing worse than a visible marker.
+    const markerOnly = line.match(HEADING_MARKER)
+    if (markerOnly) {
+      const text = stripHeadingMarker(line)
+      const plain = plainHeading(text)
+      if (plain) {
+        cursor.i++
+        blocks.push({
+          type: 'heading',
+          level: Number(markerOnly[2]) as HeadingLevel,
+          text: plain,
+          id: '',
+          children: parseInline(text),
+        })
+        continue
+      }
     }
 
     // Table: a pipe row, optionally followed by an alignment row.
@@ -666,6 +728,7 @@ function stripBreakMarker(line: string): string {
 function isBlockStart(line: string): boolean {
   return (
     HEADING.test(line) ||
+    HEADING_MARKER.test(line) ||
     BULLET.test(line) ||
     ORDERED.test(line) ||
     DIVIDER.test(line) ||
@@ -688,9 +751,23 @@ function parseTable(cursor: Cursor): TableBlock | null {
     const line = cursor.lines[cursor.i].trim()
     if (!line.startsWith('|')) break
 
-    if (!sawSeparator && rows.length === 1 && TABLE_SEPARATOR.test(line)) {
-      align = splitTableRow(line).map(columnAlign)
-      sawSeparator = true
+    // A separator-shaped row is a rule wherever it appears, not data.
+    //
+    // Markdown has exactly one, under the header, and only that one carries
+    // the column alignment. But a Word table has a border under *every* row,
+    // and the docx-to-markdown converters transcribe each one as another
+    // `| --- | --- |` — so a five-row table arrives with five separators.
+    // Read as data they rendered as a blank-looking row of literal "---"
+    // between every real row, doubling the table's height.
+    //
+    // Dropping them is safe: a row made of nothing but dashes, colons, pipes
+    // and spaces carries no content in any table, so there is nothing a writer
+    // could have meant by it.
+    if (TABLE_SEPARATOR.test(line)) {
+      if (!sawSeparator && rows.length === 1) {
+        align = splitTableRow(line).map(columnAlign)
+        sawSeparator = true
+      }
       cursor.i++
       continue
     }
@@ -842,6 +919,120 @@ function assignHeadingIds(blocks: Block[]): Block[] {
 const TAKEAWAYS_HEADING = /^key\s*takeaways?\b/i
 const FAQ_HEADING = /^(faqs?|frequently\s+asked\s+questions)\b/i
 
+/** A ":" or dash between a bold question and its answer on the same line. */
+const FAQ_ANSWER_SEPARATOR = /^[ \t]*[:—–-][ \t]*/
+
+/**
+ * A FAQ question written as a **bold paragraph** rather than an `###` heading.
+ *
+ * This is how the SEO team actually writes a FAQ — the question is a bold
+ * paragraph and the answer is the paragraph under it, or the same paragraph
+ * after a colon. Read with the `###` rule alone it produced **zero** items, so
+ * `foldSpecialSections` fell through to its "leave the section as written"
+ * branch and every FAQ on every site rendered as loose prose. That fallback is
+ * correct and silent, which is why nobody caught it from the CMS side.
+ *
+ * Only called on blocks *inside* a FAQ section, so an ordinary bold lead-in
+ * elsewhere in the article is never at risk. Inside one it still has to be
+ * distinguished from a lead-in, and three shapes are accepted:
+ *
+ *   **Question?**                  the bold run is the whole paragraph
+ *   **Question?** Answer prose.    the bold run ends in a question mark
+ *   **Label**: answer prose.       a ":" or dash separates the two
+ *
+ * Anything else — a bold run that merely opens a sentence, the way "**Kitchen
+ * wall paint finish** needs to handle grease" does — stays a paragraph.
+ *
+ * `lenient` drops those three tests and takes any leading bold run. It is only
+ * ever used for a **second pass** over a section the strict pass found nothing
+ * in, where the choice is not between a right and a wrong split but between a
+ * rough accordion and no accordion at all. The shape it rescues is a question
+ * with no blank line under it: CommonMark folds the answer onto the question's
+ * own paragraph as a soft wrap, and nothing survives into the AST to say the
+ * two were written on separate lines.
+ */
+function faqQuestionFromParagraph(
+  block: Block,
+  lenient = false,
+): { question: string; answer: ParagraphBlock | null } | null {
+  if (block.type !== 'paragraph') return null
+
+  const opener = block.children[0]
+  if (!opener || opener.type !== 'text' || !opener.bold || opener.code) return null
+  // A trailing colon belongs to the syntax, not to the question.
+  const question = opener.text.trim().replace(/[:\s]+$/, '')
+  if (!question) return null
+
+  let tail = block.children.slice(1)
+  while (tail.length && tail[0].type === 'break') tail = tail.slice(1)
+
+  const lead = tail[0]
+  const separated = !!lead && lead.type === 'text' && FAQ_ANSWER_SEPARATOR.test(lead.text)
+  if (tail.length && !separated && !/\?$/.test(question) && !lenient) return null
+
+  if (!tail.length) return { question, answer: null }
+
+  // The space after the bold run, and any ":" separator, are syntax rather
+  // than answer. Left in, the answer serialises back out with a leading space
+  // that the next parse trims — so saving twice would not be a fixed point.
+  const answer: Inline[] = tail.slice(1)
+  if (lead.type === 'text') {
+    const text = lead.text.replace(FAQ_ANSWER_SEPARATOR, '').replace(/^\s+/, '')
+    if (text) answer.unshift({ ...lead, text })
+  } else {
+    answer.unshift(lead)
+  }
+  return { question, answer: answer.length ? { type: 'paragraph', children: answer } : null }
+}
+
+/**
+ * Question/answer pairs out of one FAQ section's blocks, or null when the
+ * section holds none — which is the signal to try again leniently.
+ *
+ * Anything written between the heading and the first question used to be
+ * dropped on the floor along with the heading — a silent content loss that
+ * only stayed invisible because a FAQ section normally opens straight onto its
+ * first question. It is kept by folding it into the **first answer**.
+ *
+ * That is not where it was written, but every alternative is worse. A
+ * `FaqBlock` has no intro slot the way a `TakeawaysBlock` does, and adding one
+ * means a case in all four renderers. Pushing it back into the flow ahead of
+ * the box breaks the round-trip outright: a FAQ that follows a `## Key
+ * Takeaways` section puts those blocks between the box and the next heading,
+ * where the next parse reads them as the takeaways section's own intro and
+ * renders them *above* the bullets — so saving twice reorders the article.
+ * Inside an answer they re-parse to exactly where they were written out.
+ */
+function collectFaqItems(
+  body: Block[],
+  lenient: boolean,
+): { question: string; answer: Block[] }[] | null {
+  const intro: Block[] = []
+  const items: { question: string; answer: Block[] }[] = []
+  let current: { question: string; answer: Block[] } | null = null
+
+  for (const child of body) {
+    if (child.type === 'heading' && child.level >= 3) {
+      if (current) items.push(current)
+      current = { question: child.text, answer: [] }
+      continue
+    }
+    const asked = faqQuestionFromParagraph(child, lenient)
+    if (asked) {
+      if (current) items.push(current)
+      current = { question: asked.question, answer: asked.answer ? [asked.answer] : [] }
+      continue
+    }
+    if (current) current.answer.push(child)
+    else intro.push(child)
+  }
+  if (current) items.push(current)
+  if (!items.length) return null
+
+  items[0].answer.unshift(...intro)
+  return items
+}
+
 /**
  * Turns two heading-led conventions into their own blocks, so every site can
  * render the styled boxes its template already has:
@@ -898,19 +1089,9 @@ function foldSpecialSections(blocks: Block[]): Block[] {
       continue
     }
 
-    const faqItems: { question: string; answer: Block[] }[] = []
-    let current: { question: string; answer: Block[] } | null = null
-    for (const child of body) {
-      if (child.type === 'heading' && child.level >= 3) {
-        if (current) faqItems.push(current)
-        current = { question: child.text, answer: [] }
-      } else if (current) {
-        current.answer.push(child)
-      }
-    }
-    if (current) faqItems.push(current)
+    const faqItems = collectFaqItems(body, false) || collectFaqItems(body, true)
 
-    if (!faqItems.length) {
+    if (!faqItems) {
       out.push(block, ...body)
     } else {
       out.push({ type: 'faq', title: block.text, items: faqItems })
@@ -943,46 +1124,51 @@ export function firstParagraphText(blocks: Block[]): string {
   return paragraph ? inlineToPlainText(paragraph.children).replace(/\s+/g, ' ').trim() : ''
 }
 
+function wordCount(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length
+}
+
+function inlineWordCount(nodes: Inline[]): number {
+  return wordCount(inlineToPlainText(nodes))
+}
+
 /** Rough word count, used for a "N min read" estimate. */
 export function countWords(blocks: Block[]): number {
   let words = 0
+
+  const walkItems = (items: ListItem[]) => {
+    for (const item of items) {
+      words += inlineWordCount(item.children)
+      if (item.list) walkItems(item.list.items)
+    }
+  }
+
   const walk = (list: Block[]) => {
     for (const block of list) {
       switch (block.type) {
         case 'heading':
         case 'paragraph':
-          words += inlineToPlainText(block.children).split(/\s+/).filter(Boolean).length
+          words += inlineWordCount(block.children)
           break
-        case 'list': {
-          const walkItems = (items: ListItem[]) => {
-            for (const item of items) {
-              words += inlineToPlainText(item.children).split(/\s+/).filter(Boolean).length
-              if (item.list) walkItems(item.list.items)
-            }
-          }
+        case 'list':
           walkItems(block.items)
           break
-        }
         case 'quote':
         case 'callout':
           walk(block.blocks)
           break
         case 'takeaways':
-          for (const item of [...block.intro, ...block.items]) {
-            words += inlineToPlainText(item).split(/\s+/).filter(Boolean).length
-          }
+          for (const item of [...block.intro, ...block.items]) words += inlineWordCount(item)
           break
         case 'faq':
           for (const item of block.items) {
-            words += item.question.split(/\s+/).filter(Boolean).length
+            words += wordCount(item.question)
             walk(item.answer)
           }
           break
         case 'table':
-          for (const row of [block.headers, ...block.rows.map((r) => r)]) {
-            for (const cell of row as Inline[][]) {
-              words += inlineToPlainText(cell).split(/\s+/).filter(Boolean).length
-            }
+          for (const row of [block.headers, ...block.rows]) {
+            for (const cell of row) words += inlineWordCount(cell)
           }
           break
         default:
@@ -990,6 +1176,7 @@ export function countWords(blocks: Block[]): number {
       }
     }
   }
+
   walk(blocks)
   return words
 }
@@ -997,9 +1184,6 @@ export function countWords(blocks: Block[]): number {
 export function readTimeFromBlocks(blocks: Block[]): string {
   return `${Math.max(1, Math.round(countWords(blocks) / 220))} min read`
 }
-
-/** Kept exported so a site can render an empty inline run without a special case. */
-export const EMPTY_INLINE: InlineText = EMPTY_TEXT
 
 /* ──────────────────────── Grouping for article templates ────────────────── */
 
@@ -1076,13 +1260,9 @@ export function groupIntoSections(blocks: Block[]): ArticleOutline {
         level: block.level,
         blocks: [],
       }
-      if (CONCLUSION_HEADING.test(block.text) && !outline.conclusion) {
-        outline.conclusion = section
-        current = section
-      } else {
-        outline.sections.push(section)
-        current = section
-      }
+      if (CONCLUSION_HEADING.test(block.text) && !outline.conclusion) outline.conclusion = section
+      else outline.sections.push(section)
+      current = section
       continue
     }
 

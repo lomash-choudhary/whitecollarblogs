@@ -15,12 +15,41 @@ import Link from 'next/link'
 const NAVY = '#0D1B2A'
 const GOLD = '#C9A84C'
 
-/** Anchor id for a block that has a title but is not a heading node. */
+/** Lexical's text format bitmask, the same values markdownToLexical writes. */
+const FORMAT_BOLD = 1
+const FORMAT_ITALIC = 2
+const FORMAT_STRIKETHROUGH = 4
+const FORMAT_UNDERLINE = 8
+const FORMAT_CODE = 16
+
+/**
+ * Anchor id for a heading or for a panel that carries a title.
+ *
+ * One function so a heading's own id and the table-of-contents link that
+ * points at it can never be generated two slightly different ways.
+ */
 function anchorId(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
+}
+
+/** The caption under a figure. Shared so the three media blocks cannot drift. */
+function Caption({ text, center = false }: { text?: string; center?: boolean }) {
+  if (!text) return null
+  return (
+    <figcaption
+      className={`mt-3 text-sm text-[#0D1B2A]/50 font-body italic${center ? ' text-center' : ''}`}
+    >
+      {text}
+    </figcaption>
+  )
+}
+
+/** Flattens a node's leaves to plain text, for an id or a TOC label. */
+function plainText(children: any[]): string {
+  return (children || []).map((c: any) => c?.text || '').join('')
 }
 
 /* ─────────────────────────────── Inline ─────────────────────────────────── */
@@ -30,7 +59,7 @@ function anchorId(title: string): string {
  * itself navy — inline code, bold, strikethrough — is invisible inside the
  * navy takeaways box, so the box asks for the dark set instead.
  */
-export function renderTextNode(node: any, index: number, isDark = false): React.ReactNode {
+function renderTextNode(node: any, index: number, isDark = false): React.ReactNode {
   if (!node) return null
 
   if (node.type === 'link') {
@@ -76,7 +105,7 @@ export function renderTextNode(node: any, index: number, isDark = false): React.
   const format = node.format || 0
 
   let element: React.ReactNode = text
-  if ((format & 16) !== 0)
+  if ((format & FORMAT_CODE) !== 0)
     element = (
       <code
         className={`px-1.5 py-0.5 rounded text-[0.9em] font-mono ${
@@ -86,16 +115,16 @@ export function renderTextNode(node: any, index: number, isDark = false): React.
         {element}
       </code>
     )
-  if ((format & 1) !== 0)
+  if ((format & FORMAT_BOLD) !== 0)
     element = <strong className={isDark ? 'font-bold text-white' : 'font-bold text-[#0D1B2A]'}>{element}</strong>
-  if ((format & 2) !== 0) element = <em className="italic">{element}</em>
-  if ((format & 4) !== 0)
+  if ((format & FORMAT_ITALIC) !== 0) element = <em className="italic">{element}</em>
+  if ((format & FORMAT_STRIKETHROUGH) !== 0)
     element = (
       <span className={isDark ? 'line-through text-white/50' : 'line-through text-[#0D1B2A]/40'}>
         {element}
       </span>
     )
-  if ((format & 8) !== 0) element = <span className="underline">{element}</span>
+  if ((format & FORMAT_UNDERLINE) !== 0) element = <span className="underline">{element}</span>
 
   return <React.Fragment key={index}>{element}</React.Fragment>
 }
@@ -299,6 +328,18 @@ function renderList(node: any, index: number): React.ReactNode {
 
 /* ─────────────────────────────── Blocks ─────────────────────────────────── */
 
+/**
+ * h4, h5 and h6 share the `rest` look on purpose — an article has no use for
+ * three more heading sizes — but each still renders as its own tag, so the
+ * outline a screen reader reads off the page stays intact.
+ */
+const HEADING_CLASSES: Record<number | 'rest', string> = {
+  1: 'font-headline text-[28px] md:text-[32px] font-bold text-[#0D1B2A] tracking-tight mt-10 mb-5 leading-snug scroll-mt-24',
+  2: 'font-headline text-[22px] md:text-[26px] font-bold text-[#0D1B2A] tracking-tight mt-8 mb-4 leading-snug scroll-mt-24',
+  3: 'font-headline text-[18px] md:text-[20px] font-bold text-[#0D1B2A] mt-6 mb-3 leading-snug scroll-mt-24',
+  rest: 'font-headline text-[16px] md:text-[17px] font-bold text-[#0D1B2A]/85 mt-5 mb-2 leading-snug scroll-mt-24',
+}
+
 function renderBlock(node: any, index: number): React.ReactNode {
   if (!node) return null
 
@@ -323,11 +364,7 @@ function renderBlock(node: any, index: number): React.ReactNode {
               className="absolute inset-0 h-full w-full border-0"
             />
           </div>
-          {node.title ? (
-            <figcaption className="mt-3 text-sm text-[#0D1B2A]/50 font-body italic text-center">
-              {node.title}
-            </figcaption>
-          ) : null}
+          <Caption text={node.title} center />
         </figure>
       )
     }
@@ -344,11 +381,7 @@ function renderBlock(node: any, index: number): React.ReactNode {
             className="mx-auto rounded-2xl shadow-md border border-slate-200/50 object-contain max-h-[500px]"
             style={{ maxWidth: node.width ? `${node.width}px` : '100%', height: 'auto' }}
           />
-          {node.caption ? (
-            <figcaption className="mt-3 text-sm text-[#0D1B2A]/50 font-body italic">
-              {node.caption}
-            </figcaption>
-          ) : null}
+          <Caption text={node.caption} />
         </figure>
       )
     }
@@ -362,11 +395,7 @@ function renderBlock(node: any, index: number): React.ReactNode {
             preload="metadata"
             className="w-full rounded-2xl shadow-md border border-slate-200/50 max-h-[500px]"
           />
-          {node.caption ? (
-            <figcaption className="mt-3 text-sm text-[#0D1B2A]/50 font-body italic text-center">
-              {node.caption}
-            </figcaption>
-          ) : null}
+          <Caption text={node.caption} center />
         </figure>
       )
 
@@ -403,23 +432,8 @@ function renderBlock(node: any, index: number): React.ReactNode {
     case 'heading': {
       const Tag = (node.tag || 'h3') as keyof React.JSX.IntrinsicElements
       const level = parseInt(String(node.tag || 'h3').slice(1), 10) || 3
-      const id =
-        node.id ||
-        (node.children || [])
-          .map((c: any) => c?.text || '')
-          .join('')
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)/g, '')
-
-      const classes =
-        level === 1
-          ? 'font-headline text-[28px] md:text-[32px] font-bold text-[#0D1B2A] tracking-tight mt-10 mb-5 leading-snug scroll-mt-24'
-          : level === 2
-            ? 'font-headline text-[22px] md:text-[26px] font-bold text-[#0D1B2A] tracking-tight mt-8 mb-4 leading-snug scroll-mt-24'
-            : level === 3
-              ? 'font-headline text-[18px] md:text-[20px] font-bold text-[#0D1B2A] mt-6 mb-3 leading-snug scroll-mt-24'
-              : 'font-headline text-[16px] md:text-[17px] font-bold text-[#0D1B2A]/85 mt-5 mb-2 leading-snug scroll-mt-24'
+      const id = node.id || anchorId(plainText(node.children))
+      const classes = HEADING_CLASSES[level] || HEADING_CLASSES.rest
 
       return (
         <Tag key={index} id={id} className={classes}>
@@ -527,28 +541,12 @@ export function extractHeadings(content: any) {
 
     for (const node of children) {
       if (node?.type === 'heading') {
-        const text = (node.children || []).map((c: any) => c?.text || '').join('')
+        const text = plainText(node.children)
         if (!text.trim()) continue
-        out.push({
-          text,
-          id:
-            node.id ||
-            text
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/(^-|-$)/g, ''),
-          tag: node.tag || 'h3',
-        })
+        out.push({ text, id: node.id || anchorId(text), tag: node.tag || 'h3' })
       } else if (node?.type === 'takeaways' || node?.type === 'faq') {
         const text = node.title || (node.type === 'faq' ? 'FAQ' : 'Key Takeaways')
-        out.push({
-          text,
-          id: text
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, ''),
-          tag: 'h2',
-        })
+        out.push({ text, id: anchorId(text), tag: 'h2' })
       }
     }
     return out

@@ -37,6 +37,10 @@ function textFormat(node: InlineText): number {
   )
 }
 
+function textNode(text: string, format = 0): any {
+  return { type: 'text', version: 1, text, format }
+}
+
 function inlineToLexical(nodes: Inline[]): any[] {
   const out = nodes.map((node) => {
     if (node.type === 'link') {
@@ -48,22 +52,19 @@ function inlineToLexical(nodes: Inline[]): any[] {
           newTab: Boolean(node.newTab),
           rel: node.nofollow ? ['nofollow'] : [],
         },
-        children: node.children.map((child) => ({
-          type: 'text',
-          version: 1,
-          text: child.type === 'text' ? child.text : '',
-          format: child.type === 'text' ? textFormat(child) : 0,
-        })),
+        children: node.children.map((child) =>
+          child.type === 'text' ? textNode(child.text, textFormat(child)) : textNode(''),
+        ),
       }
     }
 
     if (node.type === 'break') return { type: 'linebreak', version: 1 }
 
-    return { type: 'text', version: 1, text: node.text, format: textFormat(node) }
+    return textNode(node.text, textFormat(node))
   })
 
   // Lexical rejects an element with no children, so an empty run needs one.
-  return out.length ? out : [{ type: 'text', version: 1, text: '', format: 0 }]
+  return out.length ? out : [textNode('')]
 }
 
 function inlineRuns(runs: Inline[][]): any[][] {
@@ -136,7 +137,7 @@ function blockToLexical(block: Block): any {
         format: '',
         indent: 0,
         version: 1,
-        children: [{ type: 'text', version: 1, text: block.code, format: 0 }],
+        children: [textNode(block.code)],
       }
 
     case 'divider':
@@ -174,17 +175,9 @@ function blockToLexical(block: Block): any {
       }
 
     case 'image':
-      return {
-        type: 'image',
-        version: 1,
-        url: block.url,
-        alt: block.alt,
-        caption: block.caption,
-      }
-
     case 'video':
       return {
-        type: 'video',
+        type: block.type,
         version: 1,
         url: block.url,
         alt: block.alt,

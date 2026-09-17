@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers'
 import { DEFAULT_SITE_KEY, getSite, isKnownSite, type SiteConfig } from '@/config/sites'
+import { SITE_COOKIE } from '@/config/siteCookie'
 
 export { siteWhere } from '@/config/sites'
-
-export const SITE_COOKIE = 'wcb_active_site'
+export { SITE_COOKIE }
 
 /**
  * Reads the website the user has selected in the portal's sidebar.

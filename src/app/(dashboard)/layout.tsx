@@ -38,7 +38,7 @@ export default async function AppLayout({
   const activeSite = await getActiveSite()
 
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full bg-[#f8fafc] text-[#0f172a] font-sans flex flex-col">
         <SiteProvider sites={publicSites()} initialSiteKey={activeSite.key}>
           <div className="min-h-screen flex bg-slate-50/50">
