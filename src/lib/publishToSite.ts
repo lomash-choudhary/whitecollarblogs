@@ -59,6 +59,48 @@ function firstParagraph(markdown: string): string {
 }
 
 /**
+ * The article's feature image, lifted out of the body to become the hero.
+ *
+ * The SEO team's brief says "Feature image (below H1, above intro)", and the
+ * generated image lands on exactly that line — which is the hero slot every
+ * template already draws, one block earlier. Left in the body it rendered
+ * *below* the hero, so the article showed two pictures: the site's generic
+ * fallback at the top and the real one under it. Worse on OVO, where the
+ * fallback pointed at a file that does not exist and the top of every
+ * published article was a broken-image icon.
+ *
+ * **Only an image written above the prose is taken.** The walk stops at the
+ * first block that is not a heading or an image, so a picture a writer placed
+ * in the middle of the article stays exactly where they put it. Hoisting one
+ * of those would be the named-slot mistake the parser rules warn about: the
+ * hero is a slot, and a slot that reaches into the flow reorders the article.
+ */
+function liftFeatureImage(markdown: string): { url: string; alt: string; body: string } | null {
+  const lines = markdown.replace(/\r\n?/g, '\n').split('\n')
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (line.trim() === '') continue
+
+    const block = parseMarkdownBlocks(line)[0]
+    if (!block) continue
+    if (block.type === 'heading') continue
+    if (block.type !== 'image') return null
+
+    // The blank line under it goes too, or the lift leaves a double gap.
+    const drop = lines[i + 1] !== undefined && lines[i + 1].trim() === '' ? 2 : 1
+    const rest = [...lines.slice(0, i), ...lines.slice(i + drop)]
+    return {
+      url: block.url,
+      alt: block.alt || '',
+      body: rest.join('\n').replace(/^\n+/, ''),
+    }
+  }
+
+  return null
+}
+
+/**
  * Converts a Payload post document into the markdown file contents the
  * target website expects. Exported so it can be previewed/tested without
  * actually calling GitHub.
@@ -68,14 +110,24 @@ export function buildPostMarkdown(
   site: SiteConfig,
   author?: any,
 ): { slug: string; fileName: string; content: string } {
-  const body = typeof post.content === 'string' ? post.content : lexicalToMarkdown(post.content)
+  const rawBody = typeof post.content === 'string' ? post.content : lexicalToMarkdown(post.content)
   const slug = slugify(post.slug || post.title)
-  const excerpt = (post.excerpt || '').trim() || firstParagraph(body)
-  const heroImage = cleanImageUrl(post.coverImageUrl) || post.resolvedCoverImageUrl || site.defaultHeroImage || ''
 
+  // The cover image box wins when a writer filled it in; otherwise the
+  // article's own feature image is the hero, and is taken out of the body so
+  // the page does not show it twice. The site default is the last resort, for
+  // an article that has neither.
+  const uploaded = cleanImageUrl(post.coverImageUrl) || post.resolvedCoverImageUrl || ''
+  const feature = uploaded ? null : liftFeatureImage(rawBody)
+  const body = feature ? feature.body : rawBody
+  const heroImage = uploaded || feature?.url || site.defaultHeroImage || ''
+
+  const excerpt = (post.excerpt || '').trim() || firstParagraph(body)
   const metaTitle = (post.metaTitle || '').trim() || post.title
   const metaDescription = (post.metaDescription || '').trim() || excerpt
-  const heroImageAlt = (post.coverImageAlt || '').trim() || post.title
+  // The feature image's own alt text describes the picture; the title does
+  // not. Prefer it over the title whenever that image is the hero.
+  const heroImageAlt = (post.coverImageAlt || '').trim() || feature?.alt || post.title
 
   const frontmatter: Frontmatter = {
     slug,

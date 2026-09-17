@@ -127,7 +127,13 @@ export const SITES: SiteConfig[] = [
     target: 'github',
     baseUrl: siteBaseUrl('OVO'),
     blogPath: '/resources',
-    defaultHeroImage: '/images/services/interior-painting.png',
+    // Checked against the file on disk in that repo. The old value,
+    // `/images/services/interior-painting.png`, was never there — only
+    // `-hero.webp` and `-service.webp` are — so every article that fell
+    // through to it opened with a broken-image icon. A default that 404s is
+    // worse than no default: `next/image` renders the alt text and the
+    // article's first impression is a broken picture.
+    defaultHeroImage: '/images/services/interior-painting-hero.webp',
     defaultCategory: 'Tips for Painting',
     github: githubTarget('OVO'),
   },

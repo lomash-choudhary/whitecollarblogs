@@ -282,7 +282,9 @@ function Faq({ node, index }: { node: any; index: number }) {
             key={i}
             className="group rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm open:shadow-md transition-shadow"
           >
-            <summary className="cursor-pointer list-none font-headline font-bold text-[#0D1B2A] flex items-start justify-between gap-4">
+            {/* Body font, not the headline serif: a question and the answer
+                under it are one exchange and must be set in one typeface. */}
+            <summary className="cursor-pointer list-none font-bold text-[#0D1B2A] flex items-start justify-between gap-4">
               <span>{item.question}</span>
               <span className="text-[#C9A84C] shrink-0 transition-transform group-open:rotate-45 text-xl leading-none">
                 +
