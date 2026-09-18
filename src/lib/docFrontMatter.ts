@@ -107,7 +107,10 @@ const LABEL_ALIASES: { pattern: string; key: LabelKey }[] = [
  * `(55 chars)` note the SEO template puts on it; an optional closing `**`/`__`
  * — before *or* after the separator, since drafts do both; and the separator
  * itself, a colon or a spaced dash. Google Docs rewrites a typed `-` as `—` on
- * paste, so all three dashes are accepted.
+ * paste, so all three dashes are accepted — and it escapes the plain one, so
+ * `Keywords \-` is the spelling that actually comes out of a real export. The
+ * backslash is optional rather than stripped beforehand, because a dash is the
+ * only separator it is ever put in front of.
  *
  * Longer aliases are listed before the ones they contain (`url slug` before
  * `slug`, `meta title` before nothing) because alternation is first-match and
@@ -118,7 +121,7 @@ const LABEL_LINE = new RegExp(
     `(${LABEL_ALIASES.map((a) => a.pattern).join('|')})` +
     '\\s*(?:\\([^)]*\\))?\\s*' +
     '(?:\\*\\*|__)?\\s*' +
-    '(?::|\\s+[-–—]\\s*|–\\s*|—\\s*)' +
+    '(?::|\\s+\\\\?[-–—]\\s*|\\\\?[–—]\\s*)' +
     '\\s*(?:\\*\\*|__)?\\s*',
   'gi',
 )
@@ -180,9 +183,17 @@ function plain(value: string): string {
  * article from `/resources/<slug>` whatever the draft says. Only the final
  * segment is the slug, and it is normalised the same way the slug box
  * normalises what a writer types into it.
+ *
+ * The wrapper comes off before the split, not after. A path written as inline
+ * code — `` `/resources/why-does-paint-get-foggy/` ``, which is how one real
+ * draft writes it — splits into a last segment of one backtick, and the slug
+ * that came back was the empty string. Stripping it from the last segment
+ * instead would be too late: the segment is the backtick.
  */
+const VALUE_WRAPPER = /^[`'"<([{\s]+|[`'">)\]}\s]+$/g
+
 function slugFromPath(value: string): string {
-  const withoutQuery = plain(value).split(/[?#]/)[0]
+  const withoutQuery = plain(value).replace(VALUE_WRAPPER, '').split(/[?#]/)[0]
   const segments = withoutQuery.split('/').filter(Boolean)
   const last = segments.length > 0 ? segments[segments.length - 1] : ''
   return last
@@ -275,12 +286,26 @@ export function readDocFrontMatter(markdown: string): DocImport {
   let openMultiLine: LabelKey | null = null
   let consumedUpTo = 0
 
+  /**
+   * Nothing above the first label is consumed until one turns up.
+   *
+   * Half the drafts in circulation write the topic line with its `Topic -`
+   * label and half write the article's title on its own, unlabelled — so the
+   * walk has to be able to scan past a line it does not recognise to reach the
+   * labels underneath. Committing as it went would mean a document whose
+   * preamble holds no metadata at all lost its opening line, which is why
+   * `consumedUpTo` only moves for a line that was actually read, and why a
+   * blank line above the first label moves nothing.
+   */
+  let sawLabel = false
+  let unlabelledTitle = ''
+
   for (let i = 0; i < headingAt; i++) {
     const line = lines[i]
     const trimmed = line.trim()
 
     if (trimmed === '' || DIVIDER_LINE.test(trimmed)) {
-      consumedUpTo = i + 1
+      if (sawLabel) consumedUpTo = i + 1
       continue
     }
 
@@ -296,6 +321,7 @@ export function readDocFrontMatter(markdown: string): DocImport {
       }
       const last = fields[fields.length - 1]
       openMultiLine = last.key === LABELS.keywords && !last.value.trim() ? LABELS.keywords : null
+      sawLabel = true
       consumedUpTo = i + 1
       continue
     }
@@ -306,7 +332,28 @@ export function readDocFrontMatter(markdown: string): DocImport {
       continue
     }
 
+    /**
+     * The topic line written without its label — `Signs of Stucco Problems:
+     * What Homeowners Should Look For` where another draft writes `Topic - …`.
+     *
+     * **The first non-blank line of the document and no other.** That bound is
+     * the whole guard: an article pasted with two paragraphs above its first
+     * heading keeps both, because the second one ends the walk exactly as it
+     * does today. One line is what the template writes, and one line is all
+     * the blast radius a wrong guess can have.
+     */
+    if (!sawLabel && !unlabelledTitle && consumedUpTo === 0) {
+      unlabelledTitle = trimmed
+      continue
+    }
+
     break
+  }
+
+  // Committed only now: an unlabelled line is a topic line because metadata
+  // followed it, and is an ordinary paragraph otherwise.
+  if (sawLabel && unlabelledTitle && !values.has(LABELS.topic)) {
+    record(LABELS.topic, unlabelledTitle)
   }
 
   const fields: Partial<DocFrontMatterFields> = {}

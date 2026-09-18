@@ -66,8 +66,9 @@ skills-lock.json
 
 # Writer drafts pasted in to try the editor on. They are article content, not
 # app source, and they belong in the CMS rather than in git. Put new ones in
-# /drafts so they are ignored without a rule per filename.
+# /drafts or /markdownfiles so they are ignored without a rule per filename.
 /drafts/
+/markdownfiles/
 /Cabinet Painting vs Refinishing_ What's the Difference_.md
 /How to Choose the Right Pain Finish (rewrite).md
 /Limewash vs Whitewash Brick_ Which Is Right for Your Home (1).docx.md
@@ -80,3 +81,6 @@ How to Choose the Right Paint Finish (rewrite).docx
 
 blog_cms_schema_reportranger.md
 blog_post_cms_schema_specOvo.md
+
+markdownfiles
+docx
