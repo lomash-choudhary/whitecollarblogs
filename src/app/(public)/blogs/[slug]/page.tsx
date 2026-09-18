@@ -9,7 +9,11 @@ import { DEFAULT_SITE_KEY, siteWhere } from '@/config/sites'
 import ShareBar from '@/components/ShareBar'
 import { renderContent, extractHeadings } from '@/components/LexicalContent'
 import { buildArticleMetadata } from '@/lib/articleSeo'
+import { articleSchemaJson } from '@/lib/articleSchema'
 import { seoSite } from '@/lib/seoSite'
+import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
+import { parseMarkdownBlocks, inlineToPlainText } from '@/lib/markdownBlocks'
+import type { Block } from '@/lib/markdownBlocks'
 import { Metadata } from 'next'
 
 interface PageProps {
@@ -65,6 +69,41 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function coverImageSrc(post: any): string {
   const media = post?.coverImage
   return (media && typeof media === 'object' && (media.url as string)) || ''
+}
+
+/**
+ * The post's FAQ, flattened for the `FAQPage` node.
+ *
+ * The three websites read `faqs` straight off the article their
+ * `markdownBlog.ts` built; this app stores lexical, so the same list has to be
+ * recovered the way the editor recovers it — serialise to markdown, parse, and
+ * take the block `foldSpecialSections` folded out of the `## FAQ` heading.
+ * Doing it here rather than adding an `faqs` column keeps one definition of
+ * what an FAQ *is*: the heading conventions in `markdownBlocks.ts`. A column
+ * would be a second copy that a re-save could silently disagree with.
+ */
+function articleFaqs(content: unknown): { question: string; answer: string }[] {
+  try {
+    const blocks = parseMarkdownBlocks(lexicalToMarkdown(content))
+    const faq = blocks.find((block: Block) => block.type === 'faq')
+    if (!faq || faq.type !== 'faq') return []
+
+    return faq.items
+      .map((item) => ({
+        question: item.question,
+        answer: item.answer
+          .map((block) => (block.type === 'paragraph' ? inlineToPlainText(block.children) : ''))
+          .filter(Boolean)
+          .join(' '),
+      }))
+      .filter((item) => item.question && item.answer)
+  } catch (err) {
+    // A malformed document must cost the reader the rich result, never the
+    // page. This runs on every article render, so it is the one place a
+    // parser change could take the whole blog down.
+    console.error('Could not read FAQs for structured data:', err)
+    return []
+  }
 }
 
 export default async function BlogDetailsPage({ params }: PageProps) {
@@ -142,8 +181,40 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
   const authorAvatar = cleanImageUrl(post.author?.avatar) || null
 
+  // The same graph the three websites emit, from the same builder — so the
+  // article a writer publishes here and the copy of it that lands on OVO are
+  // described to a crawler identically. Built from the same values
+  // `generateMetadata` reads, because a `headline` and a `<title>` that
+  // disagree is the failure this pair of modules exists to make impossible.
+  const schemaJson = articleSchemaJson(
+    {
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt || '',
+      heroImage: resolvedCoverImageUrl || '',
+      heroImageAlt: post.coverImageAlt || '',
+      author: post.author?.name
+        ? { name: post.author.name, role: post.author.role || '', image: authorAvatar || '' }
+        : undefined,
+      metaTitle: post.metaTitle || '',
+      metaDescription: post.metaDescription || '',
+      metaKeywords: post.metaKeywords || '',
+      canonicalUrl: post.canonicalUrl || '',
+      ogImage: cleanImageUrl(post.ogImageUrl) || '',
+      publishedTime: post.publishDate ? new Date(post.publishDate).toISOString() : '',
+      modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : '',
+      category: post.targetRole || '',
+      readTime: post.readTime || '',
+      faqs: articleFaqs(post.content),
+    },
+    seoSite(),
+  )
+
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
+      {schemaJson && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaJson }} />
+      )}
 
       {/* ── Article Hero ── */}
       <div className="relative bg-[#0D1B2A] text-white overflow-hidden">

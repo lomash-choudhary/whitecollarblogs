@@ -1,21 +1,25 @@
 /**
- * This app's own identity for `articleSeo.ts`.
+ * This app's own identity for `articleSeo.ts` and `articleSchema.ts`.
  *
  * Every site repo has a file of this name holding its own constant; only this
  * one derives it from `src/config/sites.ts`, because the CMS is the one place
  * that already knows what each website is called and where it serves articles
- * from. `articleSeo.ts` itself stays byte-identical in all four repos — the
- * per-site differences live here, which is why it is not part of that module.
+ * from. Both shared modules stay byte-identical in all four repos — the
+ * per-site differences live here, which is why they are not part of them.
+ *
+ * The return type is `SchemaSite`, which extends `SeoSite`: one constant
+ * describes the site to both modules, so a `<title>` built from one name and a
+ * `publisher` built from another is not expressible.
  */
 
 import { DEFAULT_SITE_KEY, getSite } from '@/config/sites'
-import type { SeoSite } from './articleSeo'
+import type { SchemaSite } from './articleSchema'
 
 /**
  * A function, not a const: `baseUrl` comes from NEXT_PUBLIC_SERVER_URL, and a
  * const would freeze whatever that was when the module first loaded.
  */
-export function seoSite(): SeoSite {
+export function seoSite(): SchemaSite {
   const site = getSite(DEFAULT_SITE_KEY)
   return {
     siteName: site.name,
@@ -30,5 +34,11 @@ export function seoSite(): SeoSite {
     // right, because an `og:image` pointing at nothing is worse than none.
     // Drop a 1200x630 image in /public and name it in `sites.ts` to close it.
     defaultOgImage: site.defaultHeroImage,
+    // `logo` and `organizationId` are both unset, and both deliberately.
+    // There is no brand asset in /public to point `logo` at — the same gap
+    // `defaultOgImage` has — so the publisher carries a name and no image.
+    // `organizationId` stays unset because this app's layout emits no
+    // organization node of its own: setting it would make every article's
+    // `publisher` a reference to a node that is not on the page.
   }
 }
