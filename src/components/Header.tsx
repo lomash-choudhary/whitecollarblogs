@@ -9,7 +9,7 @@ export const Header: React.FC = () => {
   const pathname = usePathname()
   
   const getPageTitle = () => {
-    if (pathname.includes('/blogs/')) {
+    if (pathname.includes('/resources/')) {
       return 'Blog Details'
     }
     switch (pathname) {
@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
         return 'Pipeline Kanban'
       case '/editor':
         return 'Content Editor'
-      case '/blogs':
+      case '/resources':
         return 'Blog Listing'
       case '/analytics':
         return 'Archive Stats'

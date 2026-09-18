@@ -167,7 +167,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
   if (!post) return notFound()
 
   const headings = extractHeadings(post.content)
-  const currentUrl = `${serverUrl}/blogs/${post.slug}`
+  const currentUrl = `${serverUrl}/resources/${post.slug}`
 
   const formattedDate = post.publishDate
     ? new Date(post.publishDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -226,7 +226,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
           {/* Back link */}
           <Link
-            href="/blogs"
+            href="/resources"
             className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#C9A84C]/70 hover:text-[#C9A84C] transition-colors duration-200 group mb-10"
           >
             <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -363,7 +363,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
             {/* Back link bottom */}
             <div className="mt-8">
               <Link
-                href="/blogs"
+                href="/resources"
                 className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#C9A84C] hover:text-[#B29135] transition-colors duration-200 group"
               >
                 <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -451,7 +451,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
               <div className="bg-white rounded-2xl border border-[rgba(13,27,42,0.08)] shadow-sm p-6">
                 <h4 className="text-[9px] font-bold uppercase tracking-[3px] text-[#0D1B2A]/40 mb-4">Browse The Archive</h4>
                 <Link
-                  href="/blogs"
+                  href="/resources"
                   className="flex items-center justify-between group"
                 >
                   <span className="text-sm font-bold text-[#0D1B2A] group-hover:text-[#C9A84C] transition-colors">
@@ -477,7 +477,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
               {moreReads.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/blogs/${item.slug}`}
+                  href={`/resources/${item.slug}`}
                   className="group flex flex-col overflow-hidden rounded-[14px] border border-[rgba(13,27,42,0.08)] bg-white hover:border-[#C9A84C]/35 hover:-translate-y-1 transition-all duration-300 shadow-sm"
                 >
                   <div className="relative w-full h-36 bg-[#0D1B2A] overflow-hidden">

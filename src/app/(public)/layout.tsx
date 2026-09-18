@@ -59,7 +59,7 @@ export default function PublicLayout({
                   { label: 'The Work', href: 'https://website-ten-sigma-61.vercel.app/#the-work' },
                   { label: 'The Record', href: 'https://website-ten-sigma-61.vercel.app/#the-record' },
                   { label: 'Tools', href: 'https://website-ten-sigma-61.vercel.app/#tools' },
-                  { label: 'The Archive', href: '/blogs' },
+                  { label: 'The Archive', href: '/resources' },
                   { label: 'Prison Professors', href: 'https://website-ten-sigma-61.vercel.app/#prison-professors' },
                 ].map((item) => (
                   <Link
@@ -92,7 +92,7 @@ export default function PublicLayout({
                 { label: 'The Work', href: 'https://website-ten-sigma-61.vercel.app/#the-work' },
                 { label: 'The Record', href: 'https://website-ten-sigma-61.vercel.app/#the-record' },
                 { label: 'Tools', href: 'https://website-ten-sigma-61.vercel.app/#tools' },
-                { label: 'The Archive', href: '/blogs' },
+                { label: 'The Archive', href: '/resources' },
                 { label: 'Prison Professors', href: 'https://website-ten-sigma-61.vercel.app/#prison-professors' },
               ].map((item) => (
                 <Link
@@ -170,7 +170,7 @@ export default function PublicLayout({
                     { label: 'The Playbook', href: 'https://website-ten-sigma-61.vercel.app/' },
                     { label: 'Video Library', href: 'https://website-ten-sigma-61.vercel.app/' },
                     { label: 'BOP Directory', href: 'https://website-ten-sigma-61.vercel.app/' },
-                    { label: 'Blog', href: '/blogs' },
+                    { label: 'Blog', href: '/resources' },
                   ].map((link) => (
                     <li key={link.label}>
                       <Link href={link.href} className="text-sm text-white/50 hover:text-white transition-colors duration-200">

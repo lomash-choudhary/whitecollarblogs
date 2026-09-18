@@ -3,7 +3,7 @@
  *
  * WhiteCollarBlogs (WCB) is the portal. Every post belongs to exactly one site.
  *
- *  - target: 'local'  -> the post is rendered by this very app (/blogs/[slug]).
+ *  - target: 'local'  -> the post is rendered by this very app (/resources/[slug]).
  *  - target: 'github' -> the post is pushed to another website's GitHub repo,
  *                        which turns it into a markdown file and redeploys itself.
  *
@@ -117,7 +117,13 @@ export const SITES: SiteConfig[] = [
     // Not a deploy target — this is the app serving the page, so its own
     // public URL is the right source.
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-    blogPath: '/blogs',
+    // All four websites serve a CMS article from the same path. This app used
+    // to be the exception at `/blogs`, which meant a writer had to remember
+    // which site put articles where; the route folder was moved to
+    // `(public)/resources` in the same pass, so this still names a page this
+    // app actually serves. Changing one without the other points every
+    // canonical it emits at a 404.
+    blogPath: '/resources',
     defaultCategory: 'Software Engineer',
   },
   {

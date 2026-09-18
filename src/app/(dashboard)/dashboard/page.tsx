@@ -111,7 +111,7 @@ export default async function DashboardPage() {
               <p className="text-xs text-slate-400 font-semibold">Tracking candidate-facing articles</p>
             </div>
             <Link
-              href="/blogs"
+              href="/resources"
               className="text-xs font-black uppercase tracking-wider text-[#C9A84C] hover:text-[#B29135] flex items-center gap-1.5 transition-colors group"
             >
               <span>View all blogs</span>

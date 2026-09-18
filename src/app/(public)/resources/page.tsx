@@ -126,7 +126,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
           </div>
 
           {/* Search */}
-          <form action="/blogs" method="GET" className="relative w-full md:w-80">
+          <form action="/resources" method="GET" className="relative w-full md:w-80">
             <input
               type="text"
               name="search"
@@ -148,7 +148,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
             const params = new URLSearchParams()
             if (role !== 'All') params.set('role', role)
             if (searchQuery) params.set('search', searchQuery)
-            const url = `/blogs${params.toString() ? `?${params.toString()}` : ''}#articles`
+            const url = `/resources${params.toString() ? `?${params.toString()}` : ''}#articles`
 
             return (
               <Link
@@ -185,7 +185,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
               </p>
             </div>
             <Link
-              href="/blogs#articles"
+              href="/resources#articles"
               className="text-[10px] font-bold uppercase tracking-widest text-[#C9A84C] border border-[#C9A84C]/30 hover:bg-[#C9A84C] hover:text-[#0D1B2A] px-6 py-3 rounded-full transition-all duration-200"
             >
               Clear Filters
@@ -197,7 +197,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
             {/* ── Featured Post ── */}
             {featuredBlog && (
               <Link
-                href={`/blogs/${featuredBlog.slug}`}
+                href={`/resources/${featuredBlog.slug}`}
                 className="group block overflow-hidden rounded-[20px] border border-[rgba(13,27,42,0.1)] hover:border-[#C9A84C]/40 bg-white shadow-sm hover:shadow-xl transition-all duration-500"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
@@ -279,7 +279,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
                 {displayBlogs.map((blog) => (
                   <Link
                     key={blog.id}
-                    href={`/blogs/${blog.slug}`}
+                    href={`/resources/${blog.slug}`}
                     className="group flex flex-col overflow-hidden rounded-[18px] border border-[rgba(13,27,42,0.1)] hover:border-[#C9A84C]/35 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-400"
                   >
                     {/* Cover image */}
