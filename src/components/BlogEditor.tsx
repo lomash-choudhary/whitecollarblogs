@@ -424,35 +424,52 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
    * Moves a pasted Google Docs export's front matter into the fields it was
    * written for, and its title line into the title box.
    *
-   * A field is only filled when it is **empty**. The document is authoritative
-   * about its own metadata, but the person at the keyboard is authoritative
-   * about the form they have already filled in — silently overwriting a meta
-   * description someone just rewrote would be the worst kind of helpful.
+   * **Who wins a field the form already holds depends on whether the article
+   * is the same one.** `replacesArticle` is the difference, and it is the
+   * whole of it:
+   *
+   * - The *Read SEO block* button (`false`) is the same article — the body is
+   *   the one already in the box and the boxes may hold the writer's own
+   *   edits, so a filled box wins. Silently overwriting a meta description
+   *   someone has just rewritten would be the worst kind of helpful, and the
+   *   slug of an article that is already published is its live URL.
+   * - A **whole-document paste** (`true`) is a *different* article: the writer
+   *   has just deleted the old one. Everything the form is holding describes
+   *   the article that is no longer in the box, so the document wins outright.
+   *   Skipping there is what left "Cabinet Painting vs Refinishing" in the
+   *   title, the slug and the meta title over a body that had become a paint
+   *   finish guide — the keywords updated, because that one box happened to be
+   *   empty, which is what made the result look arbitrary rather than wrong.
    *
    * The title line is removed from the body either way, because that is the
    * defect being fixed: left in, it publishes a second `<h1>` under the page's
    * own title on all four sites. Nothing is lost when the title box already
    * holds it.
    */
-  const applyDocImport = (markdown: string): string => {
+  const applyDocImport = (markdown: string, replacesArticle = false): string => {
     const { body, fields, consumed } = readDocFrontMatter(markdown)
     if (consumed.length === 0) return markdown
 
     /**
-     * A box the writer has already filled in wins over the document. Both of
-     * these are visible on the form without scrolling, so a skipped value is
-     * a value they can see — which is why the import does not announce it.
+     * A box the writer has already filled in wins over the document, unless
+     * this paste replaced the article the box describes. Both of these are
+     * visible on the form without scrolling, so a value that changes is a
+     * value they can see — which is why the import does not announce it.
      */
     const fill = (value: string | undefined, current: string, set: (next: string) => void) => {
-      if (!value || current.trim()) return
+      if (!value) return
+      if (current.trim() && !replacesArticle) return
       set(value)
     }
 
     fill(fields.title, title, (next) => {
       setTitle(next)
       // Only when the doc gave no slug of its own: the sync would otherwise
-      // overwrite the SEO team's slug with one derived from the title.
-      if (isSyncedWithTitle && !fields.slug) {
+      // overwrite the SEO team's slug with one derived from the title. A paste
+      // that replaced the article derives one even with the sync switched off,
+      // because the alternative is the new article keeping the old one's slug
+      // — which publishes article B at article A's URL.
+      if ((isSyncedWithTitle || replacesArticle) && !fields.slug) {
         setSlug(next.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''))
       }
     })
@@ -463,16 +480,20 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
     // The SEO fields are not set here. They go back into the body as the block
     // above the article, which is where the writer edits them from now on —
-    // the effect above copies them into the columns. What is already typed
-    // wins over the document, the same rule `fill` applies to title and slug.
+    // the effect above copies them into the columns. Held values win over the
+    // document by the same rule `fill` applies to title and slug, so a paste
+    // that replaced the article carries none of them forward: a field the new
+    // document does not set has to come out of the block, or the old
+    // article's meta description publishes on the new one.
+    const held = (current: string) => (replacesArticle ? '' : current.trim())
     const block = formatSeoBlock({
-      metaTitle: metaTitle.trim() || fields.metaTitle,
-      metaDescription: metaDescription.trim() || fields.metaDescription,
-      metaKeywords: metaKeywords.trim() || fields.metaKeywords,
-      targetKeyword: targetKeyword.trim() || fields.targetKeyword,
-      canonicalUrl: canonicalUrl.trim() || fields.canonicalUrl,
-      coverImageAlt: coverImageAlt.trim() || fields.coverImageAlt,
-      ogImageUrl: ogImageUrl.trim() || fields.ogImageUrl,
+      metaTitle: held(metaTitle) || fields.metaTitle,
+      metaDescription: held(metaDescription) || fields.metaDescription,
+      metaKeywords: held(metaKeywords) || fields.metaKeywords,
+      targetKeyword: held(targetKeyword) || fields.targetKeyword,
+      canonicalUrl: held(canonicalUrl) || fields.canonicalUrl,
+      coverImageAlt: held(coverImageAlt) || fields.coverImageAlt,
+      ogImageUrl: held(ogImageUrl) || fields.ogImageUrl,
     })
 
     return joinSeoBlock(block, body)
@@ -486,6 +507,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
    * which is the only moment the leading `#` is reliably the article's title
    * and not a heading they meant to write. A paste into the middle of an
    * article is left completely alone.
+   *
+   * That same anchor is what makes the document authoritative here: a paste
+   * that replaced the entire body replaced the article, so every field the
+   * form is still holding belongs to an article that is gone.
    */
   const handleContentPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget
@@ -501,7 +526,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     if (consumed.length === 0) return
 
     e.preventDefault()
-    setContent(applyDocImport(pasted))
+    setContent(applyDocImport(pasted, true))
   }
 
   // A publish can fail for reasons that have nothing to do with the article —
