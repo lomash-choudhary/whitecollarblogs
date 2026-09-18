@@ -157,6 +157,11 @@ export function buildPostMarkdown(
     authorName: author?.name || 'Editorial Team',
     authorRole: author?.role || 'Contributor',
     authorImage: cleanImageUrl(author?.avatar) || '',
+    // Empty for an author with no profile page, and dropped from the file by
+    // `buildMarkdownFile` — which is the point. `author.url` is a link a
+    // search engine follows to tell two writers of the same name apart, so a
+    // guessed one is worse than none.
+    authorUrl: (author?.url || '').trim(),
     source: 'whitecollarblogs',
     sourceId: String(post.id ?? ''),
     updatedAt: new Date().toISOString(),

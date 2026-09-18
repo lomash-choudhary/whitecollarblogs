@@ -194,7 +194,12 @@ export default async function BlogDetailsPage({ params }: PageProps) {
       heroImage: resolvedCoverImageUrl || '',
       heroImageAlt: post.coverImageAlt || '',
       author: post.author?.name
-        ? { name: post.author.name, role: post.author.role || '', image: authorAvatar || '' }
+        ? {
+            name: post.author.name,
+            role: post.author.role || '',
+            image: authorAvatar || '',
+            url: post.author.url || '',
+          }
         : undefined,
       metaTitle: post.metaTitle || '',
       metaDescription: post.metaDescription || '',

@@ -98,6 +98,10 @@ const STATEMENTS = [
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS cover_image_alt varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS og_image_url varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS target_keyword varchar`,
+  // author.url on a published article's BlogPosting. Nullable, like every
+  // other addition here: an author without one publishes no `url` key, which
+  // is what an author with no page should do.
+  `ALTER TABLE public.authors ADD COLUMN IF NOT EXISTS url varchar`,
   // A slug is unique per *website*, not across the whole CMS. Every site
   // publishes to its own repo and serves from its own domain, so the same
   // article on two of them is two URLs and neither shadows the other; the
