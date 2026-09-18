@@ -69,6 +69,22 @@ async function resolveStageKey(stage: unknown, req: any): Promise<string | undef
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
+  /**
+   * A slug is unique **per website**, not across the whole CMS.
+   *
+   * Each site publishes into its own repo and serves the article from its own
+   * domain, so `signs-of-stucco-problems` on Durahome and the same slug on OVO
+   * are two different URLs and neither shadows the other. Both public routes
+   * here already filter by site (`siteWhere(DEFAULT_SITE_KEY)`), so this app's
+   * own `/resources/<slug>` still resolves to exactly one post.
+   *
+   * `push` is false, so Payload never creates this index itself — the matching
+   * statement in `scripts/upgrade-db-multisite.mjs` is what actually enforces
+   * it, and the two have to be added in the same pass. Declaring it here is
+   * still not decoration: it is where the rule is written down, and the schema
+   * Payload builds from the config has to agree with the database.
+   */
+  indexes: [{ fields: ['site', 'slug'], unique: true }],
   access: {
     read: () => true,
     create: ({ req: { user } }) => Boolean(user),
@@ -89,7 +105,17 @@ export const Posts: CollectionConfig = {
       name: 'slug',
       type: 'text',
       required: true,
-      unique: true,
+      // Indexed but **not** `unique`. A slug is only a URL within one website,
+      // and every site publishes to its own repo — so the same article can
+      // legitimately run on two of them, and until this changed the second one
+      // was rejected as a duplicate of a post the writer could not even see
+      // from the site they were working in. The uniqueness that does apply is
+      // the compound index below.
+      //
+      // The plain index stays because the compound one is `(site, slug)` and
+      // cannot serve a lookup by slug alone, which is what the public article
+      // page does on every request.
+      index: true,
       admin: {
         position: 'sidebar',
       },

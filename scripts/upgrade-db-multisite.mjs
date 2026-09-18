@@ -98,6 +98,32 @@ const STATEMENTS = [
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS cover_image_alt varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS og_image_url varchar`,
   `ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS target_keyword varchar`,
+  // A slug is unique per *website*, not across the whole CMS. Every site
+  // publishes to its own repo and serves from its own domain, so the same
+  // article on two of them is two URLs and neither shadows the other; the
+  // global unique index rejected the second one as a duplicate of a post the
+  // writer could not even see from the site they were working in.
+  //
+  // The new index is created **before** the old one is dropped, so there is no
+  // moment with no uniqueness at all. Creating it cannot fail on existing
+  // rows: a globally unique slug is unique per site by definition.
+  //
+  // `NULLS NOT DISTINCT` because Postgres otherwise treats every NULL as its
+  // own value, and two rows with no site and the same slug would both be
+  // accepted. The backfill above means there are none today; this makes it
+  // true tomorrow as well. (Postgres 15+; this database is 18.)
+  `CREATE UNIQUE INDEX IF NOT EXISTS posts_site_slug_idx ON public.posts (site, slug) NULLS NOT DISTINCT`,
+  // The one statement here that takes something away. It is an *index*, not a
+  // column — no row changes and nothing is unrecoverable, which is why it does
+  // not break the additive rule the rest of this list follows. Recreating it
+  // is one CREATE UNIQUE INDEX away.
+  `DROP INDEX IF EXISTS public.posts_slug_idx`,
+  // Slug lookups outlive the unique index that used to serve them: the public
+  // article page queries by slug on every request, and the compound index
+  // above leads with `site`, so it cannot answer that. A separate name from
+  // the dropped one keeps this list idempotent — same name and a re-run would
+  // drop and rebuild it every time.
+  `CREATE INDEX IF NOT EXISTS posts_slug_lookup_idx ON public.posts (slug)`,
 ]
 
 const client = new pg.Client({

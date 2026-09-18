@@ -57,11 +57,29 @@ const FIELD_LABELS: Record<string, string> = {
 const UNIQUE = /must be unique/i
 const REQUIRED = /required|cannot be (blank|empty)/i
 
+/**
+ * A compound unique index reports every column it covers, not one field.
+ *
+ * `(site, slug)` is enforced by the database rather than by a Payload `unique`
+ * flag, so a violation arrives as a raw Postgres 23505 that the adapter turns
+ * into a `ValidationError` whose `path` it reads out of the error detail —
+ * `Key (site, slug)=(durahome, signs-of-stucco-problems) already exists.`
+ * gives the literal path `"site, slug"`. Split back apart, the slug is the
+ * half a writer can do something about.
+ */
+function pathParts(path: string | undefined): string[] {
+  if (!path) return []
+  return path
+    .split(',')
+    .map((part) => part.trim().split('.')[0])
+    .filter(Boolean)
+}
+
 /** `content.root.children` is a failure on the body — label it as the body. */
 function labelFor(path: string | undefined): string {
-  if (!path) return 'a field'
-  const root = path.split('.')[0]
-  return FIELD_LABELS[root] || root
+  const parts = pathParts(path)
+  if (parts.length === 0) return 'a field'
+  return parts.map((part) => FIELD_LABELS[part] || part).join(' and ')
 }
 
 /**
@@ -76,9 +94,17 @@ function sentenceFor({ path, message }: FieldError): string {
   const reason = (message || '').trim()
 
   if (UNIQUE.test(reason)) {
-    return path === 'slug'
-      ? 'That URL slug already belongs to another post. Edit the URL slug (or change the title it is synced from) and save again.'
-      : `That ${label} already belongs to another post — pick a different one and save again.`
+    // A slug only has to be unique within one website, so the sentence says
+    // which website — "already belongs to another post" sent a writer hunting
+    // through a list that does not contain it, because the post it collides
+    // with belongs to a site they are not looking at.
+    const parts = pathParts(path)
+    if (parts.includes('slug')) {
+      return parts.includes('site')
+        ? 'That URL slug is already used by another post on this website. Edit the URL slug (or change the title it is synced from) and save again — the same slug on a different website is fine.'
+        : 'That URL slug already belongs to another post. Edit the URL slug (or change the title it is synced from) and save again.'
+    }
+    return `That ${label} already belongs to another post — pick a different one and save again.`
   }
 
   if (REQUIRED.test(reason)) {
