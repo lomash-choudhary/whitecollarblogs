@@ -41,8 +41,18 @@
  * bracket. It is lazy so that the optional backslash of an escaped `\]` is
  * matched by the escape rather than swallowed into the body — greedy, every
  * tag that had been through a save ended with a stray trailing backslash.
+ *
+ * **The whole tag may be wrapped in emphasis**, because a real draft writes it
+ * that way: `*\[Feature image: … Alt text: "…"\]*`. Unmatched here the line
+ * fell through to the unbracketed branch below, which strips only `**` and
+ * `__` — so the wrapper stayed in the body, the closing `"\]*` rode along on
+ * the end of the alt text, and `escapeAlt` then took out the brackets and left
+ * a published `og:image:alt` ending in `problems"\*`. Alt text is the one
+ * field whose damage is invisible on the page and read out loud to anyone
+ * using a screen reader.
  */
-const PLACEHOLDER_LINE = /^[ \t]*\\?\[([^\]\n]+?)\\?\][ \t]*$/
+const PLACEHOLDER_LINE =
+  /^[ \t]*(?:\*{1,2}|_{1,2})?[ \t]*\\?\[([^\]\n]+?)\\?\][ \t]*(?:\*{1,2}|_{1,2})?[ \t]*$/
 
 /**
  * The same brief written as a **bold label** instead of a bracketed line:
@@ -56,14 +66,16 @@ const PLACEHOLDER_LINE = /^[ \t]*\\?\[([^\]\n]+?)\\?\][ \t]*$/
  *
  * The bold is optional because a copy-paste out of Google Docs into the plain
  * markdown textarea drops it, and the placement note sits in parentheses on the
- * label rather than after a dash.
+ * label rather than after a dash. Single `*` and `_` are stripped too — a
+ * draft that italicises the brief instead of bolding it is the same brief, and
+ * alt text carries no markup for the delimiters to have meant anything in.
  *
  * Unlike the bracketed form this one is just an ordinary line, so it needs a
  * second guard or `**Image quality matters** on a repaint…` becomes a picture.
  * It must therefore carry one of the two field labels — every real tag has at
  * least `Alt text:` — on top of the "image" test every tag has to pass.
  */
-const EMPHASIS_DELIMITERS = /\*\*|__/g
+const EMPHASIS_DELIMITERS = /\*{1,2}|_{1,2}/g
 
 /**
  * `Feature image (below H1, above intro)` — the placement note parenthesised on
@@ -165,8 +177,18 @@ export function findImagePlaceholders(markdown: string): ImagePlaceholder[] {
     // An unbracketed line is only a tag if it names one of the two fields.
     if (!bracketed && !ALT_LABEL.test(body) && !DIRECTION_LABEL.test(body)) return
 
-    const separator = body.match(LABEL_SEPARATOR)
-    const written = (separator ? body.slice(0, separator.index) : body).trim()
+    // The separator is looked for **before the first field label**, never
+    // across it. `[In-content image, after the comparison table. Alt text:
+    // "…"]` separates its label from its note with a full stop, which is not a
+    // separator — so the earliest colon in the whole body is the one belonging
+    // to `Alt text:`. Cutting there made the label swallow the field name,
+    // left `splitFields` with no label to find, and fell the alt back to the
+    // raw remainder with its quotes still on it.
+    const fieldLabels = [body.search(ALT_LABEL), body.search(DIRECTION_LABEL)].filter((at) => at >= 0)
+    const head = fieldLabels.length > 0 ? body.slice(0, Math.min(...fieldLabels)) : body
+
+    const separator = head.match(LABEL_SEPARATOR)
+    const written = (separator ? head.slice(0, separator.index) : head).trim()
     const parenthesised = written.match(LABEL_PARENTHETICAL)
     const label = (parenthesised ? parenthesised[1] : written).trim()
     if (!/image/i.test(label)) return
@@ -178,8 +200,12 @@ export function findImagePlaceholders(markdown: string): ImagePlaceholder[] {
     const placement = fields.placement || (parenthesised ? parenthesised[2].trim() : '')
     // A tag with no `Alt text:` still needs an alt: the photo direction
     // describes the picture, so it reads better than the bare label would.
-    const alt = fields.alt || fields.direction || remainder || label
-    const direction = fields.direction || fields.alt || remainder || label
+    // The fallbacks are unquoted here rather than in `splitFields`, which only
+    // sees the labelled halves — a brief whose whole body is a quoted sentence
+    // would otherwise publish an alt with the quotes still around it.
+    const unquote = (value: string) => value.replace(SURROUNDING_QUOTES, '').trim()
+    const alt = fields.alt || fields.direction || unquote(remainder) || unquote(label)
+    const direction = fields.direction || fields.alt || unquote(remainder) || unquote(label)
 
     found.push({
       raw: rawLine,
