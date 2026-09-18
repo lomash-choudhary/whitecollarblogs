@@ -5,6 +5,13 @@ import { Plus, Edit2, Trash2, X, Check, RefreshCw, User, Briefcase, Tag, Link as
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 
 interface Author {
+  /**
+   * A page identifying this author — published as `author.url` in every
+   * article they write, which is the link Google uses to tell two writers of
+   * the same name apart. Optional: left empty, no `url` is published at all,
+   * which is the honest answer for a site with no author pages.
+   */
+  url?: string
   id: string | number
   name: string
   role: string
@@ -42,6 +49,7 @@ export const AuthorsManager: React.FC = () => {
   const [role, setRole] = useState('')
   const [department, setDepartment] = useState<Author['department']>('hr-ops')
   const [avatar, setAvatar] = useState('')
+  const [url, setUrl] = useState('')
 
   const fetchAuthors = async () => {
     try {
@@ -68,6 +76,7 @@ export const AuthorsManager: React.FC = () => {
     setRole('Technical Recruiter')
     setDepartment('hr-ops')
     setAvatar('')
+    setUrl('')
     setError('')
     setSuccess('')
     setIsOpen(true)
@@ -79,6 +88,7 @@ export const AuthorsManager: React.FC = () => {
     setRole(author.role)
     setDepartment(author.department)
     setAvatar(author.avatar || '')
+    setUrl(author.url || '')
     setError('')
     setSuccess('')
     setIsOpen(true)
@@ -98,7 +108,11 @@ export const AuthorsManager: React.FC = () => {
       name,
       role,
       department,
-      avatar: cleanImageUrl(avatar) || undefined
+      avatar: cleanImageUrl(avatar) || undefined,
+      // Sent as '' rather than undefined when empty: a PATCH ignores an
+      // undefined key, so clearing this box would report a successful save and
+      // keep publishing the URL the writer just deleted.
+      url: url.trim()
     }
 
     try {
@@ -322,6 +336,21 @@ export const AuthorsManager: React.FC = () => {
                   className="w-full bg-slate-50 border border-slate-200 focus:border-[#2563eb] focus:bg-white rounded-xl px-4 py-2.5 text-xs outline-none transition-all text-slate-800 font-medium shadow-inner"
                 />
                 <p className="text-[9px] text-slate-400 italic">Leave empty to use generic system icon profile picture.</p>
+              </div>
+
+              {/* Profile page, published as author.url on every article they write */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                  <LinkIcon className="w-3.5 h-3.5 text-slate-300" /> Profile URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="e.g. https://www.linkedin.com/in/..."
+                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#2563eb] focus:bg-white rounded-xl px-4 py-2.5 text-xs outline-none transition-all text-slate-800 font-medium shadow-inner"
+                />
+                <p className="text-[9px] text-slate-400 italic">A page that identifies this author, published with every article they write. Leave empty if there is none — a link to a page that does not exist is worse than no link.</p>
               </div>
 
             </form>
