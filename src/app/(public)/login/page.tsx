@@ -44,9 +44,9 @@ export default function LoginPage() {
       {/* `max-w-md` was too narrow for the card's own contents: the logo panel
           and the "Sign in to write, schedule and publish articles" line both
           ran nearly edge to edge, which read as a column squeezed rather than
-          a form. Wider than `xl` starts to look like a page instead of a
+          a form. Wider than `2xl` starts to look like a page instead of a
           dialog. */}
-      <div className="w-full max-w-xl">
+      <div className="w-full max-w-2xl">
         <div className="bg-white p-8 md:p-12 flex flex-col gap-8 relative overflow-hidden rounded-3xl shadow-sm border border-[rgba(13,27,42,0.1)]">
           {/* Top accent highlight */}
           <div className="absolute top-0 inset-x-0 h-1.5 bg-[#C9A84C]"></div>

@@ -1386,7 +1386,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     onClick={() => docInputRef.current?.click()}
                     disabled={isImportingDoc}
                     className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                    title="Import a Word (.docx) or markdown (.md) document. A .docx is converted the way Google Docs' own Download as Markdown converts it; the document replaces the body, and its title, slug and meta tags move into the fields above."
                   >
                     {isImportingDoc ? (
                       <>
