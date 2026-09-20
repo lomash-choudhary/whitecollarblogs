@@ -108,6 +108,13 @@ export interface SiteConfig {
   defaultHeroImage?: string
   /** Fallback category used when a post has no category */
   defaultCategory?: string
+  /**
+   * Whether a writer may pick this website in the sidebar switcher.
+   * Defaults to true; only `wcb` sets it false. See the note on that entry —
+   * it has to stay in `SITES` while being absent from the dropdown, and those
+   * are two different questions.
+   */
+  selectable?: boolean
   github?: GithubTargetConfig
 }
 
@@ -122,6 +129,18 @@ export const SITES: SiteConfig[] = [
     // `DEFAULT_SITE_KEY`, which is what every row written before multi-site
     // existed (site NULL) is matched by — renaming or removing it would
     // reassign those posts to whichever site happened to be first.
+    //
+    // Off the dropdown since 2026-09-20. It published nowhere, so choosing it
+    // meant writing an article that went nowhere — and it was the one entry
+    // carrying the company's own name, which read as a fourth website sitting
+    // beside the three real ones. **Hiding it is not the same as deleting
+    // it**: `siteWhere(DEFAULT_SITE_KEY)` is still the only clause that
+    // matches a NULL `site`, `getSite()` still falls back here, and
+    // `Posts.ts` still parks a row with an unrecognised site on this key
+    // rather than on whichever website happens to be first in the list. Take
+    // the entry out of `SITES` and all three of those quietly become OVO
+    // Painting's.
+    selectable: false,
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
     // Empty on purpose. `blogPath` names the route a website serves an article
     // from, and this app no longer has one; `/resources` here would only build
@@ -195,6 +214,16 @@ export function isKnownSite(key?: string | null): boolean {
   return Boolean(key && SITES.some((s) => s.key === key))
 }
 
+/**
+ * Narrower than `isKnownSite`: a key may be real and still not something a
+ * writer is allowed to be looking at. `wcb` is exactly that, so a stale
+ * cookie naming it has to be treated as no choice at all rather than pinning
+ * the dashboard to a website the switcher cannot show.
+ */
+export function isSelectableSite(key?: string | null): boolean {
+  return Boolean(key && SELECTABLE_SITES.some((s) => s.key === key))
+}
+
 /** Lightweight shape safe to hand to client components. */
 export interface PublicSite {
   key: string
@@ -206,8 +235,20 @@ export interface PublicSite {
   defaultCategory: string
 }
 
+/** The websites a writer may choose between. `wcb` is deliberately not one. */
+export const SELECTABLE_SITES: SiteConfig[] = SITES.filter((s) => s.selectable !== false)
+
+/** The website a writer lands on before they have chosen one. */
+export const DEFAULT_SELECTABLE_SITE_KEY = SELECTABLE_SITES[0].key
+
+/**
+ * Only the selectable websites are handed to the client. This is what the
+ * sidebar switcher renders, so a hidden site cannot be picked — and, because
+ * the list is also what the client validates against, cannot be forced back
+ * in by editing the cookie either.
+ */
 export function publicSites(): PublicSite[] {
-  return SITES.map(({ key, name, description, target, blogPath, baseUrl, defaultCategory }) => ({
+  return SELECTABLE_SITES.map(({ key, name, description, target, blogPath, baseUrl, defaultCategory }) => ({
     key,
     name,
     description,

@@ -40,7 +40,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center p-6 text-left font-body">
+    // `w-full` is load-bearing: the layout's `<main>` is a flex container, so
+    // this div is a flex item and without it shrinks to its content rather
+    // than filling the page. The card inside is `w-full max-w-2xl`, and a
+    // percentage width against a shrink-to-fit parent is circular — it
+    // resolved to the card's own content width (~362px at any viewport), so
+    // the max-width never applied and raising it changed nothing on screen.
+    <div className="w-full min-h-[75vh] flex items-center justify-center p-6 text-left font-body">
       {/* `max-w-md` was too narrow for the card's own contents: the logo panel
           and the "Sign in to write, schedule and publish articles" line both
           ran nearly edge to edge, which read as a column squeezed rather than
