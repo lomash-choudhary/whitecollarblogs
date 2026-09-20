@@ -33,7 +33,8 @@ import {
   Sparkles,
   Search,
   ChevronDown,
-  FileDown
+  FileDown,
+  FileUp
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import { findImagePlaceholders, replaceImagePlaceholder } from '@/lib/imagePlaceholders'
@@ -285,6 +286,9 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const mediaInputRef = React.useRef<HTMLInputElement>(null)
   const [isMediaUploading, setIsMediaUploading] = useState(false)
+  const docInputRef = React.useRef<HTMLInputElement>(null)
+  const [isImportingDoc, setIsImportingDoc] = useState(false)
+  const [docImportError, setDocImportError] = useState('')
 
   const triggerFileUpload = () => {
     mediaInputRef.current?.click()
@@ -527,6 +531,94 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
     e.preventDefault()
     setContent(applyDocImport(pasted, true))
+  }
+
+  /**
+   * Puts an uploaded document into the body.
+   *
+   * Two file types, one of which is not converted at all:
+   *
+   * - **`.md` / `.markdown` / `.txt`** is already the format the box works in,
+   *   so it is read in the browser and used as-is. Converting it would only be
+   *   a chance to change it.
+   * - **`.docx`** goes to `/api/import-docx`, which turns it into the markdown
+   *   Google Docs' own "Download as Markdown" produces — the shape every
+   *   convention downstream was written against. See `docxToMarkdown.ts`.
+   *
+   * Either way the result then goes through `applyDocImport(…, true)`, which
+   * is the **same call a whole-document paste makes**: the document's own
+   * title line moves into the title box instead of publishing as a second
+   * `<h1>`, its `Meta Title` / `Meta Description` / `URL Slug` preamble is
+   * rewritten as the SEO block, and the slug follows. An upload is a
+   * replacement by definition — the writer picked a file for an article — so
+   * the document wins over whatever the form is still holding, exactly as it
+   * does for a paste over a select-all.
+   *
+   * The body is replaced, so a body that already has something in it asks
+   * first. There is no undo in a textarea.
+   */
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    // Cleared straight away, and not in a `finally`: picking the same file
+    // twice in a row fires no change event otherwise, so a failed import
+    // could not be retried without choosing a different file first.
+    if (e.target) e.target.value = ''
+    if (!file) return
+
+    setDocImportError('')
+
+    if (content.trim() && !confirm(`Replace the article in the body with "${file.name}"?`)) {
+      return
+    }
+
+    const name = file.name.toLowerCase()
+    const isMarkdown = /\.(md|markdown|txt)$/.test(name)
+    const isDocx = name.endsWith('.docx')
+
+    if (!isMarkdown && !isDocx) {
+      setDocImportError(`"${file.name}" is not a .docx or .md file. In Google Docs use File > Download > Markdown (.md) or Microsoft Word (.docx).`)
+      return
+    }
+
+    setIsImportingDoc(true)
+    try {
+      let markdown: string
+
+      if (isMarkdown) {
+        // A downloaded file can carry a BOM and CRLF line endings, and both
+        // break the first thing that reads it: a BOM sits in front of `Topic`
+        // or `#` so neither the preamble nor the title line matches, and a
+        // `\r` rides along on the end of every value the SEO block imports.
+        markdown = (await file.text()).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
+      } else {
+        const form = new FormData()
+        form.append('file', file)
+        const res = await fetch('/api/import-docx', {
+          method: 'POST',
+          credentials: 'include',
+          body: form,
+        })
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+          setDocImportError(data?.error || 'The document could not be imported. Try again, or paste the text in.')
+          return
+        }
+        markdown = String(data?.markdown || '')
+      }
+
+      if (!markdown.trim()) {
+        setDocImportError(`"${file.name}" has no text in it.`)
+        return
+      }
+
+      setContent(applyDocImport(markdown, true))
+    } catch {
+      // A network failure or a file the browser could not read. The message
+      // names the thing the writer can do next, not what threw.
+      setDocImportError('The file could not be read. Check the download and try again, or paste the text in.')
+    } finally {
+      setIsImportingDoc(false)
+    }
   }
 
   // A publish can fail for reasons that have nothing to do with the article —
@@ -1286,6 +1378,28 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                       the far right instead of crowding the formatting groups. Each
                       appears only when the body actually has something for it to do. */}
                   <div className="flex items-center gap-0.5">
+                  {/* Always visible, unlike the two buttons after it: this is
+                      how an article gets into the box in the first place, so
+                      it cannot be conditional on the box already having one. */}
+                  <button
+                    type="button"
+                    onClick={() => docInputRef.current?.click()}
+                    disabled={isImportingDoc}
+                    className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    title="Import a Word (.docx) or markdown (.md) document. A .docx is converted the way Google Docs' own Download as Markdown converts it; the document replaces the body, and its title, slug and meta tags move into the fields above."
+                  >
+                    {isImportingDoc ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Converting
+                      </>
+                    ) : (
+                      <>
+                        <FileUp className="w-3.5 h-3.5 text-[#C9A84C]" />
+                        Upload .docx / .md
+                      </>
+                    )}
+                  </button>
                   {pendingImport.consumed.length > 0 && (
                     <button
                       type="button"
@@ -1333,6 +1447,23 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                   className="w-full bg-transparent border-0 text-xs font-semibold p-4 outline-none focus:ring-0 text-[#0D1B2A] leading-relaxed resize-y block"
                 />
               </div>
+
+              {/* An import failure is the one thing here worth saying out loud:
+                  the writer picked a file and the body did not change, so
+                  without this the upload looks like it did nothing. */}
+              {docImportError && (
+                <p className="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-100 rounded-2xl px-3 py-2">
+                  {docImportError}
+                </p>
+              )}
+
+              <input
+                type="file"
+                ref={docInputRef}
+                onChange={handleDocumentUpload}
+                className="hidden"
+                accept=".docx,.md,.markdown,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain"
+              />
 
               <input
                 type="file"

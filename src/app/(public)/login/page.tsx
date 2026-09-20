@@ -41,8 +41,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-6 text-left font-body">
-      <div className="w-full max-w-md">
-        <div className="bg-white p-8 md:p-10 flex flex-col gap-8 relative overflow-hidden rounded-3xl shadow-sm border border-[rgba(13,27,42,0.1)]">
+      {/* `max-w-md` was too narrow for the card's own contents: the logo panel
+          and the "Sign in to write, schedule and publish articles" line both
+          ran nearly edge to edge, which read as a column squeezed rather than
+          a form. Wider than `xl` starts to look like a page instead of a
+          dialog. */}
+      <div className="w-full max-w-xl">
+        <div className="bg-white p-8 md:p-12 flex flex-col gap-8 relative overflow-hidden rounded-3xl shadow-sm border border-[rgba(13,27,42,0.1)]">
           {/* Top accent highlight */}
           <div className="absolute top-0 inset-x-0 h-1.5 bg-[#C9A84C]"></div>
 
