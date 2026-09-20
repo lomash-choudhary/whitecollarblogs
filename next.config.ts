@@ -17,20 +17,21 @@ const nextConfig: NextConfig = {
   },
 
   /**
-   * The blog root moved from `/blogs` to `/resources` on 2026-09-18, so that
-   * all four websites serve a CMS article from one path and a writer never has
-   * to remember which site puts articles where.
+   * The public blog this app used to serve is gone (2026-09-20), so the two
+   * old article paths both have to land somewhere that exists. `/blogs` was
+   * redirected to `/resources` when the route moved on 2026-09-18; with
+   * `/resources` itself removed, that redirect would only point at a 404, so
+   * both paths now go to the dashboard — the one page this app still has.
    *
-   * Permanent (308), and kept rather than deleted later: every link already
-   * shared, bookmarked or indexed at the old path is someone's route into the
-   * article, and a moved page that 404s loses whatever ranking it had instead
-   * of handing it to the new URL. `:slug*` catches the root and the query
-   * string as well as an article.
+   * Permanent (308) because the pages are not coming back. `:slug*` catches
+   * an article as well as the root.
    */
   async redirects() {
     return [
-      { source: '/blogs', destination: '/resources', permanent: true },
-      { source: '/blogs/:slug*', destination: '/resources/:slug*', permanent: true },
+      { source: '/blogs', destination: '/dashboard', permanent: true },
+      { source: '/blogs/:slug*', destination: '/dashboard', permanent: true },
+      { source: '/resources', destination: '/dashboard', permanent: true },
+      { source: '/resources/:slug*', destination: '/dashboard', permanent: true },
     ]
   },
 }

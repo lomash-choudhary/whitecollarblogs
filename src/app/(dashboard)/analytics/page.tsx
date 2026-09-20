@@ -105,8 +105,8 @@ export default async function AnalyticsPage() {
     <div className="space-y-8 animate-in fade-in duration-300 text-left">
       {/* Page Header */}
       <div className="space-y-1">
-        <h2 className="text-xl font-black text-[#090d16] tracking-tight">Recruitment Editorial Analytics</h2>
-        <p className="text-xs text-slate-400 font-semibold mt-1">Real-time performance metrics for candidate engagement blogs</p>
+        <h2 className="text-xl font-black text-[#090d16] tracking-tight">Editorial Analytics</h2>
+        <p className="text-xs text-slate-400 font-semibold mt-1">Real-time performance metrics for every published article</p>
       </div>
 
       {/* Numerical Stats Grid */}
@@ -126,7 +126,7 @@ export default async function AnalyticsPage() {
             <Heart className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Candidate Likes</p>
+            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Likes</p>
             <p className="text-2xl font-black text-[#090d16] mt-1 leading-none">{stats.likes}</p>
           </div>
         </div>
@@ -178,10 +178,10 @@ export default async function AnalyticsPage() {
           </div>
         </div>
 
-        {/* High Performing recruitment blogs */}
+        {/* Highest performing articles */}
         <div className="small-group-card p-8 bg-white flex flex-col gap-6 rounded-3xl border border-slate-200/60 shadow-sm">
           <div className="space-y-1">
-            <h3 className="text-base font-black text-[#090d16] tracking-tight">High Performing Recruitment Blogs</h3>
+            <h3 className="text-base font-black text-[#090d16] tracking-tight">High Performing Blogs</h3>
             <p className="text-xs text-slate-400 font-semibold">Leading talent funnel drivers by page views</p>
           </div>
 

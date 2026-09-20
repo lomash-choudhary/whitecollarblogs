@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { 
   LayoutDashboard, 
@@ -25,17 +26,18 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside className="w-64 bg-[#0D1B2A] text-white flex flex-col fixed inset-y-0 left-0 border-r border-white/5 z-30 shadow-lg font-body">
-      {/* Branding Logo */}
-      <div className="h-20 flex items-center px-6 border-b border-white/5 gap-3">
+      {/* Branding Logo — the wordmark is white on transparent, so it needs the
+          sidebar's navy behind it, which is exactly where it sits. */}
+      <div className="h-20 flex items-center px-6 border-b border-white/5">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="flex flex-col text-left">
-            <span className="text-[15px] font-bold tracking-tight leading-none text-white font-headline">
-              White Collar
-            </span>
-            <span className="text-[10px] font-bold tracking-[2px] leading-none text-[#C9A84C] mt-1 font-body">
-              ADVICE
-            </span>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Homeowner Marketers"
+            width={1030}
+            height={345}
+            priority
+            className="w-[150px] h-auto group-hover:opacity-90 transition-opacity"
+          />
           <div className="h-5 w-[1px] bg-white/20 self-center"></div>
           <span className="text-[9px] font-bold text-[#C9A84C] tracking-wider uppercase">
             CMS

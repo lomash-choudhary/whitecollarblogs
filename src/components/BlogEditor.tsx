@@ -710,7 +710,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
           {isEditing ? 'Edit WCA Blog Post' : 'Draft New WCA Blog Post'}
         </h2>
         <p className="text-xs text-[#0D1B2A]/50 font-semibold mt-1">
-          {isEditing ? 'Update existing mitigation insights for the archive' : 'Deploy fresh federal prep insights for defendants'}
+          {isEditing ? 'Update this article and republish it to its website' : 'Write a new article and publish it to one of your websites'}
         </p>
       </div>
 
@@ -789,7 +789,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 <input 
                   type="text" 
                   required
-                  placeholder="e.g. Why Most Defendants Wait Too Long to Begin Mitigation"
+                  placeholder="e.g. How to Choose the Right Paint Finish"
                   value={title}
                   onChange={(e) => {
                     const newTitle = e.target.value
@@ -849,7 +849,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 <input 
                   type="text" 
                   required
-                  placeholder="why-defendants-wait-too-long-mitigation"
+                  placeholder="how-to-choose-the-right-paint-finish"
                   value={slug}
                   onChange={(e) => {
                     setIsSyncedWithTitle(false)
@@ -1056,7 +1056,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               <textarea 
                 required
                 rows={2}
-                placeholder="Give a short summary of this article to display in the archive..."
+                placeholder="Give a short summary of this article to show in the blog listing..."
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 className="w-full bg-[#F5F0E8]/30 border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:bg-white focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-3 rounded-xl outline-none transition-all text-[#0D1B2A] shadow-sm resize-none"

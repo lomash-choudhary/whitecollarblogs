@@ -73,7 +73,7 @@ export const AuthorsManager: React.FC = () => {
   const handleOpenAdd = () => {
     setEditingAuthor(null)
     setName('')
-    setRole('Technical Recruiter')
+    setRole('Contributor')
     setDepartment('hr-ops')
     setAvatar('')
     setUrl('')
@@ -160,7 +160,7 @@ export const AuthorsManager: React.FC = () => {
       <div className="flex items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-black text-[#090d16] tracking-tight">Team Authors</h2>
-          <p className="text-xs text-slate-400 font-semibold">Manage corporate contributors and their recruitment roles.</p>
+          <p className="text-xs text-slate-400 font-semibold">Manage the writers who appear as the byline on a published article.</p>
         </div>
         <button
           onClick={handleOpenAdd}

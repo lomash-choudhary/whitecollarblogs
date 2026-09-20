@@ -47,7 +47,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialPosts, stages }
   const [posts, setPosts] = useState<Post[]>(initialPosts)
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
 
-  // Sort stages by standard recruitment progression
+  // Sort stages by standard editorial progression
   const stageOrder = ['draft', 'review', 'approved', 'scheduled', 'published']
   const sortedStages = [...stages].sort(
     (a, b) => stageOrder.indexOf(a.key) - stageOrder.indexOf(b.key)
@@ -108,7 +108,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ initialPosts, stages }
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-black text-[#090d16] tracking-tight">Editorial Lifecycle</h2>
-          <p className="text-xs text-slate-400 font-semibold mt-1">Move candidate-facing posts between stages dynamically</p>
+          <p className="text-xs text-slate-400 font-semibold mt-1">Move articles between stages dynamically</p>
         </div>
         <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 bg-[#2563eb]/5 border border-[#2563eb]/10 rounded-full text-xs font-semibold text-[#2563eb] shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-[#2563eb]" />

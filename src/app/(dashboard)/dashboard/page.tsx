@@ -108,13 +108,13 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between border-b border-slate-100 pb-5">
             <div className="space-y-1">
               <h3 className="text-base font-black text-[#090d16] tracking-tight">Recent Blogs in Pipeline</h3>
-              <p className="text-xs text-slate-400 font-semibold">Tracking candidate-facing articles</p>
+              <p className="text-xs text-slate-400 font-semibold">Tracking every article across your websites</p>
             </div>
             <Link
-              href="/resources"
+              href="/kanban"
               className="text-xs font-black uppercase tracking-wider text-[#C9A84C] hover:text-[#B29135] flex items-center gap-1.5 transition-colors group"
             >
-              <span>View all blogs</span>
+              <span>View pipeline board</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>

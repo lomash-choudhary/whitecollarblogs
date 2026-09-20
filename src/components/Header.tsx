@@ -9,9 +9,6 @@ export const Header: React.FC = () => {
   const pathname = usePathname()
   
   const getPageTitle = () => {
-    if (pathname.includes('/resources/')) {
-      return 'Blog Details'
-    }
     switch (pathname) {
       case '/dashboard':
         return 'Editorial Dashboard'
@@ -19,10 +16,8 @@ export const Header: React.FC = () => {
         return 'Pipeline Kanban'
       case '/editor':
         return 'Content Editor'
-      case '/resources':
-        return 'Blog Listing'
       case '/analytics':
-        return 'Archive Stats'
+        return 'Performance Stats'
       case '/authors':
         return 'Author Manager'
       default:
@@ -36,7 +31,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-bold text-[#0D1B2A] tracking-tight font-headline">{getPageTitle()}</h1>
         <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#C9A84C]/8 text-[#C9A84C] border border-[#C9A84C]/15">
-          <Sparkles className="w-3.5 h-3.5" /> Archive Active
+          <Sparkles className="w-3.5 h-3.5" /> CMS Active
         </span>
       </div>
 
@@ -49,7 +44,7 @@ export const Header: React.FC = () => {
           </span>
           <input
             type="text"
-            placeholder="Search archive articles..."
+            placeholder="Search articles..."
             className="w-full text-xs pl-9 pr-4 py-2 bg-slate-50 border border-slate-200/80 rounded-full focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#C9A84C]/15 focus:border-[#C9A84C] transition-all text-[#0D1B2A] font-semibold"
           />
         </div>

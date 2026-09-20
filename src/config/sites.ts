@@ -1,9 +1,12 @@
 /**
  * Multi-site publishing registry.
  *
- * WhiteCollarBlogs (WCB) is the portal. Every post belongs to exactly one site.
+ * The Homeowner Marketers blog CMS is the portal. Every post belongs to
+ * exactly one site.
  *
- *  - target: 'local'  -> the post is rendered by this very app (/resources/[slug]).
+ *  - target: 'local'  -> the post stays in this CMS and is served nowhere. The
+ *                        app's own public blog was removed on 2026-09-20, so
+ *                        this is a holding bucket, not a website.
  *  - target: 'github' -> the post is pushed to another website's GitHub repo,
  *                        which turns it into a markdown file and redeploys itself.
  *
@@ -111,20 +114,20 @@ export interface SiteConfig {
 export const SITES: SiteConfig[] = [
   {
     key: 'wcb',
-    name: 'White Collar Advice',
-    description: 'New blogs publish to this CMS.',
+    name: 'Homeowner Marketers',
+    description: 'Stays in this CMS — not pushed to a website.',
     target: 'local',
-    // Not a deploy target — this is the app serving the page, so its own
-    // public URL is the right source.
+    // Not a deploy target — and since 2026-09-20 not a website either: this
+    // app serves no public article page at all. The key stays because it is
+    // `DEFAULT_SITE_KEY`, which is what every row written before multi-site
+    // existed (site NULL) is matched by — renaming or removing it would
+    // reassign those posts to whichever site happened to be first.
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-    // All four websites serve a CMS article from the same path. This app used
-    // to be the exception at `/blogs`, which meant a writer had to remember
-    // which site put articles where; the route folder was moved to
-    // `(public)/resources` in the same pass, so this still names a page this
-    // app actually serves. Changing one without the other points every
-    // canonical it emits at a 404.
-    blogPath: '/resources',
-    defaultCategory: 'Software Engineer',
+    // Empty on purpose. `blogPath` names the route a website serves an article
+    // from, and this app no longer has one; `/resources` here would only build
+    // canonicals and "view it live" links pointing at a 404.
+    blogPath: '',
+    defaultCategory: 'General',
   },
   {
     key: 'ovopainting',

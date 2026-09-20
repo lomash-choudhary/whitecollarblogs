@@ -74,9 +74,9 @@ export const Posts: CollectionConfig = {
    *
    * Each site publishes into its own repo and serves the article from its own
    * domain, so `signs-of-stucco-problems` on Durahome and the same slug on OVO
-   * are two different URLs and neither shadows the other. Both public routes
-   * here already filter by site (`siteWhere(DEFAULT_SITE_KEY)`), so this app's
-   * own `/resources/<slug>` still resolves to exactly one post.
+   * are two different URLs and neither shadows the other. This app itself no
+   * longer serves articles at all (its `/resources` blog was removed on
+   * 2026-09-20), so nothing here has to resolve a slug to a single post.
    *
    * `push` is false, so Payload never creates this index itself — the matching
    * statement in `scripts/upgrade-db-multisite.mjs` is what actually enforces

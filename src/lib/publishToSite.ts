@@ -182,7 +182,7 @@ export async function publishPostToSite(post: any, author?: any): Promise<Publis
   const site = getSite(post?.site)
 
   if (site.target !== 'github' || !site.github) {
-    return { ok: true, status: 'skipped', message: `"${site.name}" is served by this CMS directly — nothing to dispatch.` }
+    return { ok: true, status: 'skipped', message: `"${site.name}" is not a publishing target — the article stays in this CMS.` }
   }
 
   // Repo coordinates and the token all come from this site's env vars, so one

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * Renders a post's Lexical JSON with White Collar Advice typography.
+ * Renders a post's Lexical JSON with the CMS's own typography.
  *
  * Every block type `markdownToLexical` can produce has a case here. That is
  * the rule this file exists to hold: the CMS must be able to *show* anything a

@@ -68,7 +68,7 @@ export const SiteSwitcher: React.FC = () => {
                     {site.name}
                   </span>
                   <span className="block text-[10px] text-slate-500 mt-0.5">
-                    {site.target === 'local' ? 'Hosted on this CMS' : 'Published via GitHub'}
+                    {site.target === 'local' ? 'Stays in this CMS' : 'Published via GitHub'}
                   </span>
                 </span>
                 {isActive && <Check className="w-3.5 h-3.5 text-[#C9A84C] shrink-0 mt-0.5" />}
