@@ -4,11 +4,11 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  KanbanSquare, 
-  PenTool, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  KanbanSquare,
+  PenTool,
+  BarChart3,
   Users2
 } from 'lucide-react'
 import { SiteSwitcher } from './SiteSwitcher'
@@ -57,11 +57,10 @@ export const Sidebar: React.FC = () => {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 ${
-                isActive
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 ${isActive
                   ? 'bg-[#C9A84C] text-[#0D1B2A] shadow-lg shadow-[#C9A84C]/20'
                   : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-              }`}
+                }`}
             >
               <Icon className={`w-4 h-4 ${isActive ? 'text-[#0D1B2A]' : 'text-slate-400'}`} />
               <span>{item.name}</span>

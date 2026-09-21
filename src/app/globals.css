@@ -246,6 +246,17 @@ h1, h2, h3, h4, h5, h6 {
   animation: marquee-scroll 30s linear infinite;
 }
 
+/* Shimmer animation */
+@keyframes shimmer {
+  100% {
+    transform: translateX(200%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+
 /* Article prose overrides */
 .prose-wca p {
   font-family: var(--font-body);

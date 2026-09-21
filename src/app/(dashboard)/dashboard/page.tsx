@@ -3,11 +3,11 @@ import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { getActiveSite, siteWhere } from '@/utils/activeSite'
-import { 
-  CheckCircle2, 
-  Users, 
-  ArrowRight, 
-  BookOpen, 
+import {
+  CheckCircle2,
+  Users,
+  ArrowRight,
+  BookOpen,
   Flame
 } from 'lucide-react'
 
@@ -128,8 +128,8 @@ export default async function DashboardPage() {
               </div>
             ) : (
               posts.map((post: any) => (
-                <div 
-                  key={post.id} 
+                <div
+                  key={post.id}
                   className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100/80 hover:bg-slate-50/50 hover:border-slate-200 transition-all group text-left"
                 >
                   <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] font-bold shrink-0">
@@ -137,10 +137,10 @@ export default async function DashboardPage() {
                   </div>
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-4">
-                      <span 
+                      <span
                         className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border"
-                        style={{ 
-                          backgroundColor: `${post.stage?.color || '#cbd5e1'}15`, 
+                        style={{
+                          backgroundColor: `${post.stage?.color || '#cbd5e1'}15`,
                           borderColor: `${post.stage?.color || '#cbd5e1'}30`,
                           color: post.stage?.color || '#64748b'
                         }}
@@ -150,8 +150,8 @@ export default async function DashboardPage() {
                       <div className="flex items-center gap-3">
                         <span className="text-[10px] text-slate-400 font-semibold">{post.readTime || '5 min read'}</span>
                         <span className="text-slate-200">|</span>
-                        <Link 
-                          href={`/editor?id=${post.id}`} 
+                        <Link
+                          href={`/editor?id=${post.id}`}
                           className="text-[10px] font-black uppercase tracking-widest text-[#C9A84C] hover:text-[#B29135] transition-colors"
                         >
                           Edit

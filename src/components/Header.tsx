@@ -7,7 +7,7 @@ import { Plus, Search, Sparkles } from 'lucide-react'
 
 export const Header: React.FC = () => {
   const pathname = usePathname()
-  
+
   const getPageTitle = () => {
     switch (pathname) {
       case '/dashboard':

@@ -3,12 +3,12 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { 
-  Check, 
-  Clock, 
+import {
+  Check,
+  Clock,
   Image as ImageIcon,
   CalendarClock,
-  Loader2,  
+  Loader2,
   Send,
   Upload,
   Trash2,
@@ -297,7 +297,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     setIsMediaUploading(true)
     try {
       const doc = await uploadToMedia(file, file.name)
@@ -353,7 +353,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [targetRole, setTargetRole] = useState(
     initialPost?.targetRole || targetSite.defaultCategory,
   )
-  
+
   // Derive reading time dynamically from content length to avoid useEffect state updates
   const words = content.trim() ? content.trim().split(/\s+/).length : 0
   const minutes = Math.max(1, Math.ceil(words / 200))
@@ -387,10 +387,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     setIsUploading(true)
     setError(null)
-    
+
     try {
       const doc = await uploadToMedia(file, `Cover for ${title || 'blog'}`)
       if (!doc?.id) throw new Error('Invalid response from media server.')
@@ -725,23 +725,23 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     const lexicalContent = markdownToLexical(seoBlock.body)
     const seo = seoBlock.present
       ? {
-          metaTitle: seoBlock.fields.metaTitle || '',
-          metaDescription: seoBlock.fields.metaDescription || '',
-          metaKeywords: seoBlock.fields.metaKeywords || '',
-          canonicalUrl: seoBlock.fields.canonicalUrl || '',
-          coverImageAlt: seoBlock.fields.coverImageAlt || '',
-          ogImageUrl: seoBlock.fields.ogImageUrl || '',
-          targetKeyword: seoBlock.fields.targetKeyword || '',
-        }
+        metaTitle: seoBlock.fields.metaTitle || '',
+        metaDescription: seoBlock.fields.metaDescription || '',
+        metaKeywords: seoBlock.fields.metaKeywords || '',
+        canonicalUrl: seoBlock.fields.canonicalUrl || '',
+        coverImageAlt: seoBlock.fields.coverImageAlt || '',
+        ogImageUrl: seoBlock.fields.ogImageUrl || '',
+        targetKeyword: seoBlock.fields.targetKeyword || '',
+      }
       : {
-          metaTitle,
-          metaDescription,
-          metaKeywords,
-          canonicalUrl: canonicalUrl.trim(),
-          coverImageAlt,
-          ogImageUrl,
-          targetKeyword,
-        }
+        metaTitle,
+        metaDescription,
+        metaKeywords,
+        canonicalUrl: canonicalUrl.trim(),
+        coverImageAlt,
+        ogImageUrl,
+        targetKeyword,
+      }
 
     try {
       const url = isEditing ? `/api/posts/${initialPost?.id}` : '/api/posts'
@@ -878,8 +878,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Article Title</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   placeholder="e.g. How to Choose the Right Paint Finish"
                   value={title}
@@ -918,11 +918,10 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                         setIsSyncedWithTitle(false)
                       }
                     }}
-                    className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
-                      isSyncedWithTitle
+                    className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border transition-all cursor-pointer ${isSyncedWithTitle
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60 hover:bg-emerald-100/70'
                         : 'bg-[#F5F0E8]/40 text-[#0D1B2A]/50 border-[rgba(13,27,42,0.1)] hover:bg-[#F5F0E8]/70'
-                    }`}
+                      }`}
                     title={isSyncedWithTitle ? "Synced with Title (Click to customize)" : "Customized (Click to sync with Title)"}
                   >
                     {isSyncedWithTitle ? (
@@ -938,8 +937,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                     )}
                   </button>
                 </div>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   placeholder="how-to-choose-the-right-paint-finish"
                   value={slug}
@@ -960,8 +959,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">Target Focus / Category</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   placeholder="e.g. Pre-Sentence, Post-Sentence, RDAP"
                   value={targetRole}
@@ -1026,9 +1025,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 </p>
                 {isEditing && initialPost?.scheduleStatus && (
                   <p
-                    className={`text-[10px] font-bold ${
-                      initialPost.scheduleStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
-                    }`}
+                    className={`text-[10px] font-bold ${initialPost.scheduleStatus === 'failed' ? 'text-rose-600' : 'text-emerald-700'
+                      }`}
                   >
                     {initialPost.scheduleStatus} — {initialPost.scheduleMessage}
                   </p>
@@ -1046,22 +1044,20 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                   <button
                     type="button"
                     onClick={() => setImageSource('upload')}
-                    className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${
-                      imageSource === 'upload'
+                    className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${imageSource === 'upload'
                         ? 'bg-white text-[#C9A84C] shadow-sm'
                         : 'text-[#0D1B2A]/50 hover:text-[#0D1B2A]'
-                    }`}
+                      }`}
                   >
                     Upload File
                   </button>
                   <button
                     type="button"
                     onClick={() => setImageSource('url')}
-                    className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${
-                      imageSource === 'url'
+                    className={`px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all ${imageSource === 'url'
                         ? 'bg-white text-[#C9A84C] shadow-sm'
                         : 'text-[#0D1B2A]/50 hover:text-[#0D1B2A]'
-                    }`}
+                      }`}
                   >
                     Image URL
                   </button>
@@ -1145,7 +1141,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
             {/* Short Excerpt */}
             <div className="space-y-2">
               <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">Brief Article Excerpt</label>
-              <textarea 
+              <textarea
                 required
                 rows={2}
                 placeholder="Give a short summary of this article to show in the blog listing..."
@@ -1378,61 +1374,61 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                       the far right instead of crowding the formatting groups. Each
                       appears only when the body actually has something for it to do. */}
                   <div className="flex items-center gap-0.5">
-                  {/* Always visible, unlike the two buttons after it: this is
+                    {/* Always visible, unlike the two buttons after it: this is
                       how an article gets into the box in the first place, so
                       it cannot be conditional on the box already having one. */}
-                  <button
-                    type="button"
-                    onClick={() => docInputRef.current?.click()}
-                    disabled={isImportingDoc}
-                    className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {isImportingDoc ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Converting
-                      </>
-                    ) : (
-                      <>
-                        <FileUp className="w-3.5 h-3.5 text-[#C9A84C]" />
-                        Upload .docx / .md
-                      </>
-                    )}
-                  </button>
-                  {pendingImport.consumed.length > 0 && (
                     <button
                       type="button"
-                      onClick={() => setContent(applyDocImport(content))}
-                      className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer"
-                      title={`Moves the document's ${pendingImport.consumed.join(', ')} out of the body and into the fields above. A field you have already filled in is left alone.`}
-                    >
-                      <FileDown className="w-3.5 h-3.5 text-[#C9A84C]" />
-                      Read SEO block
-                    </button>
-                  )}
-                  {pendingImages.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={generateImages}
-                      disabled={isGeneratingImages}
+                      onClick={() => docInputRef.current?.click()}
+                      disabled={isImportingDoc}
                       className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                      title={pendingImages
-                        .map((p) => `${p.label}${p.placement ? ` (${p.placement})` : ''}: ${p.alt}`)
-                        .join('\n')}
                     >
-                      {isGeneratingImages ? (
+                      {isImportingDoc ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Generating {imageProgress ? `${imageProgress.done + 1}/${imageProgress.total}` : ''}
+                          Converting
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
-                          Generate {pendingImages.length} image{pendingImages.length === 1 ? '' : 's'}
+                          <FileUp className="w-3.5 h-3.5 text-[#C9A84C]" />
+                          Upload .docx / .md
                         </>
                       )}
                     </button>
-                  )}
+                    {pendingImport.consumed.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setContent(applyDocImport(content))}
+                        className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer"
+                        title={`Moves the document's ${pendingImport.consumed.join(', ')} out of the body and into the fields above. A field you have already filled in is left alone.`}
+                      >
+                        <FileDown className="w-3.5 h-3.5 text-[#C9A84C]" />
+                        Read SEO block
+                      </button>
+                    )}
+                    {pendingImages.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={generateImages}
+                        disabled={isGeneratingImages}
+                        className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        title={pendingImages
+                          .map((p) => `${p.label}${p.placement ? ` (${p.placement})` : ''}: ${p.alt}`)
+                          .join('\n')}
+                      >
+                        {isGeneratingImages ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            Generating {imageProgress ? `${imageProgress.done + 1}/${imageProgress.total}` : ''}
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
+                            Generate {pendingImages.length} image{pendingImages.length === 1 ? '' : 's'}
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
                 <textarea
@@ -1471,7 +1467,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 className="hidden"
                 accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               />
-              
+
             </div>
 
             {/* SEO & meta tags — the fallback surface, for an article whose
@@ -1486,134 +1482,134 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                 Deleting the block from the body brings this back, holding
                 whatever the block last said. */}
             {!seoBlock.present && (
-            <div className="rounded-xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/30 shadow-sm overflow-hidden">
-              <button
-                type="button"
-                onClick={() => setSeoOpen((open) => !open)}
-                className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#F5F0E8]/60 transition-colors cursor-pointer"
-              >
-                <span className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/60">
-                  <Search className="w-3.5 h-3.5 text-[#C9A84C]" />
-                  SEO &amp; meta tags
-                  {seoFilledCount > 0 && (
-                    <span className="normal-case tracking-normal font-bold text-[9px] text-[#C9A84C]">
-                      {seoFilledCount} set
-                    </span>
-                  )}
-                </span>
-                <ChevronDown
-                  className={`w-4 h-4 text-[#0D1B2A]/40 transition-transform ${seoOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
+              <div className="rounded-xl border border-[rgba(13,27,42,0.12)] bg-[#F5F0E8]/30 shadow-sm overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setSeoOpen((open) => !open)}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#F5F0E8]/60 transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/60">
+                    <Search className="w-3.5 h-3.5 text-[#C9A84C]" />
+                    SEO &amp; meta tags
+                    {seoFilledCount > 0 && (
+                      <span className="normal-case tracking-normal font-bold text-[9px] text-[#C9A84C]">
+                        {seoFilledCount} set
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-[#0D1B2A]/40 transition-transform ${seoOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
 
-              {seoOpen && (
-                <div className="px-4 pb-4 pt-1 space-y-4 border-t border-[rgba(13,27,42,0.08)]">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {seoOpen && (
+                  <div className="px-4 pb-4 pt-1 space-y-4 border-t border-[rgba(13,27,42,0.08)]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Meta title
+                          <span className="ml-2 normal-case tracking-normal font-semibold text-[#0D1B2A]/35">
+                            {metaTitle.trim().length}/60
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          value={metaTitle}
+                          onChange={(e) => setMetaTitle(e.target.value)}
+                          placeholder={title || 'Falls back to the article title'}
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Target keyword
+                        </label>
+                        <input
+                          type="text"
+                          value={targetKeyword}
+                          onChange={(e) => setTargetKeyword(e.target.value)}
+                          placeholder="cost to paint kitchen cabinets"
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
+                    </div>
+
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Meta title
+                        Meta description
                         <span className="ml-2 normal-case tracking-normal font-semibold text-[#0D1B2A]/35">
-                          {metaTitle.trim().length}/60
+                          {metaDescription.trim().length}/160
                         </span>
                       </label>
-                      <input
-                        type="text"
-                        value={metaTitle}
-                        onChange={(e) => setMetaTitle(e.target.value)}
-                        placeholder={title || 'Falls back to the article title'}
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                      <textarea
+                        rows={2}
+                        value={metaDescription}
+                        onChange={(e) => setMetaDescription(e.target.value)}
+                        placeholder={excerpt || 'Falls back to the excerpt'}
+                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A] resize-none"
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Target keyword
-                      </label>
-                      <input
-                        type="text"
-                        value={targetKeyword}
-                        onChange={(e) => setTargetKeyword(e.target.value)}
-                        placeholder="cost to paint kitchen cabinets"
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Meta keywords
+                        </label>
+                        <input
+                          type="text"
+                          value={metaKeywords}
+                          onChange={(e) => setMetaKeywords(e.target.value)}
+                          placeholder="cabinet painting, kitchen cabinets, cost"
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Canonical URL
+                        </label>
+                        <input
+                          type="text"
+                          value={canonicalUrl}
+                          onChange={(e) => setCanonicalUrl(e.target.value)}
+                          placeholder={`${targetSite.baseUrl || ''}${targetSite.blogPath}/${slug || 'your-slug'}`}
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
                     </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Cover image alt text
+                        </label>
+                        <input
+                          type="text"
+                          value={coverImageAlt}
+                          onChange={(e) => setCoverImageAlt(e.target.value)}
+                          placeholder="Sprayed white cabinet doors drying on a rack"
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
+                          Social share image URL
+                        </label>
+                        <input
+                          type="text"
+                          value={ogImageUrl}
+                          onChange={(e) => setOgImageUrl(e.target.value)}
+                          placeholder={coverImageUrl || 'Falls back to the cover image'}
+                          className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
+                        />
+                      </div>
+                    </div>
+
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                      Meta description
-                      <span className="ml-2 normal-case tracking-normal font-semibold text-[#0D1B2A]/35">
-                        {metaDescription.trim().length}/160
-                      </span>
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={metaDescription}
-                      onChange={(e) => setMetaDescription(e.target.value)}
-                      placeholder={excerpt || 'Falls back to the excerpt'}
-                      className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A] resize-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Meta keywords
-                      </label>
-                      <input
-                        type="text"
-                        value={metaKeywords}
-                        onChange={(e) => setMetaKeywords(e.target.value)}
-                        placeholder="cabinet painting, kitchen cabinets, cost"
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Canonical URL
-                      </label>
-                      <input
-                        type="text"
-                        value={canonicalUrl}
-                        onChange={(e) => setCanonicalUrl(e.target.value)}
-                        placeholder={`${targetSite.baseUrl || ''}${targetSite.blogPath}/${slug || 'your-slug'}`}
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Cover image alt text
-                      </label>
-                      <input
-                        type="text"
-                        value={coverImageAlt}
-                        onChange={(e) => setCoverImageAlt(e.target.value)}
-                        placeholder="Sprayed white cabinet doors drying on a rack"
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">
-                        Social share image URL
-                      </label>
-                      <input
-                        type="text"
-                        value={ogImageUrl}
-                        onChange={(e) => setOgImageUrl(e.target.value)}
-                        placeholder={coverImageUrl || 'Falls back to the cover image'}
-                        className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A]"
-                      />
-                    </div>
-                  </div>
-
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             )}
 
             {/* Submit Button */}

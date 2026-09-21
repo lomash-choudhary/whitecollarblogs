@@ -14,39 +14,41 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
-/**
- * Login is the only public page. It used to sit inside the old marketing
- * chrome — a nav bar, a five-link footer and a company blurb, all of it for a
- * website this app no longer serves — so removing the `/resources` blog on
- * 2026-09-20 left that shell wrapping a single password box. What a signed-out
- * visitor needs is the form and the brand, so that is all this is.
- */
 export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    // `data-scroll-behavior` is what makes Next turn the smooth scrolling in
-    // `globals.css` off for the length of a route change. Without it a
-    // navigation animates its way back to the top instead of arriving there,
-    // and Next 16 warns in the console rather than assuming.
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${playfair.variable} ${dmSans.variable} scroll-smooth`}
+      className={`${playfair.variable} ${dmSans.variable} scroll-smooth dark`}
     >
-      <body className="min-h-screen bg-[#F5F0E8] text-[#0D1B2A] font-body antialiased flex flex-col">
-        <main className="flex-grow w-full flex items-center justify-center">
+      <body className="min-h-screen bg-[#070D15] text-slate-100 font-body antialiased flex flex-col relative overflow-x-hidden selection:bg-[#C9A84C]/30 selection:text-[#E5C567]">
+        {/* Subtle grid pattern background */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <div 
+            className="absolute inset-0 opacity-[0.03]" 
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.8) 1px, transparent 0)`,
+              backgroundSize: '32px 32px'
+            }}
+          />
+        </div>
+
+
+        <main className="relative z-10 flex-grow w-full flex items-center justify-center p-4 sm:p-6 md:p-8">
           {children}
         </main>
 
-        <footer className="w-full py-6 text-center">
-          <p className="text-[11px] text-[#0D1B2A]/35 font-semibold">
-            © {new Date().getFullYear()} Homeowner Marketers. All rights reserved.
+        <footer className="relative z-10 w-full py-6 text-center">
+          <p className="text-[11px] text-slate-500 font-medium tracking-wide">
+            © {new Date().getFullYear()} <span className="text-slate-400 font-semibold">Homeowner Marketers</span> · All rights reserved.
           </p>
         </footer>
       </body>
     </html>
   )
 }
+
