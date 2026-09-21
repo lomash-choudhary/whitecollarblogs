@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   KanbanSquare,
   PenTool,
-  BarChart3,
   Users2
 } from 'lucide-react'
 import { SiteSwitcher } from './SiteSwitcher'
@@ -23,7 +22,6 @@ export const Sidebar: React.FC = () => {
     // upload dialog rather than one of them quietly skipping it.
     { name: 'Write New Blog', href: '/editor?upload=1', icon: PenTool },
     { name: 'Manage Authors', href: '/authors', icon: Users2 },
-    { name: 'Performance Stats', href: '/analytics', icon: BarChart3 },
   ]
 
   return (

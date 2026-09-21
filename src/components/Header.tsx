@@ -16,8 +16,6 @@ export const Header: React.FC = () => {
         return 'Pipeline Kanban'
       case '/editor':
         return 'Content Editor'
-      case '/analytics':
-        return 'Performance Stats'
       case '/authors':
         return 'Author Manager'
       default:
