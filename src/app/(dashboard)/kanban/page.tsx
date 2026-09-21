@@ -2,7 +2,8 @@ import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { KanbanBoard } from '@/components/KanbanBoard'
-import { getActiveSite, siteWhere } from '@/utils/activeSite'
+import { getActiveSite } from '@/utils/activeSite'
+import { findSitePosts } from '@/utils/sitePosts'
 
 
 export default async function KanbanPage() {
@@ -23,35 +24,46 @@ export default async function KanbanPage() {
       color: stage.color,
     }))
 
-    // Fetch posts
-    const postsResult = await payload.find({
-      collection: 'posts',
-      where: siteWhere(activeSite.key),
-      limit: 100,
-      depth: 1,
-    })
-    posts = postsResult.docs
-      .filter((post: any) => post.stage && typeof post.stage === 'object')
-      .map((post: any) => ({
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt || '',
-        targetRole: post.targetRole || 'Generic',
-        readTime: post.readTime || '5 min read',
-        views: post.views || 0,
-        likes: post.likes || 0,
-        author: post.author ? {
-          name: post.author.name,
-          avatar: post.author.avatar || undefined,
-        } : undefined,
-        stage: {
-          id: post.stage.id,
-          name: post.stage.name,
-          key: post.stage.key,
-          color: post.stage.color,
-        },
-      }))
+    // Fetch posts. No page limit: the board and the overview count the same
+    // rows, so a cap here would make the two screens disagree.
+    const siteDocs = await findSitePosts(payload, activeSite.key)
+    const fallbackStage =
+      stages.find((stage: any) => stage.key === 'draft') ?? stages[0] ?? null
+
+    posts = siteDocs
+      .map((post: any) => {
+        // A post whose stage relation did not populate is placed in Draft
+        // rather than dropped — a row the overview counts and the board hides
+        // is exactly the mismatch this page is being kept in step with.
+        const populated = post.stage && typeof post.stage === 'object' ? post.stage : null
+        const stage = populated
+          ? {
+              id: populated.id,
+              name: populated.name,
+              key: populated.key,
+              color: populated.color,
+            }
+          : fallbackStage
+
+        if (!stage) return null
+
+        return {
+          id: post.id,
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt || '',
+          targetRole: post.targetRole || 'Generic',
+          readTime: post.readTime || '5 min read',
+          views: post.views || 0,
+          likes: post.likes || 0,
+          author: post.author ? {
+            name: post.author.name,
+            avatar: post.author.avatar || undefined,
+          } : undefined,
+          stage,
+        }
+      })
+      .filter(Boolean)
   } catch (err) {
     console.error('Error loading Kanban data from Payload CMS:', err)
     stages = []

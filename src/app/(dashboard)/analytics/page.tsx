@@ -1,7 +1,8 @@
 import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { getActiveSite, siteWhere } from '@/utils/activeSite'
+import { getActiveSite } from '@/utils/activeSite'
+import { findSitePosts, stageKeyOf } from '@/utils/sitePosts'
 import { 
   Eye, 
   Heart, 
@@ -30,14 +31,9 @@ export default async function AnalyticsPage() {
   try {
     const payload = await getPayload({ config })
     const activeSite = await getActiveSite()
-    const postsResult = await payload.find({
-      collection: 'posts',
-      where: siteWhere(activeSite.key),
-      limit: 100,
-      depth: 2,
-    })
-
-    const posts = postsResult.docs
+    // Uncapped, like the overview and the board: every screen that reports a
+    // number for a site has to be looking at the same set of rows.
+    const posts = await findSitePosts(payload, activeSite.key, { depth: 2 })
 
     if (posts.length > 0) {
       let views = 0
@@ -61,7 +57,7 @@ export default async function AnalyticsPage() {
         const mins = parseInt(readTimeStr) || 5
         totalReadTimeMinutes += mins
 
-        const stageKey = post.stage?.key || 'draft'
+        const stageKey = stageKeyOf(post)
         if (stageCounts[stageKey]) {
           stageCounts[stageKey].count++
         } else {

@@ -2,7 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { getActiveSite, siteWhere } from '@/utils/activeSite'
+import { getActiveSite } from '@/utils/activeSite'
+import { countPostsByStage, findSitePosts, type StageCounts } from '@/utils/sitePosts'
 import {
   CheckCircle2,
   Users,
@@ -12,48 +13,34 @@ import {
 } from 'lucide-react'
 
 
+/** How many of the site's posts the overview lists. It never bounds a count. */
+const RECENT_POST_COUNT = 10
+
 export default async function DashboardPage() {
   const activeSite = await getActiveSite()
-  let posts: any[] = []
-  let stats = {
+  const emptyStats: StageCounts = {
     total: 0,
-    published: 0,
-    review: 0,
     draft: 0,
+    review: 0,
+    approved: 0,
     scheduled: 0,
+    published: 0,
   }
+  // The list below is trimmed for display; the counters are not. They are
+  // derived from every post on the site, so they agree with the pipeline board.
+  let recentPosts: any[] = []
+  let stats: StageCounts = emptyStats
 
   try {
     const payload = await getPayload({ config })
-    const postsResult = await payload.find({
-      collection: 'posts',
-      where: siteWhere(activeSite.key),
-      limit: 10,
-      depth: 1,
-    })
+    const posts = await findSitePosts(payload, activeSite.key, { sort: '-updatedAt' })
 
-    posts = postsResult.docs
-
-    // Dynamic stats aggregation
-    posts.forEach((post: any) => {
-      const key = post.stage?.key || 'draft'
-      stats.total++
-      if (key === 'published') stats.published++
-      else if (key === 'review') stats.review++
-      else if (key === 'draft') stats.draft++
-      else if (key === 'scheduled') stats.scheduled++
-      else if (key === 'approved') stats.review++ // Treat approved as in-pipeline/review
-    })
+    stats = countPostsByStage(posts)
+    recentPosts = posts.slice(0, RECENT_POST_COUNT)
   } catch (err) {
     console.error('Error fetching dashboard posts from Payload CMS:', err)
-    posts = []
-    stats = {
-      total: 0,
-      published: 0,
-      review: 0,
-      draft: 0,
-      scheduled: 0,
-    }
+    recentPosts = []
+    stats = emptyStats
   }
 
   return (
@@ -87,7 +74,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-[10px] font-bold text-[#0D1B2A]/40 uppercase tracking-widest">Under Review</p>
-            <p className="text-2xl font-bold text-[#0D1B2A] mt-1 leading-none">{stats.review}</p>
+            <p className="text-2xl font-bold text-[#0D1B2A] mt-1 leading-none">{stats.review + stats.approved}</p>
           </div>
         </div>
 
@@ -120,14 +107,14 @@ export default async function DashboardPage() {
           </div>
 
           <div className="space-y-4">
-            {posts.length === 0 ? (
+            {recentPosts.length === 0 ? (
               <div className="p-8 text-center border border-dashed border-slate-200 rounded-2xl space-y-2">
                 <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
                 <p className="text-sm font-bold text-slate-700">No Articles in Pipeline</p>
                 <p className="text-xs text-slate-400">Start by writing a new blog from the Content Editor.</p>
               </div>
             ) : (
-              posts.map((post: any) => (
+              recentPosts.map((post: any) => (
                 <div
                   key={post.id}
                   className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100/80 hover:bg-slate-50/50 hover:border-slate-200 transition-all group text-left"
