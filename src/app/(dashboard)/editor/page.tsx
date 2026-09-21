@@ -8,12 +8,17 @@ import { BlogEditor } from '@/components/BlogEditor'
 interface PageProps {
   searchParams: Promise<{
     id?: string
+    upload?: string
   }>
 }
 
 export default async function EditorPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams
   const postId = resolvedSearchParams.id
+  // `New Blog` asks for the upload dialog by carrying `?upload=1`; a plain
+  // `/editor` is the same blank editor it always was. Never while editing —
+  // the dialog replaces the whole body.
+  const startWithUpload = !postId && resolvedSearchParams.upload === '1'
 
   let authors: any[] = []
   let stages: any[] = []
@@ -98,7 +103,12 @@ export default async function EditorPage({ searchParams }: PageProps) {
 
   return (
     <div className="w-full">
-      <BlogEditor authors={authors} stages={stages} initialPost={initialPost} />
+      <BlogEditor
+        authors={authors}
+        stages={stages}
+        initialPost={initialPost}
+        startWithUpload={startWithUpload}
+      />
     </div>
   )
 }

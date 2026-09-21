@@ -50,8 +50,11 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Create Post Button */}
+        {/* `?upload=1` opens the upload dialog over a blank editor — the only
+            door into the document importer now that the toolbar button is
+            gone. Closing it drops the parameter and leaves a blank editor. */}
         <Link
-          href="/editor"
+          href="/editor?upload=1"
           className="flex items-center gap-2 bg-[#C9A84C] hover:bg-[#E5C567] text-[#0D1B2A] font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-full shadow-md shadow-[#C9A84C]/10 hover:shadow-lg transition-all active:scale-[0.98] hover:scale-[1.02]"
         >
           <Plus className="w-4 h-4" />

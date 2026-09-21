@@ -19,7 +19,9 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Pipeline Board', href: '/kanban', icon: KanbanSquare },
-    { name: 'Write New Blog', href: '/editor', icon: PenTool },
+    // Same entry point as the header's New Blog button, so both offer the
+    // upload dialog rather than one of them quietly skipping it.
+    { name: 'Write New Blog', href: '/editor?upload=1', icon: PenTool },
     { name: 'Manage Authors', href: '/authors', icon: Users2 },
     { name: 'Performance Stats', href: '/analytics', icon: BarChart3 },
   ]
@@ -51,7 +53,9 @@ export const Sidebar: React.FC = () => {
       {/* Navigation Links */}
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href
+          // Compared against the path alone: a nav entry may carry a query
+          // (`/editor?upload=1`), and `usePathname` never returns one.
+          const isActive = pathname === item.href.split('?')[0]
           const Icon = item.icon
           return (
             <Link

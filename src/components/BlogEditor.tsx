@@ -33,8 +33,7 @@ import {
   Sparkles,
   Search,
   ChevronDown,
-  FileDown,
-  FileUp
+  FileDown
 } from 'lucide-react'
 import { cleanImageUrl } from '@/utils/cleanImageUrl'
 import { findImagePlaceholders, replaceImagePlaceholder } from '@/lib/imagePlaceholders'
@@ -44,10 +43,12 @@ import {
   readDocFrontMatter,
   readSeoBlock,
 } from '@/lib/docFrontMatter'
+import { firstParagraphText, parseMarkdownBlocks } from '@/lib/markdownBlocks'
 import { describeSaveError } from '@/lib/saveError'
 import { lexicalToMarkdown } from '@/utils/lexicalToMarkdown'
 import { markdownToLexical } from '@/utils/markdownToLexical'
 import { useSite } from '@/context/SiteContext'
+import { NewBlogModal, type ImportPhase } from './NewBlogModal'
 
 interface Author {
   id: string
@@ -91,6 +92,16 @@ interface BlogEditorProps {
     scheduleStatus?: string
     scheduleMessage?: string
   } | null
+  /**
+   * Open the upload dialog over a blank editor on mount.
+   *
+   * Driven by `?upload=1` on the route rather than by "this is a new post", so
+   * the two ways of arriving here stay distinct: *New Blog* asks for the
+   * dialog, and closing it drops the parameter and leaves the same URL a plain
+   * blank editor has. Never set while editing — the dialog replaces the whole
+   * body, and there is no undo in a textarea.
+   */
+  startWithUpload?: boolean
 }
 
 
@@ -203,7 +214,12 @@ const MARKDOWN_SNIPPETS: Record<string, (selected: string) => MarkdownSnippet> =
   'callout-key': (s) => ({ replacement: `\n:::key ${s || 'Key point'}\nWhy it matters.\n:::\n` }),
 }
 
-export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initialPost }) => {
+export const BlogEditor: React.FC<BlogEditorProps> = ({
+  authors,
+  stages,
+  initialPost,
+  startWithUpload = false,
+}) => {
   const { sites, activeSite } = useSite()
   // The destination comes from the sidebar switcher, so the form has no picker
   // for it. A new post targets whichever website is selected there; an existing
@@ -218,7 +234,14 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const [slug, setSlug] = useState(initialPost?.slug || '')
   // Synced by default for new posts. If editing, preserve the existing slug without dynamic updates.
   const [isSyncedWithTitle, setIsSyncedWithTitle] = useState(!isEditing)
-  const [excerpt, setExcerpt] = useState(initialPost?.excerpt || '')
+  // No box of its own any more: it was a second place to write the meta
+  // description, and the writer has just typed the article's opening paragraph
+  // one field down. An existing value is kept — an article may carry one a
+  // writer wrote by hand — and a post without one takes the first paragraph on
+  // save, which is what `publishToSite` was already falling back to. Kept in
+  // the column rather than derived at every read because the dashboard's
+  // "Recent Blogs" card prints it, and that card has no article body to parse.
+  const [excerpt] = useState(initialPost?.excerpt || '')
 
   // The SEO fields. Every one is optional and falls back on the site side
   // (src/lib/articleSeo.ts), so an untouched post publishes exactly the tags
@@ -286,9 +309,35 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const mediaInputRef = React.useRef<HTMLInputElement>(null)
   const [isMediaUploading, setIsMediaUploading] = useState(false)
-  const docInputRef = React.useRef<HTMLInputElement>(null)
-  const [isImportingDoc, setIsImportingDoc] = useState(false)
+  // The upload dialog, and how far the document it was given has got. The
+  // dialog is the only door into the importer now, so these live here rather
+  // than in it: the flow it reports on is `applyDocImport` plus the image
+  // generation that follows, and both of those need the editor's own state.
+  const [isUploadOpen, setIsUploadOpen] = useState(startWithUpload && !initialPost)
+  const [importPhase, setImportPhase] = useState<ImportPhase>('idle')
   const [docImportError, setDocImportError] = useState('')
+
+  /**
+   * Puts the dialog away and drops `?upload=1` with it, so a refresh — or the
+   * back button landing on this URL again — does not reopen it over an article
+   * the writer has since started.
+   *
+   * `history.replaceState` rather than `router.replace`: the parameter is only
+   * an instruction to open the dialog once, and a real navigation would send
+   * this page's server component round again for nothing while the form is
+   * holding an unsaved article.
+   */
+  const dismissUpload = React.useCallback(() => {
+    setIsUploadOpen(false)
+    setDocImportError('')
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    if (!url.searchParams.has('upload')) return
+    // Only that one key: anything else on the URL belongs to the page, not to
+    // this dialog.
+    url.searchParams.delete('upload')
+    window.history.replaceState(null, '', `${url.pathname}${url.search}`)
+  }, [])
 
   const triggerFileUpload = () => {
     mediaInputRef.current?.click()
@@ -534,7 +583,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
   }
 
   /**
-   * Puts an uploaded document into the body.
+   * Puts an uploaded document into the body, and resolves its image briefs.
    *
    * Two file types, one of which is not converted at all:
    *
@@ -554,22 +603,19 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
    * the document wins over whatever the form is still holding, exactly as it
    * does for a paste over a select-all.
    *
-   * The body is replaced, so a body that already has something in it asks
-   * first. There is no undo in a textarea.
+   * The image briefs the document arrives with are then generated in the same
+   * run, before the dialog closes. That is the one place it is worth waiting
+   * for: a freshly imported article has every one of its tags unresolved, and
+   * an unresolved tag blocks publishing — so the writer would have had to press
+   * the button as their first act anyway. It stays a *button* everywhere else,
+   * and it is still not a save hook here; the generation happens in the browser
+   * while the dialog is up, holding no database connection.
+   *
+   * The dialog only ever opens over a blank editor, so nothing is overwritten
+   * and there is nothing to confirm.
    */
-  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    // Cleared straight away, and not in a `finally`: picking the same file
-    // twice in a row fires no change event otherwise, so a failed import
-    // could not be retried without choosing a different file first.
-    if (e.target) e.target.value = ''
-    if (!file) return
-
+  const importDocument = async (file: File) => {
     setDocImportError('')
-
-    if (content.trim() && !confirm(`Replace the article in the body with "${file.name}"?`)) {
-      return
-    }
 
     const name = file.name.toLowerCase()
     const isMarkdown = /\.(md|markdown|txt)$/.test(name)
@@ -580,7 +626,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
       return
     }
 
-    setIsImportingDoc(true)
+    setImportPhase('converting')
     try {
       let markdown: string
 
@@ -611,13 +657,29 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         return
       }
 
-      setContent(applyDocImport(markdown, true))
+      const imported = applyDocImport(markdown, true)
+      setContent(imported)
+
+      // Generation reports through the dialog's own loader, and the dialog
+      // closes on whatever it produced — a tag the model refused is left in
+      // the body untouched, with the failure named in the editor's error box,
+      // so the writer lands on the article rather than on a dead end.
+      //
+      // Asked first rather than letting the run no-op on an empty list: the
+      // phase drives a loader, and a document with no briefs would flash one
+      // for a frame on its way past.
+      if (findImagePlaceholders(imported).length > 0) {
+        setImportPhase('images')
+        setContent(await runImageGeneration(imported))
+      }
+
+      dismissUpload()
     } catch {
       // A network failure or a file the browser could not read. The message
       // names the thing the writer can do next, not what threw.
       setDocImportError('The file could not be read. Check the download and try again, or paste the text in.')
     } finally {
-      setIsImportingDoc(false)
+      setImportPhase('idle')
     }
   }
 
@@ -657,15 +719,25 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
    * Each tag is resolved in its own request and the textarea is updated as each
    * one lands, so a failure on the fourth image keeps the first three.
    */
-  const generateImages = async () => {
-    const total = findImagePlaceholders(content).length
-    if (total === 0) return
+  const generateImages = () => runImageGeneration(content)
+
+  /**
+   * The body of the above, taking the markdown to work on as an argument.
+   *
+   * Separate from the button because the import flow generates into markdown
+   * that is not in `content` yet — `setContent` is asynchronous, so a run that
+   * read the state back would resolve the tags in the *previous* article. The
+   * text flows through as a value and the state follows it.
+   */
+  const runImageGeneration = async (source: string): Promise<string> => {
+    const total = findImagePlaceholders(source).length
+    if (total === 0) return source
 
     setIsGeneratingImages(true)
     setImageProgress({ done: 0, total })
     setError(null)
 
-    let working = content
+    let working = source
     // Index of the tag to try next. A resolved tag leaves the list, so this
     // only moves forward past one that failed — without it, a tag the model
     // refuses would be retried until the loop ran out.
@@ -711,6 +783,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
     setIsGeneratingImages(false)
     setImageProgress(null)
+    return working
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -723,6 +796,25 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
     // from the mirrored state: at submit they agree, but only one of the two
     // is guaranteed to have seen the writer's last keystroke.
     const lexicalContent = markdownToLexical(seoBlock.body)
+
+    // Parsed rather than pattern-matched on the raw lines: an article opening
+    // with a callout, a code fence or the Key Takeaways box has no line a
+    // prefix check would recognise, and the excerpt came out as a bare ":::".
+    // Capped at the same 300 characters `publishToSite` uses, so a post's
+    // stored excerpt and a published one that fell back cannot disagree.
+    //
+    // The image briefs come out first, and that is not a detail: a brief sits
+    // *above* the intro by the SEO template's own instruction, so on a freshly
+    // imported draft the first paragraph in the body is "[Feature image —
+    // below H1, above intro. Alt text: …]". `publishToSite` never meets one,
+    // because an unresolved tag blocks publishing — a draft saves with them
+    // still in it, and this runs on every save.
+    const skipLines = new Set(findImagePlaceholders(seoBlock.body).map((p) => p.line))
+    const excerptSource = seoBlock.body
+      .split('\n')
+      .filter((_, i) => !skipLines.has(i + 1))
+      .join('\n')
+    const derivedExcerpt = firstParagraphText(parseMarkdownBlocks(excerptSource)).slice(0, 300)
     const seo = seoBlock.present
       ? {
         metaTitle: seoBlock.fields.metaTitle || '',
@@ -754,7 +846,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
         body: JSON.stringify({
           title,
           slug,
-          excerpt,
+          excerpt: excerpt.trim() || derivedExcerpt,
           content: lexicalContent,
           targetRole,
           readTime,
@@ -797,6 +889,16 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-300 text-left font-body">
+      {isUploadOpen && (
+        <NewBlogModal
+          phase={importPhase}
+          imageProgress={imageProgress}
+          error={docImportError}
+          onSelectFile={importDocument}
+          onClose={dismissUpload}
+        />
+      )}
+
       <div className="space-y-1">
         <h2 className="text-2xl font-bold text-[#0D1B2A] tracking-tight font-headline">
           {isEditing ? 'Edit WCA Blog Post' : 'Draft New WCA Blog Post'}
@@ -1138,19 +1240,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
               )}
             </div>
 
-            {/* Short Excerpt */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-extrabold uppercase tracking-widest text-[#0D1B2A]/40">Brief Article Excerpt</label>
-              <textarea
-                required
-                rows={2}
-                placeholder="Give a short summary of this article to show in the blog listing..."
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                className="w-full bg-[#F5F0E8]/30 border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:bg-white focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-3 rounded-xl outline-none transition-all text-[#0D1B2A] shadow-sm resize-none"
-              />
-            </div>
-
             {/* Content Body */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -1374,27 +1463,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                       the far right instead of crowding the formatting groups. Each
                       appears only when the body actually has something for it to do. */}
                   <div className="flex items-center gap-0.5">
-                    {/* Always visible, unlike the two buttons after it: this is
-                      how an article gets into the box in the first place, so
-                      it cannot be conditional on the box already having one. */}
-                    <button
-                      type="button"
-                      onClick={() => docInputRef.current?.click()}
-                      disabled={isImportingDoc}
-                      className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#0D1B2A] hover:bg-[#C9A84C]/20 rounded-lg transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {isImportingDoc ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Converting
-                        </>
-                      ) : (
-                        <>
-                          <FileUp className="w-3.5 h-3.5 text-[#C9A84C]" />
-                          Upload .docx / .md
-                        </>
-                      )}
-                    </button>
                     {pendingImport.consumed.length > 0 && (
                       <button
                         type="button"
@@ -1442,23 +1510,6 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                   className="w-full bg-transparent border-0 text-xs font-semibold p-4 outline-none focus:ring-0 text-[#0D1B2A] leading-relaxed resize-y block"
                 />
               </div>
-
-              {/* An import failure is the one thing here worth saying out loud:
-                  the writer picked a file and the body did not change, so
-                  without this the upload looks like it did nothing. */}
-              {docImportError && (
-                <p className="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-100 rounded-2xl px-3 py-2">
-                  {docImportError}
-                </p>
-              )}
-
-              <input
-                type="file"
-                ref={docInputRef}
-                onChange={handleDocumentUpload}
-                className="hidden"
-                accept=".docx,.md,.markdown,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain"
-              />
 
               <input
                 type="file"
@@ -1546,7 +1597,11 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ authors, stages, initial
                         rows={2}
                         value={metaDescription}
                         onChange={(e) => setMetaDescription(e.target.value)}
-                        placeholder={excerpt || 'Falls back to the excerpt'}
+                        // The excerpt has no box of its own now, so naming it
+                        // here would point at nothing. What it falls back to is
+                        // the same thing either way: the article's opening
+                        // paragraph.
+                        placeholder={excerpt || "Falls back to the article's opening paragraph"}
                         className="w-full bg-white border border-[rgba(13,27,42,0.12)] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/15 text-xs font-semibold px-4 py-2.5 rounded-xl outline-none transition-all text-[#0D1B2A] resize-none"
                       />
                     </div>
