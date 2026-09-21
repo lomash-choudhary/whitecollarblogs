@@ -501,7 +501,11 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
    */
   const applyDocImport = (markdown: string, replacesArticle = false): string => {
     const { body, fields, consumed } = readDocFrontMatter(markdown)
-    if (consumed.length === 0) return markdown
+    // `body`, not `markdown`: the importer normalises the whole document
+    // before it reads anything, and a Google Docs export whose preamble
+    // carries no metadata still has `&nbsp;` lines in it that would otherwise
+    // publish as paragraphs reading `&nbsp;`.
+    if (consumed.length === 0) return body
 
     /**
      * A box the writer has already filled in wins over the document, unless
@@ -575,8 +579,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
     const pasted = e.clipboardData.getData('text/plain')
     if (!pasted.trim()) return
 
-    const { consumed } = readDocFrontMatter(pasted)
-    if (consumed.length === 0) return
+    // Two reasons to take the paste over: there is metadata to lift, or the
+    // document is one the importer rewrites anyway — a Google Docs export
+    // writes its blank paragraphs as `&nbsp;`, and those are text to every
+    // renderer. Left as an ordinary paste, the writer publishes the word.
+    const { body, consumed } = readDocFrontMatter(pasted)
+    if (consumed.length === 0 && body === pasted) return
 
     e.preventDefault()
     setContent(applyDocImport(pasted, true))

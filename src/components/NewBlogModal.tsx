@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { FileUp, Loader2, Sparkles, X } from 'lucide-react'
 
 /**
@@ -22,6 +23,9 @@ interface NewBlogModalProps {
   onSelectFile: (file: File) => void
   onClose: () => void
 }
+
+/** Nothing to subscribe to: the value only differs between server and client. */
+const SUBSCRIBE_NOTHING = () => () => {}
 
 const ACCEPT =
   '.docx,.md,.markdown,.txt,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain'
@@ -58,21 +62,78 @@ export const NewBlogModal: React.FC<NewBlogModalProps> = ({
     return () => window.removeEventListener('keydown', onKey)
   }, [busy, onClose])
 
+  /**
+   * The page behind a modal does not scroll.
+   *
+   * `html` is `h-full` and `body` only `min-h-full`, so the dashboard scrolls
+   * the *viewport* rather than an inner pane — `main` is `flex-1` inside a
+   * `min-h-screen` column, which grows with its content instead of scrolling
+   * itself. `overflow: hidden` on `body` is what stops that: `html`'s own
+   * overflow is `visible`, so `body`'s is the one that propagates to the
+   * viewport. Setting it on the wrong one of the two is a no-op that looks
+   * like the lock not working.
+   *
+   * The scrollbar's width is added back as padding, or removing it reflows the
+   * whole page a few pixels sideways the moment the dialog opens — invisible
+   * on macOS, where scrollbars are overlaid and the measurement is 0, and very
+   * visible everywhere else.
+   */
+  React.useEffect(() => {
+    const { body } = document
+    const overflow = body.style.overflow
+    const paddingRight = body.style.paddingRight
+    const gutter = window.innerWidth - document.documentElement.clientWidth
+
+    body.style.overflow = 'hidden'
+    if (gutter > 0) body.style.paddingRight = `${gutter}px`
+
+    return () => {
+      body.style.overflow = overflow
+      body.style.paddingRight = paddingRight
+    }
+  }, [])
+
+  /**
+   * Rendered into `document.body`, not where it sits in the editor's tree.
+   *
+   * A `position: fixed` element is only viewport-sized while nothing above it
+   * has a `transform`, `filter`, `backdrop-filter`, `perspective`, `contain`
+   * or a `will-change` naming one of them — any of those makes the element's
+   * containing block that ancestor's box instead, so `inset-0` stops meaning
+   * the screen and the scrim comes up short, leaving a live strip of page down
+   * one edge. The editor is a deep tree inside a scrolling `main` and it is
+   * not the dialog's job to know what every ancestor sets, so it steps out of
+   * the tree entirely. `z-50` then competes with nothing but the sidebar's
+   * `z-30` and the header's `z-20`.
+   *
+   * Guarded on mount because `isUploadOpen` can be true on the very first
+   * render — `?upload=1` is read from props — and there is no `document` on
+   * the server. `useSyncExternalStore` rather than a `setState` in an effect:
+   * the two say the same thing, but this states the server/browser split as a
+   * snapshot and costs no second render pass.
+   */
+  const mounted = React.useSyncExternalStore(SUBSCRIBE_NOTHING, () => true, () => false)
+  if (!mounted) return null
+
   const take = (file: File | undefined) => {
     if (!file || busy) return
     onSelectFile(file)
   }
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 font-body"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 font-body overscroll-contain"
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-blog-modal-title"
     >
+      {/* `fixed`, not `absolute`: the scrim is measured against the viewport
+          itself rather than against whatever box its parent turned out to
+          have. The navy is the sidebar's, so the dimmed page reads as one
+          screen going quiet rather than a grey sheet laid over it. */}
       <div
         onClick={() => !busy && onClose()}
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        className="fixed inset-0 bg-[#0D1B2A]/45 backdrop-blur-md"
       />
 
       <div className="relative w-full max-w-lg bg-white rounded-3xl border border-[rgba(13,27,42,0.1)] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -192,6 +253,7 @@ export const NewBlogModal: React.FC<NewBlogModalProps> = ({
           }}
         />
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

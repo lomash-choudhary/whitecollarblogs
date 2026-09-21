@@ -176,6 +176,70 @@ function plain(value: string): string {
 }
 
 /**
+ * `&nbsp;` is how a converted document writes an empty paragraph, and it is
+ * not a space to anything downstream.
+ *
+ * Google Docs' markdown export puts a line holding nothing but `&nbsp;`
+ * wherever the document had a blank paragraph, and hangs one on the end of
+ * plenty of lines that are not blank. Nothing further down reads HTML —
+ * `markdownBlocks.ts` deliberately has no entity and no raw-HTML support,
+ * because these files arrive over a webhook — so every one of them is *text*,
+ * and it breaks three separate things at once:
+ *
+ * - **The preamble walk never reaches the labels.** A `&nbsp;` line between
+ *   the topic line and `Keywords \-` is a second unlabelled paragraph, which
+ *   is exactly the guard that ends the walk — so the whole SEO block published
+ *   as the article's opening copy with every column left empty, which is the
+ *   defect this module exists to fix, arriving through a different door.
+ * - **A bold FAQ question stops being one.** `**Question?**&nbsp;` is no
+ *   longer a bold run alone in its paragraph, so it matches the
+ *   `**Question?** Answer prose.` spelling instead with `&nbsp;` as the
+ *   answer — six questions with six empty answers, and the real answers
+ *   dropped from the accordion and from the `FAQPage` graph.
+ * - **The reader sees the word.** A `&nbsp;` line renders as a paragraph
+ *   reading `&nbsp;`, and a trailing one prints at the end of a sentence.
+ *
+ * So it is normalised **on the way in**, like every other convention of this
+ * team's documents: nothing here reaches `markdownBlocks.ts` and no site
+ * renderer changes. An entity is a space, and the three cases follow from
+ * that — a line of nothing but entities is a blank line; a trailing run is
+ * removed rather than turned into a space, because a space there would be
+ * trailing whitespace the parser has a meaning for; anything else becomes one
+ * plain space.
+ *
+ * **The trailing run has to start at an entity**, or this eats a hard break.
+ * `word  ` is two trailing spaces and means `<br>`; `word  &nbsp;` is that
+ * same hard break with an entity stuck on the end, and only the entity goes.
+ *
+ * A fenced code block is skipped. Its contents are literal to the parser and
+ * to the reader, so an entity written inside one was written on purpose.
+ */
+const NBSP = '&nbsp;|&#0*160;|&#[xX]0*[aA]0;|\\u00a0'
+const HAS_NBSP = new RegExp(NBSP, 'i')
+const NBSP_ANY = new RegExp(NBSP, 'gi')
+const NBSP_BLANK_LINE = new RegExp(`^(?:${NBSP}|\\s)*$`, 'i')
+const NBSP_TRAILING = new RegExp(`(?:${NBSP})(?:${NBSP}|[ \\t])*$`, 'i')
+const FENCE_LINE = /^\s*(?:```|~~~)/
+
+export function normalizeNbsp(markdown: string): string {
+  if (!HAS_NBSP.test(markdown)) return markdown
+
+  let inFence = false
+  return markdown
+    .split('\n')
+    .map((line) => {
+      if (FENCE_LINE.test(line)) {
+        inFence = !inFence
+        return line
+      }
+      if (inFence || !HAS_NBSP.test(line)) return line
+      if (NBSP_BLANK_LINE.test(line)) return ''
+      return line.replace(NBSP_TRAILING, '').replace(NBSP_ANY, ' ')
+    })
+    .join('\n')
+}
+
+/**
  * `/blog/how-to-choose-the-right-paint-finish` -> the last segment.
  *
  * The SEO team writes the slug as a path, and which path it is has nothing to
@@ -249,7 +313,13 @@ function fieldsOnLine(line: string): { key: LabelKey; value: string }[] {
  * this makes deletes text the writer can see.
  */
 export function readDocFrontMatter(markdown: string): DocImport {
-  const source = markdown.replace(/\r\n?/g, '\n')
+  // Normalised before anything reads it, and the *whole* document rather than
+  // just the preamble: the export writes `&nbsp;` lines at the bottom of the
+  // article as well as the top. Every return below hands back `source`, so a
+  // document that carries no metadata at all still comes out with its entities
+  // resolved — and one that carries none of either is byte-identical, because
+  // both passes are no-ops on it.
+  const source = normalizeNbsp(markdown.replace(/\r\n?/g, '\n'))
   const lines = source.split('\n')
 
   /**
@@ -263,7 +333,7 @@ export function readDocFrontMatter(markdown: string): DocImport {
   const headingAt = lines.findIndex(
     (line) => line.trim() !== '' && parseMarkdownBlocks(line)[0]?.type === 'heading',
   )
-  if (headingAt < 0) return { body: markdown, fields: {}, consumed: [] }
+  if (headingAt < 0) return { body: source, fields: {}, consumed: [] }
 
   // Tag lines are the one non-metadata thing that reliably sits inside the
   // preamble — the image brief for the feature image is written above the H1.
@@ -424,7 +494,7 @@ export function readDocFrontMatter(markdown: string): DocImport {
     }
   }
 
-  if (consumed.length === 0) return { body: markdown, fields: {}, consumed: [] }
+  if (consumed.length === 0) return { body: source, fields: {}, consumed: [] }
 
   return { body: body.join('\n').replace(/^\n+/, ''), fields, consumed }
 }

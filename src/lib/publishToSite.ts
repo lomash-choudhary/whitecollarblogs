@@ -145,7 +145,10 @@ export function buildPostMarkdown(
     readTime: post.readTime || '5 min read',
     heroImage,
     heroImageAlt,
-    heroImageCaption: excerpt,
+    // No `heroImageCaption`: it used to carry the excerpt, and OVO and Ranger
+    // print that string in a bar under the hero — so every CMS article opened
+    // with its own summary repeated as a photo caption. A caption describes the
+    // picture; nothing in the CMS collects one, so the key is simply not written.
     // The SEO box. Written unconditionally rather than only when set: an empty
     // value is dropped by buildMarkdownFile, so clearing a field in the CMS
     // removes the key from the file and the site falls back again.
