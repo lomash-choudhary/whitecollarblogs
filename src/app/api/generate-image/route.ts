@@ -25,12 +25,13 @@ import { aspectRatioFor, promptFor } from '@/lib/imagePlaceholders'
 
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/interactions'
 
-// Generation runs ~8s, plus the sharp resize and the Supabase upload, so this
-// needs room beyond the platform default (10s Hobby, 15s Pro). Vercel enforces
-// the *lower* of this and the plan ceiling, so without it the function is
-// killed mid-call and the writer gets a raw FUNCTION_INVOCATION_TIMEOUT instead
-// of the message below.
-export const maxDuration = 60
+// Generation runs ~8s, plus the sharp resize and the Supabase upload. Vercel
+// enforces the *lower* of this and the plan ceiling, so this must name a value
+// the plan actually allows: with fluid compute (on by default since April 2025)
+// that is 300s on Hobby and Pro alike, which is what this asks for. Without the
+// line at all the function is killed at the plan default and the writer gets a
+// raw FUNCTION_INVOCATION_TIMEOUT instead of the message below.
+export const maxDuration = 300
 export const dynamic = 'force-dynamic'
 
 /**
@@ -38,8 +39,15 @@ export const dynamic = 'force-dynamic'
  *
  * It has to stay *under* `maxDuration`, or the platform kills the function
  * first and this route's own "took too long" message never gets to send.
+ *
+ * **Under it with room to spare, not merely under it.** This bounds the Gemini
+ * call alone — the `sharp` resize, the Supabase upload and the JSON response
+ * all happen after it returns — so a value pressed right up against
+ * `maxDuration` still gets the function killed in the tail, which is the exact
+ * failure this pair exists to avoid. The 20s of slack is the budget for that
+ * tail; measured, it is a few seconds.
  */
-const TIMEOUT_MS = 55_000
+const TIMEOUT_MS = 280_000
 
 /**
  * Digs the base64 bytes out of a response.
